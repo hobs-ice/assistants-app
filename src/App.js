@@ -1,23 +1,81 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import Medicaments from './Medicaments';
+import Urgences from './Urgences';
+import Nutrition from './Nutrition';
+import Emploi from './Emploi';
+import Films from './Films';
+import Etudiant from './Etudiant';
+import Business from './Business';
+import Sport from './Sport';
+
+const assistants = [
+  { id: 'medicaments', emoji: '💊', title: 'Médicaments', desc: 'Posologie, recommandations, pharmacies', color: '#667eea' },
+  { id: 'nutrition', emoji: '🥗', title: 'Nutrition', desc: 'Calories, aliments, conseils nutritionnels', color: '#43e97b' },
+  { id: 'urgences', emoji: '🚨', title: 'Urgences', desc: 'Premiers secours, numéros utiles', color: '#f5365c' },
+  { id: 'emploi', emoji: '💼', title: 'Emploi', desc: 'CV, offres, conseils carrière', color: '#fb6340' },
+  { id: 'films', emoji: '🎭', title: 'Audiovisuel', desc: 'Films, Séries, Acteurs, Musique', color: '#8965e0' },
+  { id: 'etudiant', emoji: '🎓', title: 'Étudiant', desc: 'Cours, révisions, organisation', color: '#11cdef' },
+  { id: 'business', emoji: '📈', title: 'Business', desc: 'Stratégie, finances, marketing', color: '#2dce89' },
+  { id: 'sport', emoji: '🏅', title: 'Sport', desc: 'Résultats, palmarès, coaching', color: '#f5365c' },
+];
+
+function Home({ onSelect }) {
+  return (
+    <div className="home">
+      <div className="header">
+        <h1>🧠 Mes Assistants</h1>
+        <p>Choisissez un assistant pour commencer</p>
+      </div>
+      <div className="grid">
+        {assistants.map(a => (
+          <div key={a.id} className="card" onClick={() => onSelect(a.id)} style={{ borderTop: `4px solid ${a.color}` }}>
+            <div className="card-emoji">{a.emoji}</div>
+            <div className="card-title">{a.title}</div>
+            <div className="card-desc">{a.desc}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Assistant({ id, onBack }) {
+  const a = assistants.find(x => x.id === id);
+
+  if (id === 'medicaments') return <Medicaments onBack={onBack} />;
+  if (id === 'urgences') return <Urgences onBack={onBack} />;
+  if (id === 'nutrition') return <Nutrition onBack={onBack} />;
+  if (id === 'emploi') return <Emploi onBack={onBack} />;
+  if (id === 'films') return <Films onBack={onBack} />;
+  if (id === 'etudiant') return <Etudiant onBack={onBack} />;
+  if (id === 'business') return <Business onBack={onBack} />;
+  if (id === 'sport') return <Sport onBack={onBack} />;
+  return (
+    <div className="assistant">
+      <button className="back-btn" onClick={onBack}>← Retour</button>
+      <div className="assistant-header" style={{ background: a.color }}>
+        <div className="assistant-emoji">{a.emoji}</div>
+        <h2>{a.title}</h2>
+      </div>
+      <div className="coming-soon">
+        <p>🚧 En construction</p>
+        <p>Cet assistant arrive bientôt !</p>
+      </div>
+    </div>
+  );
+}
 
 function App() {
+  const [current, setCurrent] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      {current ? (
+        <Assistant id={current} onBack={() => setCurrent(null)} />
+      ) : (
+        <Home onSelect={setCurrent} />
+      )}
     </div>
   );
 }
