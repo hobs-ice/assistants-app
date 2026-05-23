@@ -75,11 +75,13 @@ export default function Business({ onBack }) {
   const [marketingResult, setMarketingResult] = useState('');
   const [marketingLoading, setMarketingLoading] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (section === 'bourse' && bourseType === 'crypto' && cryptoList.length === 0) {
       chargerCryptos();
     }
-  }, [section, bourseType]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [section, bourseType, cryptoList.length]);
 
   const chargerCryptos = async () => {
     setCryptoLoading(true);
