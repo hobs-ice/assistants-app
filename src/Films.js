@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-const TMDB_KEY = 'ec7ef31e986d344b40a4cdc2fcfd00ba';
+
+const TMDB_KEY = process.env.REACT_APP_TMDB_KEY || 'ta_cle_ici';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
 
@@ -100,7 +101,7 @@ export default function Films({ onBack }) {
   setShazamLoading(true);
   setShazamResult(null);
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
