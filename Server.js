@@ -1,3 +1,6 @@
+
+require('dotenv').config();
+
 const express = require('express');
 const cors = require('cors');
 
@@ -5,7 +8,7 @@ const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-const GROQ_API_KEY = process.env.GROQ_API_KEY || 'ta_cle_ici';
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 app.post('/api/claude', async (req, res) => {
   console.log('📨 Requête reçue');
   try {
@@ -24,7 +27,8 @@ app.post('/api/claude', async (req, res) => {
     });
     const data = await response.json();
     console.log('✅ Réponse Groq reçue');
-    res.json({ content: [{ text: data.choices[0].message.content || '' }] });
+    const text = data.choices?.[0]?.message?.content || data.error?.message || 'Erreur Groq';
+res.json({ content: [{ text }] });
   } catch (error) {
     console.error('❌ Erreur:', error);
     res.status(500).json({ error: error.message });

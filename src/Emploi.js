@@ -123,7 +123,7 @@ const cvRef = useRef(null);
   setLettreLoading(true);
   setLettreGeneree('');
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -154,7 +154,7 @@ RÈGLES STRICTES :
     const data = await response.json();
     setLettreGeneree(data.content[0].text);
   } catch {
-    setLettreGeneree('Erreur — vérifiez que le serveur tourne sur port 3001');
+    setLettreGeneree('Erreur — vérifiez que le serveur tourne sur port 3002');
   }
   setLettreLoading(false);
 };
@@ -164,7 +164,7 @@ const estimerSalaire = async () => {
   setSalaireLoading(true);
   setSalaireResult(null);
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -192,7 +192,7 @@ Sois précis avec des chiffres réels du marché français 2024-2025.`
     const data = await response.json();
     setSalaireResult(data.content[0].text);
   } catch {
-    setSalaireResult('Erreur — vérifiez que le serveur tourne sur port 3001');
+    setSalaireResult('Erreur — vérifiez que le serveur tourne sur port 3002');
   }
   setSalaireLoading(false);
 };
@@ -200,7 +200,7 @@ Sois précis avec des chiffres réels du marché français 2024-2025.`
 const lancerSimulateur = async () => {
   setSimulateurLoading(true);
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -245,7 +245,7 @@ Format exact :
 const evaluerReponse = async (index) => {
   setSimulateurLoading(true);
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -301,7 +301,7 @@ Lance la négociation en proposant le salaire initial.`
   };
 
   try {
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [systemMsg] })
@@ -333,7 +333,8 @@ ${newMessages.map(m => `${m.role === 'assistant' ? 'Recruteur' : 'Candidat'}: ${
 Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
     };
 
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('http://localhost:3002/api/claude', {
+
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [context] })
