@@ -9,6 +9,7 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
+console.log('GROQ KEY:', GROQ_API_KEY ? 'présente' : 'ABSENTE');
 app.post('/api/claude', async (req, res) => {
   console.log('📨 Requête reçue');
   try {
