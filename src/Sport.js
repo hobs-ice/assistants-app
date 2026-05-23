@@ -25,8 +25,7 @@ export default function Sport({ onBack }) {
   const [sportifResult, setSportifResult] = useState(null);
   const [searchLoading, setSearchLoading] = useState(false);
   const [searchType, setSearchType] = useState('equipe');
-  const [evenements, setEvenements] = useState([]);
-  const [evLoading, setEvLoading] = useState(false);
+  
   const [sportifAge, setSportifAge] = useState('');
   const [sportifNiveau, setSportifNiveau] = useState('debutant');
   const [sportifObjectif, setSportifObjectif] = useState('');
@@ -108,30 +107,6 @@ Sois précis et complet. Maximum 300 mots.`
     setSearchLoading(false);
   };
 
-  const chargerEvenements = async () => {
-    setEvLoading(true);
-    setEvenements([]);
-    try {
-      if (searchQuery.trim()) {
-        const teamRes = await fetch(`${SPORTSDB_BASE}/searchteams.php?t=${encodeURIComponent(searchQuery)}&s=${sportsPopulaires.find(s => s.id === sportSelec)?.query || 'Soccer'}`);
-        const teamData = await teamRes.json();
-        const team = teamData.teams?.[0];
-        if (team) {
-          const evRes = await fetch(`${SPORTSDB_BASE}/eventslast.php?id=${team.idTeam}`);
-          const evData = await evRes.json();
-          setEvenements(evData.results || []);
-        } else {
-          setEvenements([]);
-        }
-      } else {
-        const sport = sportsPopulaires.find(s => s.id === sportSelec);
-        const res = await fetch(`${SPORTSDB_BASE}/eventsday.php?d=${new Date().toISOString().split('T')[0]}&s=${encodeURIComponent(sport?.query || 'Soccer')}`);
-        const data = await res.json();
-        setEvenements(data.events || []);
-      }
-    } catch {}
-    setEvLoading(false);
-  };
 
   const conseilSport = async () => {
     setSportifLoading(true);
