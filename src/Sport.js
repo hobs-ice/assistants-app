@@ -53,7 +53,7 @@ export default function Sport({ onBack }) {
     try {
       if (searchType === 'equipe') {
         // Groq pour le palmarès équipe
-        const response = await fetch('http://localhost:3002/api/claude', {
+        const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -75,7 +75,7 @@ Sois précis et complet. Maximum 300 mots.`
         setEquipeResult({ nom: searchQuery, palmares: data.content?.[0]?.text || 'Aucune réponse reçue' });
       } else {
         // Groq pour le palmarès sportif
-        const response = await fetch('http://localhost:3002/api/claude', {
+        const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -137,7 +137,7 @@ Sois précis et complet. Maximum 300 mots.`
     setSportifLoading(true);
     setSportifResult2('');
     try {
-      const response = await fetch('http://localhost:3002/api/claude', {
+      const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

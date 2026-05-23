@@ -65,7 +65,7 @@ export default function Etudiant({ onBack }) {
     setFicheLoading(true);
     setFicheResult('');
     try {
-      const response = await fetch('http://localhost:3001/api/claude', {
+      const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -128,7 +128,7 @@ Sois clair, concis et pédagogique. Maximum 500 mots.`
       temps: 'gestion du temps et organisation du travail étudiant',
       finances: 'précarité financière et gestion du budget étudiant',
     };
-    const response = await fetch('http://localhost:3001/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

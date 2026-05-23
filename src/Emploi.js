@@ -123,7 +123,7 @@ const cvRef = useRef(null);
   setLettreLoading(true);
   setLettreGeneree('');
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -164,7 +164,7 @@ const estimerSalaire = async () => {
   setSalaireLoading(true);
   setSalaireResult(null);
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -200,7 +200,7 @@ Sois précis avec des chiffres réels du marché français 2024-2025.`
 const lancerSimulateur = async () => {
   setSimulateurLoading(true);
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -245,7 +245,7 @@ Format exact :
 const evaluerReponse = async (index) => {
   setSimulateurLoading(true);
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -301,7 +301,7 @@ Lance la négociation en proposant le salaire initial.`
   };
 
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ messages: [systemMsg] })
@@ -333,7 +333,7 @@ ${newMessages.map(m => `${m.role === 'assistant' ? 'Recruteur' : 'Candidat'}: ${
 Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
     };
 
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

@@ -101,7 +101,7 @@ export default function Films({ onBack }) {
   setShazamLoading(true);
   setShazamResult(null);
   try {
-    const response = await fetch('http://localhost:3002/api/claude', {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

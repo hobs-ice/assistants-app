@@ -98,7 +98,7 @@ export default function Business({ onBack }) {
   setBourseLoading(true);
   setBourseData(null);
   try {
-    const res = await fetch(`http://localhost:3002/api/stock/${encodeURIComponent(bourseSearch)}`);
+    const res = await fetch(`https://assistants-app-production.up.railway.app/api/stock/${encodeURIComponent(bourseSearch)}`);
     const data = await res.json();
     if (data.prix) {
       setBourseData(data);
@@ -146,7 +146,7 @@ export default function Business({ onBack }) {
     setBpLoading(true);
     setBpResult('');
     try {
-      const response = await fetch('http://localhost:3002/api/claude', {
+      const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -190,7 +190,7 @@ Sois concret, chiffré quand possible. Maximum 600 mots.`
         fiscalite: 'fiscalité des entreprises en France (TVA, IS, cotisations...)',
         propriete: 'propriété intellectuelle, marques et brevets en France',
       };
-      const response = await fetch('http://localhost:3002/api/claude', {
+      const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -230,7 +230,7 @@ Maximum 300 mots.`
         email: 'Génère un email de prospection commercial professionnel',
         pitch: 'Génère un pitch de 60 secondes pour présenter ce produit/service',
       };
-      const response = await fetch('http://localhost:3002/api/claude', {
+      const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
