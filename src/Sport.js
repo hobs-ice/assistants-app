@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const SPORTSDB_BASE = 'https://www.thesportsdb.com/api/v1/json/3';
+
 
 const sportsPopulaires = [
   { id: 'soccer', label: '⚽ Football', query: 'Soccer' },
