@@ -5,8 +5,7 @@ const app = express();
 app.use(cors({ origin: '*' }));
 app.use(express.json());
 
-const GROQ_API_KEY = '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';
-
+const GROQ_API_KEY = process.env.GROQ_API_KEY || 'ta_cle_ici';
 app.post('/api/claude', async (req, res) => {
   console.log('📨 Requête reçue');
   try {
@@ -37,8 +36,8 @@ app.get('/test', (req, res) => {
   res.json({ message: 'OK' });
 });
 
-const ALPHA_KEY = 'GOO5IOVKUCP7YI6X';
 
+const ALPHA_KEY = process.env.ALPHA_VANTAGE_KEY || 'ta_cle_ici';
 app.get('/api/stock/:symbol', async (req, res) => {
   try {
     const response = await fetch(
