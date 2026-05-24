@@ -175,7 +175,7 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
     <div style={styles.card}>
       <div style={styles.cardTitle}>🔮 Retrouver un film / série</div>
       <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: 13, marginBottom: 12, lineHeight: 1.6 }}>
-        Décrivez ce dont vous vous souvenez — scène, acteur, ambiance, histoire... et l'IA retrouve le film !
+        Décrivez ce dont vous vous souvenez — scène, acteur, ambiance, histoire... on vous retrouve le film !
       </p>
       <textarea
         style={{ ...styles.input, height: 120, resize: 'vertical' }}
