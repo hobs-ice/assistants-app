@@ -41,9 +41,9 @@ export default function Emploi({ onBack }) {
   const [section, setSection] = useState('offres');
   const [metier, setMetier] = useState('');
   const [ville, setVille] = useState('');
-  const [offres, setOffres] = useState([]);
-  const [offresLoading, setOffresLoading] = useState(false);
-  const [offreDetail, setOffreDetail] = useState(null);
+  
+  
+  
   const [secteurSelec, setSecteurSelec] = useState(null);
   
  const [categorieEntretien, setCategorieEntretien] = useState('generales');
@@ -93,30 +93,7 @@ const cvRef = useRef(null);
   const [salaireLoading, setSalaireLoading] = useState(false);
   const [salaireResult, setSalaireResult] = useState(null);
 
-  const rechercherOffres = async () => {
-    if (!metier.trim()) return;
-    setOffresLoading(true);
-    setOffres([]);
-    try {
-      const res = await fetch(
-        `https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?motsCles=${encodeURIComponent(metier)}&commune=${encodeURIComponent(ville)}&range=0-9`,
-        {
-          headers: {
-            'Accept': 'application/json',
-          }
-        }
-      );
-      const data = await res.json();
-      if (data.resultats) {
-        setOffres(data.resultats);
-      } else {
-        setOffres([]);
-      }
-    } catch {
-      setOffres([]);
-    }
-    setOffresLoading(false);
-  };
+  
 
   const genererLettre = async () => {
   if (!offreTexte.trim() || !nomPrenom.trim()) return;
@@ -382,9 +359,7 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             <div style={styles.cardTitle}>🔍 Rechercher des offres</div>
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
-            <button style={styles.searchBtn} onClick={rechercherOffres} disabled={offresLoading}>
-              {offresLoading ? '⏳ Recherche...' : 'Rechercher 🔍'}
-            </button>
+            
             <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
               Source : France Travail (ex Pôle Emploi)
             </div>
