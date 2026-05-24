@@ -101,7 +101,7 @@ export default function Nutrition({ onBack }) {
 
 <div style={{ ...styles.card, marginTop: 10, background: 'rgba(67,233,123,0.08)', border: '1px solid rgba(67,233,123,0.2)' }}>
   <p style={{ color: '#43e97b', fontSize: 14, textAlign: 'center', lineHeight: 1.7, margin: 0 }}>
-    💡 <strong>Conseil :</strong> {imcResult.conseil}
+    💡 <strong>Conseil :</strong> {imcResult?.conseil}
   </p>
 </div>
 
