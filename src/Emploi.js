@@ -360,10 +360,6 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
             
-            <div style={{ marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
-              Source : France Travail (ex Pôle Emploi)
-            </div>
-
             {/* Liens alternatifs */}
             <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <a href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(metier)}&location=${encodeURIComponent(ville)}`}
