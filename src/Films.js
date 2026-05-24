@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 
-const TMDB_KEY = process.env.REACT_APP_TMDB_KEY || 'ta_cle_ici';
+const TMDB_KEY = process.env.REACT_APP_TMDB_KEY || 'ec7ef31e986d344b40a4cdc2fcfd00ba';
 const TMDB_BASE = 'https://api.themoviedb.org/3';
 const TMDB_IMG = 'https://image.tmdb.org/t/p/w500';
 
