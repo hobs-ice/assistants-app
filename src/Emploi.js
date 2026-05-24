@@ -356,7 +356,7 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
       {section === 'offres' && (
         <div>
           <div style={styles.card}>
-            <div style={styles.cardTitle}>🔍 Rechercher des offres</div>
+            
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
             
