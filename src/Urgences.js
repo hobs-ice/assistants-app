@@ -217,20 +217,21 @@ export default function Urgences({ onBack }) {
             💊 Pharmacie de garde
           </a>
           <button
-  onClick={() => {
+  onClick={(e) => {
+    e.preventDefault();
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const lat = pos.coords.latitude;
           const lng = pos.coords.longitude;
-          window.open(`https://openaedmap.org/en/#map=15/${lat}/${lng}`, '_blank');
+          window.location.href = `https://openaedmap.org/en/#map=15/${lat}/${lng}`;
         },
         () => {
-          window.open('https://openaedmap.org', '_blank');
+          window.location.href = 'https://openaedmap.org';
         }
       );
     } else {
-      window.open('https://openaedmap.org', '_blank');
+      window.location.href = 'https://openaedmap.org';
     }
   }}
   style={{ ...styles.locBtn, background: 'linear-gradient(135deg, #e74c3c, #c0392b)', border: 'none', cursor: 'pointer' }}>
