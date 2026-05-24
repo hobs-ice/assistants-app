@@ -400,11 +400,7 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
                   <p style={{ fontSize: 13, color: '#333', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{offreDetail.description}</p>
                 </div>
               )}
-              <button
-                onClick={() => { setSection('lettre'); setOffreTexte(offreDetail.description || ''); }}
-                style={{ ...styles.searchBtn, marginTop: 12 }}>
-                ✉️ Générer une lettre pour ce poste
-              </button>
+             
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
