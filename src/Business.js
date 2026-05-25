@@ -459,12 +459,32 @@ Sois créatif, percutant et adapté au marché français.`
                     </div>
                   );
                 })}
-                <div style={{ ...styles.macroBox, marginTop: 8 }}>
-                  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Total investi</div>
-                  <div style={{ color: 'white', fontSize: 20, fontWeight: 800 }}>
-                    {portefeuille.reduce((sum, p) => sum + p.montant, 0).toFixed(2)}€
-                  </div>
-                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginTop: 8 }}>
+  <div style={styles.macroBox}>
+    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Total investi</div>
+    <div style={{ color: 'white', fontSize: 20, fontWeight: 800 }}>
+      {portefeuille.reduce((sum, p) => sum + p.montant, 0).toFixed(2)}€
+    </div>
+  </div>
+  <div style={styles.macroBox}>
+    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Total actuel</div>
+    <div style={{ fontSize: 20, fontWeight: 800, color: (() => {
+      const totalActuel = portefeuille.reduce((sum, p) => {
+        const cryptoPrix = cryptoList.find(c => c.symbol.toUpperCase() === p.nom.toUpperCase())?.current_price;
+        if (!cryptoPrix) return sum + p.montant;
+        return sum + (cryptoPrix * (p.montant / p.prixAchat));
+      }, 0);
+      const totalInvesti = portefeuille.reduce((sum, p) => sum + p.montant, 0);
+      return totalActuel >= totalInvesti ? '#2dce89' : '#e74c3c';
+    })() }}>
+      {portefeuille.reduce((sum, p) => {
+        const cryptoPrix = cryptoList.find(c => c.symbol.toUpperCase() === p.nom.toUpperCase())?.current_price;
+        if (!cryptoPrix) return sum + p.montant;
+        return sum + (cryptoPrix * (p.montant / p.prixAchat));
+      }, 0).toFixed(2)}€
+    </div>
+  </div>
+</div>
               </div>
             )}
           </div>

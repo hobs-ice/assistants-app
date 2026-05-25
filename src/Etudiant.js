@@ -383,7 +383,7 @@ IMPORTANT : rappelle toujours qu'un professionnel peut aider si la situation est
                 style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #f39c12, #e67e22)' }}>
                 📺 Lumni (France TV)
               </a>
-              <a href={`https://www.cours-gratuit.com/?s=${encodeURIComponent(ressourceSearch)}`}
+              <a href={`https://www.kartable.fr/recherche?q=${encodeURIComponent(ressourceSearch)}`}
                 target="_blank" rel="noreferrer"
                 style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #11cdef, #1171ef)' }}>
                 📝 Cours Gratuit
