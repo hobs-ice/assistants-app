@@ -53,6 +53,10 @@ export default function Business({ onBack }) {
   setCryptoLoading(false);
 };
 
+const [mesCryptos, setMesCryptos] = useState(() => {
+  try { return JSON.parse(localStorage.getItem('mes_cryptos')) || []; }
+  catch { return []; }
+});
 
   // Portefeuille simulé
   const [portefeuille, setPortefeuille] = useState(() => {
@@ -84,16 +88,33 @@ export default function Business({ onBack }) {
   }, [section, bourseType, cryptoList.length]);
 
   const chargerCryptos = async () => {
-    setCryptoLoading(true);
-    try {
-      const res = await fetch(
-        'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=20&page=1&sparkline=false'
+  setCryptoLoading(true);
+  try {
+    // Top 20
+    const res = await fetch(
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&order=market_cap_desc&per_page=20&page=1&sparkline=false'
+    );
+    const data = await res.json();
+    
+    // Mes cryptos personnalisées
+    let mesData = [];
+    if (mesCryptos.length > 0) {
+      const ids = mesCryptos.map(c => c.id).join(',');
+      const res2 = await fetch(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=eur&ids=${ids}&sparkline=false`
       );
-      const data = await res.json();
-      setCryptoList(data);
-    } catch { setCryptoList([]); }
-    setCryptoLoading(false);
-  };
+      mesData = await res2.json();
+    }
+
+    
+    
+    // Fusionner en évitant les doublons
+    const top20Ids = data.map(c => c.id);
+    const uniqueMes = mesData.filter(c => !top20Ids.includes(c.id));
+    setCryptoList([...data, ...uniqueMes]);
+  } catch { setCryptoList([]); }
+  setCryptoLoading(false);
+};
 
   const rechercherBourse = async () => {
   if (!bourseSearch.trim()) return;
@@ -363,52 +384,96 @@ Sois créatif, percutant et adapté au marché français.`
     </div>
 
     {cryptoSearchResults.length > 0 && (
-      <div style={styles.card}>
-        <div style={styles.cardTitle}>Résultats</div>
-        {cryptoSearchResults.map((crypto, i) => (
-          <div key={i} style={{ ...styles.cryptoItem, cursor: 'pointer', marginBottom: 8 }}
-            onClick={() => { setPfNom(crypto.symbol.toUpperCase()); setPfPrix(crypto.prix?.toString() || ''); }}>
-            {crypto.thumb && <img src={crypto.thumb} alt={crypto.name} style={{ width: 32, height: 32, borderRadius: 16 }} />}
-            <div style={{ flex: 1 }}>
-              <div style={{ color: 'white', fontWeight: 700 }}>{crypto.name}</div>
-              <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{crypto.symbol.toUpperCase()}</div>
-            </div>
-            <div style={{ textAlign: 'right' }}>
-              {crypto.prix && <div style={{ color: 'white', fontWeight: 700 }}>{crypto.prix.toLocaleString('fr-FR')} €</div>}
-              {crypto.variation && (
-                <div style={{ color: crypto.variation >= 0 ? '#2dce89' : '#e74c3c', fontSize: 12 }}>
-                  {crypto.variation >= 0 ? '▲' : '▼'} {Math.abs(crypto.variation.toFixed(2))}%
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-
-    <div style={styles.card}>
-      <div style={styles.cardTitle}>🪙 Top 20 Cryptomonnaies</div>
-      <button style={{ ...styles.searchBtn, marginBottom: 12 }} onClick={chargerCryptos} disabled={cryptoLoading}>
-        {cryptoLoading ? '⏳ Chargement...' : '🔄 Actualiser'}
-      </button>
-      {cryptoList.map((crypto, i) => (
-        <div key={i} style={{ ...styles.cryptoItem, cursor: 'pointer', marginBottom: 6 }}
-          onClick={() => { setPfNom(crypto.symbol.toUpperCase()); setPfPrix(crypto.current_price.toString()); }}>
-          <div style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, minWidth: 24 }}>{i + 1}</div>
-          {crypto.image && <img src={crypto.image} alt={crypto.name} style={{ width: 32, height: 32, borderRadius: 16 }} />}
+  <div style={styles.card}>
+    <div style={styles.cardTitle}>Résultats</div>
+    {cryptoSearchResults.map((crypto, i) => (
+      <div key={i} style={{ ...styles.cryptoItem, marginBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flex: 1, cursor: 'pointer' }}
+          onClick={() => { setPfNom(crypto.symbol.toUpperCase()); setPfPrix(crypto.prix?.toString() || ''); }}>
+          {crypto.thumb && <img src={crypto.thumb} alt={crypto.name} style={{ width: 32, height: 32, borderRadius: 16 }} />}
           <div style={{ flex: 1 }}>
-            <div style={{ color: 'white', fontWeight: 700, fontSize: 14 }}>{crypto.name}</div>
+            <div style={{ color: 'white', fontWeight: 700 }}>{crypto.name}</div>
             <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{crypto.symbol.toUpperCase()}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ color: 'white', fontWeight: 700 }}>{crypto.current_price.toLocaleString('fr-FR')} €</div>
-            <div style={{ color: crypto.price_change_percentage_24h >= 0 ? '#2dce89' : '#e74c3c', fontSize: 12, fontWeight: 600 }}>
-              {crypto.price_change_percentage_24h >= 0 ? '▲' : '▼'} {Math.abs(crypto.price_change_percentage_24h?.toFixed(2))}%
-            </div>
+            {crypto.prix && <div style={{ color: 'white', fontWeight: 700 }}>{crypto.prix.toLocaleString('fr-FR')} €</div>}
+            {crypto.variation && (
+              <div style={{ color: crypto.variation >= 0 ? '#2dce89' : '#e74c3c', fontSize: 12 }}>
+                {crypto.variation >= 0 ? '▲' : '▼'} {Math.abs(crypto.variation?.toFixed(2))}%
+              </div>
+            )}
           </div>
         </div>
-      ))}
+        <button
+          onClick={() => {
+            if (mesCryptos.length >= 10) { alert('Maximum 10 cryptos personnalisées !'); return; }
+            if (mesCryptos.find(c => c.id === crypto.id)) { alert('Déjà dans ta liste !'); return; }
+            const nouv = [...mesCryptos, { id: crypto.id, name: crypto.name, symbol: crypto.symbol }];
+            setMesCryptos(nouv);
+            localStorage.setItem('mes_cryptos', JSON.stringify(nouv));
+            chargerCryptos();
+          }}
+          style={{ background: mesCryptos.find(c => c.id === crypto.id) ? 'rgba(45,206,137,0.3)' : 'rgba(255,255,255,0.1)', border: 'none', color: 'white', borderRadius: 8, padding: '6px 10px', cursor: 'pointer', fontSize: 12, marginLeft: 8 }}>
+          {mesCryptos.find(c => c.id === crypto.id) ? '⭐ Épinglé' : '☆ Épingler'}
+        </button>
+      </div>
+    ))}
+  </div>
+)}
+
+<div style={styles.card}>
+  <div style={styles.cardTitle}>🪙 Top Cryptomonnaies</div>
+  <button style={{ ...styles.searchBtn, marginBottom: 12 }} onClick={chargerCryptos} disabled={cryptoLoading}>
+    {cryptoLoading ? '⏳ Chargement...' : '🔄 Actualiser'}
+  </button>
+  {mesCryptos.length > 0 && (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 8 }}>
+        ⭐ Mes cryptos ({mesCryptos.length}/10)
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        {mesCryptos.map((c, i) => (
+          <div key={i} style={{ background: 'rgba(243,156,18,0.15)', border: '1px solid rgba(243,156,18,0.3)', borderRadius: 20, padding: '6px 12px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span style={{ color: 'white', fontSize: 13 }}>⭐ {c.name}</span>
+            <button
+              onClick={() => {
+                const nouv = mesCryptos.filter(mc => mc.id !== c.id);
+                setMesCryptos(nouv);
+                localStorage.setItem('mes_cryptos', JSON.stringify(nouv));
+                chargerCryptos();
+              }}
+              style={{ background: 'none', border: 'none', color: '#e74c3c', cursor: 'pointer', fontSize: 14, padding: 0 }}>
+              ✕
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
+  )}
+  {cryptoList.map((crypto, i) => (
+    <div key={i} style={{ ...styles.cryptoItem, cursor: 'pointer', marginBottom: 6 }}
+      onClick={() => { setPfNom(crypto.symbol.toUpperCase()); setPfPrix(crypto.current_price.toString()); }}>
+      <div style={{ color: 'rgba(255,255,255,0.4)', fontWeight: 700, minWidth: 24 }}>{i + 1}</div>
+      {crypto.image && <img src={crypto.image} alt={crypto.name} style={{ width: 32, height: 32, borderRadius: 16 }} />}
+      <div style={{ flex: 1 }}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 14 }}>
+          {mesCryptos.find(c => c.id === crypto.id) && <span style={{ color: '#f39c12', marginRight: 4 }}>⭐</span>}
+          {crypto.name}
+        </div>
+        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>{crypto.symbol.toUpperCase()}</div>
+      </div>
+      <div style={{ textAlign: 'right' }}>
+        <div style={{ color: 'white', fontWeight: 700 }}>{crypto.current_price.toLocaleString('fr-FR')} €</div>
+        <div style={{ color: crypto.price_change_percentage_24h >= 0 ? '#2dce89' : '#e74c3c', fontSize: 12, fontWeight: 600 }}>
+          {crypto.price_change_percentage_24h >= 0 ? '▲' : '▼'} {Math.abs(crypto.price_change_percentage_24h?.toFixed(2))}%
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+    
+
+  
   </div>
 )}
 
@@ -490,6 +555,12 @@ Sois créatif, percutant et adapté au marché français.`
           </div>
         </div>
       )}
+
+<div style={{ background: 'rgba(45,206,137,0.1)', border: '1px solid rgba(45,206,137,0.3)', borderRadius: 10, padding: 12, marginBottom: 12 }}>
+  <p style={{ color: '#2dce89', fontSize: 12, margin: 0, textAlign: 'center' }}>
+    📊 Seul le prix des cryptos du Top évolue en temps réel
+  </p>
+</div>
 
       {/* BUSINESS PLAN */}
       {section === 'businessplan' && (
