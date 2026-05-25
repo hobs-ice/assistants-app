@@ -61,7 +61,8 @@ const [simulateurReponses, setSimulateurReponses] = useState({});
 const [simulateurFeedback, setSimulateurFeedback] = useState({});
 const [simulateurEtape, setSimulateurEtape] = useState(0);
 const [simulateurLoading, setSimulateurLoading] = useState(false);
-
+const [offreDetail, setOffreDetail] = useState(null);
+const [offres, setOffres] = useState([]);
   // Lettre motivation
   const [offreTexte, setOffreTexte] = useState('');
   const [nomPrenom, setNomPrenom] = useState('');
