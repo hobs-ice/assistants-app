@@ -96,6 +96,20 @@ export default function Films({ onBack }) {
     setMusiqueLoading(false);
   };
 
+const rechercherArtiste = async () => {
+  if (!search.trim()) return;
+  setLoading(true);
+  setMusique([]);
+  try {
+    const res = await fetch(
+      `https://itunes.apple.com/search?term=${encodeURIComponent(search)}&media=music&entity=song&limit=20&country=fr`
+    );
+    const data = await res.json();
+    setMusique(data.results || []);
+  } catch {}
+  setLoading(false);
+};
+
   const shazamFilm = async () => {
   if (!shazamDesc.trim()) return;
   setShazamLoading(true);
@@ -254,13 +268,22 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
         )}
 
         <button
-          onClick={() => {
-            if (shazamResult.tmdb) {
-              setSection('films');
-              setSearchType(shazamResult.type === 'film' ? 'movie' : 'tv');
-              voirDetail(shazamResult.tmdb.id);
-            }
-          }}
+          onClick={async () => {
+  if (shazamResult.tmdb) {
+    const type = shazamResult.type === 'film' ? 'movie' : 'tv';
+    setSearchType(type);
+    setSection('films');
+    setDetail(null);
+    const res = await fetch(`${TMDB_BASE}/${type}/${shazamResult.tmdb.id}?api_key=${TMDB_KEY}&language=fr-FR`);
+    const data = await res.json();
+    const credits = await fetch(`${TMDB_BASE}/${type}/${shazamResult.tmdb.id}/credits?api_key=${TMDB_KEY}&language=fr-FR`).then(r => r.json());
+    const videos = await fetch(`${TMDB_BASE}/${type}/${shazamResult.tmdb.id}/videos?api_key=${TMDB_KEY}&language=fr-FR`).then(r => r.json());
+    const providers = await fetch(`${TMDB_BASE}/${type}/${shazamResult.tmdb.id}/watch/providers?api_key=${TMDB_KEY}`).then(r => r.json());
+    const trailer = videos.results?.find(v => v.type === 'Trailer') || videos.results?.[0];
+    const frProviders = providers.results?.FR;
+    setDetail({ ...data, credits, trailer, frProviders });
+  }
+}}
           style={{ ...styles.searchBtn, marginTop: 12 }}>
           🎬 Voir la fiche complète
         </button>
@@ -586,6 +609,20 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
               {musiqueLoading ? '⏳ Chargement...' : '🎵 Charger le classement'}
             </button>
           </div>
+
+          <div style={{ marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 16 }}>
+  <div style={styles.cardTitle}>🎤 Rechercher un artiste</div>
+  <input
+    style={styles.input}
+    placeholder="Ex: Beyoncé, Daft Punk, Jul..."
+    value={search}
+    onChange={e => setSearch(e.target.value)}
+    onKeyDown={e => e.key === 'Enter' && rechercherArtiste()}
+  />
+  <button style={styles.searchBtn} onClick={rechercherArtiste} disabled={loading}>
+    {loading ? '⏳ Recherche...' : '🎤 Rechercher'}
+  </button>
+</div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {musique.map((song, i) => (
