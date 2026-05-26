@@ -14,6 +14,8 @@ export default function Game({ onBack }) {
   const [iaResult, setIaResult] = useState('');
   const [iaLoading, setIaLoading] = useState(false);
 
+// eslint-disable-next-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (section === 'actu') chargerJeux();
   }, [section]);
