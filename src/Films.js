@@ -91,7 +91,7 @@ export default function Films({ onBack }) {
         `https://assistants-app-production.up.railway.app/api/music?type=charts`
       );
       const data = await res.json();
-      setMusique(data.results || []);
+      setMusique(data.results || data.feed?.entry || []);
     } catch {}
     setMusiqueLoading(false);
   };
