@@ -8,6 +8,8 @@ import Films from './Films';
 import Etudiant from './Etudiant';
 import Business from './Business';
 import Sport from './Sport';
+import Game from './Game';
+
 
 const assistants = [
   { id: 'medicaments', emoji: '💊', title: 'Médicaments', desc: 'Posologie, recommandations, pharmacies', color: '#667eea' },
@@ -18,6 +20,7 @@ const assistants = [
   { id: 'etudiant', emoji: '🎓', title: 'Étudiant', desc: 'Cours, révisions, organisation', color: '#11cdef' },
   { id: 'business', emoji: '📈', title: 'Business', desc: 'Stratégie, finances, marketing', color: '#2dce89' },
   { id: 'sport', emoji: '🏅', title: 'Sport', desc: 'Résultats, palmarès, coaching', color: '#f5365c' },
+  { id: 'game', emoji: '🎮', title: 'Gaming', desc: 'Jeux, Esports, IA Gaming', color: '#7928ca' },
 ];
 
 function Home({ onSelect }) {
@@ -51,6 +54,7 @@ function Assistant({ id, onBack }) {
   if (id === 'etudiant') return <Etudiant onBack={onBack} />;
   if (id === 'business') return <Business onBack={onBack} />;
   if (id === 'sport') return <Sport onBack={onBack} />;
+  if (id === 'game') return <Game onBack={onBack} />;
   return (
     <div className="assistant">
       <button className="back-btn" onClick={onBack}>← Retour</button>

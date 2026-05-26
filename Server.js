@@ -92,4 +92,24 @@ app.get('/api/music', async (req, res) => {
   }
 });
 
+app.get('/api/games', async (req, res) => {
+  try {
+    const { search, category } = req.query;
+    let url = 'https://www.freetogame.com/api/games';
+    if (category && category !== 'all') url += `?category=${category}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (search) {
+      const filtered = data.filter(j =>
+        j.title.toLowerCase().includes(search.toLowerCase()) ||
+        j.genre.toLowerCase().includes(search.toLowerCase())
+      );
+      return res.json(filtered.slice(0, 10));
+    }
+    res.json(data.slice(0, 20));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(3002, () => console.log('✅ Serveur Groq démarré sur port 3002'));
