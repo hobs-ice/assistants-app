@@ -13,16 +13,14 @@ export default function Game({ onBack }) {
   const [iaQuestion, setIaQuestion] = useState('');
   const [iaResult, setIaResult] = useState('');
   const [iaLoading, setIaLoading] = useState(false);
-
   
-  
-  
-  
-  
-  useEffect(() => {
-  if (section === 'actu') chargerJeux(); // eslint-disable-line react-hooks/exhaustive-deps
+  /* eslint-disable react-hooks/exhaustive-deps */
+useEffect(() => {
+  if (section === 'actu') chargerJeux();
 }, [section]);
-  const genres = [
+/* eslint-enable react-hooks/exhaustive-deps */
+  
+const genres = [
     { id: 'all', label: '🎮 Tous' },
     { id: 'shooter', label: '🔫 FPS' },
     { id: 'moba', label: '⚔️ MOBA' },
