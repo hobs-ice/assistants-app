@@ -13,7 +13,7 @@ export default function Game({ onBack }) {
   const [iaQuestion, setIaQuestion] = useState('');
   const [iaResult, setIaResult] = useState('');
   const [iaLoading, setIaLoading] = useState(false);
-  
+
   /* eslint-disable react-hooks/exhaustive-deps */
 useEffect(() => {
   if (section === 'actu') chargerJeux();
@@ -217,7 +217,12 @@ Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
       {section === 'recherche' && (
         <div>
           <div style={styles.card}>
-            <div style={styles.cardTitle}>🔍 Rechercher un jeu</div>
+            <div style={styles.cardTitle}>🔍 Rechercher un jeu gratuit</div>
+            <div style={{ ...styles.infoBox, marginBottom: 12 }}>
+  <p style={{ fontSize: 12, color: '#555', margin: 0 }}>
+    🆓 Base de données Free-to-Play uniquement — pour les jeux payants utilise Steam ou Google
+  </p>
+</div>
             <input style={styles.input}
               placeholder="Ex: Fortnite, Valorant, CS2..."
               value={searchJeu}
@@ -229,17 +234,24 @@ Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
           </div>
 
           {searchResults.length === 0 && !searchLoading && searchJeu && (
-            <div style={styles.card}>
-              <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>
-                Aucun jeu trouvé — essaie sur Google :
-              </p>
-              <a href={`https://www.google.com/search?q=${encodeURIComponent(searchJeu)}+jeu+video`}
-                target="_blank" rel="noreferrer"
-                style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', display: 'block' }}>
-                🔵 Rechercher sur Google
-              </a>
-            </div>
-          )}
+  <div style={styles.card}>
+    <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>
+      Aucun jeu gratuit trouvé — essaie sur :
+    </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <a href={`https://www.google.com/search?q=${encodeURIComponent(searchJeu)}+jeu+video`}
+        target="_blank" rel="noreferrer"
+        style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center' }}>
+        🔵 Rechercher sur Google
+      </a>
+      <a href={`https://store.steampowered.com/search/?term=${encodeURIComponent(searchJeu)}`}
+        target="_blank" rel="noreferrer"
+        style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #1b2838, #2a475e)' }}>
+        🎮 Rechercher sur Steam
+      </a>
+    </div>
+  </div>
+)}
 
           {searchResults.map((jeu, i) => (
             <div key={i} style={styles.card}>
