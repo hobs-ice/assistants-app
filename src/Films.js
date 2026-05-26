@@ -88,7 +88,7 @@ export default function Films({ onBack }) {
     setMusiqueLoading(true);
     try {
       const res = await fetch(
-        `https://itunes.apple.com/search?term=${encodeURIComponent(musiqueGenre)}&media=music&entity=song&limit=20&country=fr`
+        `https://assistants-app-production.up.railway.app/api/music?type=charts`
       );
       const data = await res.json();
       setMusique(data.results || []);
@@ -102,7 +102,7 @@ const rechercherArtiste = async () => {
   setMusique([]);
   try {
     const res = await fetch(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(search)}&media=music&entity=song&limit=20&country=fr`
+      `https://assistants-app-production.up.railway.app/api/music?term=${encodeURIComponent(search)}`
     );
     const data = await res.json();
     setMusique(data.results || []);
