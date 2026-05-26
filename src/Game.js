@@ -14,15 +14,14 @@ export default function Game({ onBack }) {
   const [iaResult, setIaResult] = useState('');
   const [iaLoading, setIaLoading] = useState(false);
 
-
-
   
   
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
+  
+  
   useEffect(() => {
-    if (section === 'actu') chargerJeux();
-  }, [section]);
-
+  if (section === 'actu') chargerJeux(); // eslint-disable-line react-hooks/exhaustive-deps
+}, [section]);
   const genres = [
     { id: 'all', label: '🎮 Tous' },
     { id: 'shooter', label: '🔫 FPS' },
