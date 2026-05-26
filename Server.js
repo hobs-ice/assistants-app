@@ -78,4 +78,18 @@ app.get('/api/stock/:symbol', async (req, res) => {
   }
 });
 
+app.get('/api/music', async (req, res) => {
+  try {
+    const { term, type } = req.query;
+    const url = type === 'charts' 
+      ? `https://itunes.apple.com/fr/rss/topsongs/limit=20/json`
+      : `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=song&limit=20&country=fr`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(3002, () => console.log('✅ Serveur Groq démarré sur port 3002'));
