@@ -37,7 +37,7 @@ export default function Game({ onBack }) {
       const url = genreSelec === 'all'
   ? `${SERVER}/api/games`
   : `${SERVER}/api/games?category=${genreSelec}`;
-const res = await fetch(url);
+
 
       const res = await fetch(url);
       const data = await res.json();
