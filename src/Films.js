@@ -21,6 +21,7 @@ export default function Films({ onBack }) {
   const [shazamDesc, setShazamDesc] = useState('');
   const [shazamResult, setShazamResult] = useState(null);
   const [shazamLoading, setShazamLoading] = useState(false);
+  const [albums, setAlbums] = useState([]);
    const rechercher = async () => {
     if (!search.trim()) return;
     setLoading(true);
@@ -107,11 +108,14 @@ const rechercherArtiste = async () => {
   setLoading(true);
   setMusique([]);
   try {
-    const res = await fetch(
-      `https://assistants-app-production.up.railway.app/api/music?term=${encodeURIComponent(search)}`
-    );
-    const data = await res.json();
-    setMusique(data.results || []);
+    const [songsRes, albumsRes] = await Promise.all([
+      fetch(`https://assistants-app-production.up.railway.app/api/music?term=${encodeURIComponent(search)}`),
+      fetch(`https://assistants-app-production.up.railway.app/api/music?term=${encodeURIComponent(search)}&type=albums`)
+    ]);
+    const songsData = await songsRes.json();
+    const albumsData = await albumsRes.json();
+    setMusique(songsData.results || []);
+    setAlbums(albumsData.results || []);
   } catch {}
   setLoading(false);
 };
@@ -617,18 +621,14 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
           </div>
 
           <div style={{ marginTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 16 }}>
-  <div style={styles.cardTitle}>🎤 Rechercher un artiste</div>
-  <input
-    style={styles.input}
-    placeholder="Ex: Beyoncé, Daft Punk, Jul..."
-    value={search}
-    onChange={e => setSearch(e.target.value)}
-    onKeyDown={e => e.key === 'Enter' && rechercherArtiste()}
-  />
-  <button style={styles.searchBtn} onClick={rechercherArtiste} disabled={loading}>
-    {loading ? '⏳ Recherche...' : '🎤 Rechercher'}
-  </button>
-</div>
+            <div style={styles.cardTitle}>🎤 Rechercher un artiste</div>
+            <input style={styles.input} placeholder="Ex: Beyoncé, Daft Punk, Jul..."
+              value={search} onChange={e => setSearch(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && rechercherArtiste()} />
+            <button style={styles.searchBtn} onClick={rechercherArtiste} disabled={loading}>
+              {loading ? '⏳ Recherche...' : '🎤 Rechercher'}
+            </button>
+          </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {musique.map((song, i) => (
@@ -651,6 +651,33 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
               </div>
             ))}
           </div>
+
+          {albums.length > 0 && (
+            <div style={styles.card}>
+              <div style={styles.cardTitle}>💿 Discographie</div>
+              {albums.map((album, i) => (
+                <div key={i} style={{ ...styles.songItem, marginBottom: 8 }}>
+                  {album.artworkUrl60 && (
+                    <img src={album.artworkUrl60} alt={album.collectionName}
+                      style={{ width: 50, height: 50, borderRadius: 8, objectFit: 'cover' }} />
+                  )}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ color: 'white', fontWeight: 600, fontSize: 13 }}>{album.collectionName}</div>
+                    <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>
+                      {album.artistName} · {album.releaseDate?.substring(0, 4)}
+                    </div>
+                    <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>
+                      {album.trackCount} titres
+                    </div>
+                  </div>
+                  <a href={album.collectionViewUrl} target="_blank" rel="noreferrer"
+                    style={{ ...styles.badge, background: '#8965e0', color: 'white', textDecoration: 'none' }}>
+                    iTunes
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

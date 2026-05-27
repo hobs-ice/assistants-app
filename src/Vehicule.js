@@ -395,11 +395,7 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
                 target="_blank" rel="noreferrer"
                 style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #f39c12, #e67e22)' }}>
                 🟡 AutoScout24
-              </a>
-              <a href={`https://www.paruvendu.fr/a/voiture-occasion/${encodeURIComponent(rechMarque.toLowerCase())}/?rechpv=1&px1=${rechBudget || ''}&km1=${rechKm || ''}&a0=${rechAnnee || ''}`}
-  target="_blank" rel="noreferrer"
-  style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #27ae60, #1e8449)' }}>
-  🟢 ParuVendu
+  
 
               </a>
             </div>

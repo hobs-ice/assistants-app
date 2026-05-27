@@ -81,9 +81,14 @@ app.get('/api/stock/:symbol', async (req, res) => {
 app.get('/api/music', async (req, res) => {
   try {
     const { term, type } = req.query;
-    const url = type === 'charts' 
-      ? `https://itunes.apple.com/fr/rss/topsongs/limit=20/json`
-      : `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=song&limit=20&country=fr`;
+    let url;
+    if (type === 'charts') {
+      url = `https://itunes.apple.com/fr/rss/topsongs/limit=20/json`;
+    } else if (type === 'albums') {
+      url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=album&limit=10&country=fr`;
+    } else {
+      url = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&media=music&entity=song&limit=20&country=fr`;
+    }
     const response = await fetch(url);
     const data = await response.json();
     res.json(data);
