@@ -135,4 +135,22 @@ app.post('/api/legifrance', async (req, res) => {
   }
 });
 
+app.get('/api/judilibre', async (req, res) => {
+  try {
+    const { query } = req.query;
+    const response = await fetch(
+      `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodeURIComponent(query)}&page_size=5`,
+      {
+        headers: {
+          'KeyId': process.env.LEGIFRANCE_KEY
+        }
+      }
+    );
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.listen(3002, () => console.log('✅ Serveur Groq démarré sur port 3002'));
