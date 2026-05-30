@@ -97,6 +97,7 @@ app.get('/api/music', async (req, res) => {
   }
 });
 
+
 app.get('/api/games', async (req, res) => {
   try {
     const { search, category } = req.query;
@@ -112,6 +113,23 @@ app.get('/api/games', async (req, res) => {
       return res.json(filtered.slice(0, 10));
     }
     res.json(data.slice(0, 20));
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/legifrance', async (req, res) => {
+  try {
+    const response = await fetch('https://api.piste.gouv.fr/dila/legifrance/lf-engine-app/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer TA_CLE_LEGIFRANCE`,
+      },
+      body: JSON.stringify(req.body)
+    });
+    const data = await response.json();
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

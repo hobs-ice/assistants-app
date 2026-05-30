@@ -99,23 +99,20 @@ Maximum 400 mots.`
     setLegiResults([]);
     try {
       // Recherche via Légifrance API
-      const legiRes = await fetch('https://api.piste.gouv.fr/dila/legifrance/lf-engine-app/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${LEGIFRANCE_KEY}`,
-        },
-        body: JSON.stringify({
-          recherche: {
-            champs: [{ typeChamp: 'ALL', criteres: [{ typeRecherche: 'EXACTE', valeur: droitQuery }] }],
-            filtres: [{ facette: 'TYPE_FONDS', valeur: 'CODE' }],
-            pageNumber: 1,
-            pageSize: 5,
-            sort: 'PERTINENCE',
-          },
-          fond: 'CODE_DATE',
-        })
-      });
+      const legiRes = await fetch(`${SERVER}/api/legifrance`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    recherche: {
+      champs: [{ typeChamp: 'ALL', criteres: [{ typeRecherche: 'EXACTE', valeur: droitQuery }] }],
+      filtres: [{ facette: 'TYPE_FONDS', valeur: 'CODE' }],
+      pageNumber: 1,
+      pageSize: 5,
+      sort: 'PERTINENCE',
+    },
+    fond: 'CODE_DATE',
+  })
+});
       const legiData = await legiRes.json();
       setLegiResults(legiData.results || []);
 
