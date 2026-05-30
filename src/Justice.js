@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
 const SERVER = 'https://assistants-app-production.up.railway.app';
-const LEGIFRANCE_KEY = '39b8792d-c883-4f47-9d6d-e78599189299';
-
 export default function Justice({ onBack }) {
   const [section, setSection] = useState('avocat');
 
