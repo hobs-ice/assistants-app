@@ -10,6 +10,7 @@ import Business from './Business';
 import Sport from './Sport';
 import Game from './Game';
 import Vehicule from './Vehicule';
+import Justice from './Justice';
 
 const assistants = [
   { id: 'medicaments', emoji: '💊', title: 'Médicaments', desc: 'Posologie, recommandations, pharmacies', color: '#667eea' },
@@ -22,6 +23,7 @@ const assistants = [
   { id: 'sport', emoji: '🏅', title: 'Sport', desc: 'Résultats, palmarès, coaching', color: '#f5365c' },
   { id: 'game', emoji: '🎮', title: 'Gaming', desc: 'Jeux, Esports, IA Gaming', color: '#7928ca' },
   { id: 'vehicule', emoji: '🚗', title: 'Véhicule', desc: 'F1, Mécanicien IA, VIN, Auto', color: '#e74c3c' },
+  { id: 'justice', emoji: '⚖️', title: 'Justice', desc: 'Avocat IA · Lois · Courriers', color: '#1a1a2e' },
 ];
 
 function Home({ onSelect }) {
@@ -57,6 +59,7 @@ function Assistant({ id, onBack }) {
   if (id === 'sport') return <Sport onBack={onBack} />;
   if (id === 'game') return <Game onBack={onBack} />;
   if (id === 'vehicule') return <Vehicule onBack={onBack} />;
+  if (id === 'justice') return <Justice onBack={onBack} />;
   return (
     <div className="assistant">
       <button className="back-btn" onClick={onBack}>← Retour</button>
