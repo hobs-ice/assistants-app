@@ -142,11 +142,14 @@ app.get('/api/judilibre', async (req, res) => {
       `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodeURIComponent(query)}&page_size=5`,
       {
         headers: {
-  'Authorization': `Bearer ${process.env.LEGIFRANCE_KEY}`
-}
+          'Authorization': `Bearer ${process.env.LEGIFRANCE_KEY}`
+        }
       }
     );
-    const data = await response.json();
+    console.log('Judilibre status:', response.status);
+    const text = await response.text();
+    console.log('Judilibre response:', text.substring(0, 200));
+    const data = JSON.parse(text);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
