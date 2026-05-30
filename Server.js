@@ -124,7 +124,7 @@ app.post('/api/legifrance', async (req, res) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer TA_CLE_LEGIFRANCE`,
+        'Authorization': `Bearer ${process.env.LEGIFRANCE_KEY}`,
       },
       body: JSON.stringify(req.body)
     });
