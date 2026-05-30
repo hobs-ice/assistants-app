@@ -154,7 +154,7 @@ Maximum 350 mots.`
   `${SERVER}/api/hudoc?query=${encodeURIComponent(interQuery)}`
 );
     const hudocData = await hudocRes.json();
-    setInterDecisions(hudocData.results?.map(r => JSON.parse(r)) || []);
+    setInterDecisions(hudocData.results || []);
 
     // Groq pour analyse
     const groqRes = await fetch(`${SERVER}/api/claude`, {
