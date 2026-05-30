@@ -34,6 +34,9 @@ export default function Justice({ onBack }) {
   const [courrierLoading, setCourrierLoading] = useState(false);
   const [expediteur, setExpediteur] = useState('');
   const [destinataire, setDestinataire] = useState('');
+  const [expediteurEmail, setExpediteurEmail] = useState('');
+  const [expediteurTel, setExpediteurTel] = useState('');  
+  const [interDecisions, setInterDecisions] = useState([]);
 
   const domaines = [
     { id: 'general', label: '⚖️ Général' },
@@ -141,36 +144,46 @@ Maximum 350 mots.`
   };
 
   const rechercherDroitInternational = async () => {
-    if (!interQuery.trim()) return;
-    setInterLoading(true);
-    setInterResult('');
-    try {
-      const response = await fetch(`${SERVER}/api/claude`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messages: [{
-            role: 'user',
-            content: `Tu es un expert en droit international et européen.
+  if (!interQuery.trim()) return;
+  setInterLoading(true);
+  setInterResult('');
+  setInterDecisions([]);
+  try {
+    // HUDOC - Décisions CEDH
+    const hudocRes = await fetch(
+  `${SERVER}/api/hudoc?query=${encodeURIComponent(interQuery)}`
+);
+    const hudocData = await hudocRes.json();
+    setInterDecisions(hudocData.results?.map(r => JSON.parse(r)) || []);
+
+    // Groq pour analyse
+    const groqRes = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Tu es un expert en droit international et européen.
 
 Question sur : "${interQuery}"
 
 Structure :
 🌍 CADRE JURIDIQUE INTERNATIONAL
-🇪🇺 DROIT EUROPÉEN APPLICABLE (directives, règlements, traités)
+🇪 DROIT EUROPÉEN APPLICABLE (directives, règlements, traités)
 ⚖️ JURISPRUDENCE INTERNATIONALE (CJUE, CEDH si pertinent)
-🇫🇷 APPLICATION EN FRANCE
+🇫 APPLICATION EN FRANCE
 💡 CONSEIL PRATIQUE
 
 Maximum 400 mots.`
-          }]
-        })
-      });
-      const data = await response.json();
-      setInterResult(data.content[0].text);
-    } catch { setInterResult('Erreur — vérifiez que le serveur tourne'); }
-    setInterLoading(false);
-  };
+        }]
+      })
+    });
+    const groqData = await groqRes.json();
+    setInterResult(groqData.content[0].text);
+  } catch { setInterResult('Erreur — vérifiez que le serveur tourne'); }
+  setInterLoading(false);
+};
+
 
  const rechercherJurisprudence = async () => {
   if (!jurisQuery.trim()) return;
@@ -216,22 +229,45 @@ Maximum 350 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un avocat expert en rédaction de courriers juridiques français.
+            content: `Tu es expert en rédaction de courriers juridiques français.
 
 Type de courrier : ${typeLabel}
-Expéditeur : ${expediteur || 'Non spécifié'}
-Destinataire : ${destinataire || 'Non spécifié'}
+Expéditeur : ${expediteur || '[Prénom Nom]'}
+Email : ${expediteurEmail || ''}
+Téléphone : ${expediteurTel || ''}
+Destinataire : ${destinataire || '[Nom destinataire]'}
 Situation : "${courrierSituation}"
 
-Rédige un courrier juridique complet, professionnel et conforme au droit français :
-- En-tête et coordonnées
-- Objet clair
-- Corps du courrier structuré avec les arguments juridiques
-- Mention des textes de loi applicables si pertinent
-- Formule de politesse appropriée
-- Délais légaux si applicable (ex: 8 jours pour mise en demeure)
+Rédige un courrier juridique SANS markdown, SANS astérisques, SANS gras.
+Texte brut uniquement.
 
-Le courrier doit être prêt à être envoyé, formel et juridiquement solide.`
+Format :
+[Prénom Nom expéditeur]
+[Adresse si fournie]
+[Email si fourni]
+[Téléphone si fourni]
+
+[Ville], le [date]
+
+[Nom destinataire]
+[Adresse destinataire si fournie]
+
+Objet : [objet précis]
+
+Madame, Monsieur,
+
+[Corps du courrier sobre, professionnel, avec arguments juridiques]
+
+Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
+
+[Prénom Nom]
+
+RÈGLES STRICTES :
+- Aucun astérisque
+- Aucun gras markdown
+- Aucune note finale
+- Pas de mention avocat
+- Pas de pièces jointes génériques`
           }]
         })
       });
@@ -373,6 +409,24 @@ Le courrier doit être prêt à être envoyé, formel et juridiquement solide.`
               {interLoading ? '⏳ Recherche...' : '🔍 Rechercher'}
             </button>
           </div>
+
+          {interDecisions.length > 0 && (
+  <div style={styles.card}>
+    <div style={styles.cardTitle}>⚖️ Décisions CEDH récentes</div>
+    {interDecisions.map((d, i) => (
+      <div key={i} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: 12, marginBottom: 8 }}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 13 }}>{d.docname}</div>
+        <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>
+          {d.respondent} · {d.kpdate?.substring(0, 10)}
+        </div>
+        <a href={`https://hudoc.echr.coe.int/eng?i=${d.itemid}`} target="_blank" rel="noreferrer"
+          style={{ color: '#667eea', fontSize: 12 }}>
+          Voir la décision →
+        </a>
+      </div>
+    ))}
+  </div>
+)}
 
           {interResult && (
             <div style={styles.card}>

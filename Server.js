@@ -135,21 +135,13 @@ app.post('/api/legifrance', async (req, res) => {
   }
 });
 
-app.get('/api/judilibre', async (req, res) => {
+app.get('/api/hudoc', async (req, res) => {
   try {
     const { query } = req.query;
     const response = await fetch(
-      `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodeURIComponent(query)}&page_size=5`,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.LEGIFRANCE_KEY}`
-        }
-      }
+      `https://hudoc.echr.coe.int/app/query/results?query=${encodeURIComponent(query)}&select=itemid,docname,kpdate,respondent&sort=kpdate%20Descending&start=0&length=5`
     );
-    console.log('Judilibre status:', response.status);
-    const text = await response.text();
-    console.log('Judilibre response:', text.substring(0, 200));
-    const data = JSON.parse(text);
+    const data = await response.json();
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
