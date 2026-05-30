@@ -533,13 +533,21 @@ RÈGLES STRICTES :
               ))}
             </div>
             <input style={styles.input}
-              placeholder="Votre nom / société (expéditeur)"
-              value={expediteur}
-              onChange={e => setExpediteur(e.target.value)} />
-            <input style={styles.input}
-              placeholder="Nom / société destinataire"
-              value={destinataire}
-              onChange={e => setDestinataire(e.target.value)} />
+  placeholder="Votre nom / société (expéditeur)"
+  value={expediteur}
+  onChange={e => setExpediteur(e.target.value)} />
+<input style={styles.input}
+  placeholder="Email expéditeur (optionnel)"
+  value={expediteurEmail}
+  onChange={e => setExpediteurEmail(e.target.value)} />
+<input style={styles.input}
+  placeholder="Téléphone expéditeur (optionnel)"
+  value={expediteurTel}
+  onChange={e => setExpediteurTel(e.target.value)} />
+<input style={styles.input}
+  placeholder="Nom / société destinataire"
+  value={destinataire}
+  onChange={e => setDestinataire(e.target.value)} />
             <textarea style={{ ...styles.input, height: 120, resize: 'vertical' }}
               placeholder="Décrivez votre situation en détail..."
               value={courrierSituation}
