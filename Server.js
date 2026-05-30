@@ -142,8 +142,8 @@ app.get('/api/judilibre', async (req, res) => {
       `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodeURIComponent(query)}&page_size=5`,
       {
         headers: {
-          'KeyId': process.env.LEGIFRANCE_KEY
-        }
+  'Authorization': `Bearer ${process.env.LEGIFRANCE_KEY}`
+}
       }
     );
     const data = await response.json();
