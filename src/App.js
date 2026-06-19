@@ -13,6 +13,8 @@ import Vehicule from './Vehicule';
 import Justice from './Justice';
 import { supabase } from './supabase';
 import Auth from './Auth';
+import Voyage from './Voyage';
+
 
 
 const assistants = [
@@ -27,6 +29,8 @@ const assistants = [
   { id: 'game', emoji: '🎮', title: 'Gaming', desc: 'Jeux, Esports, IA Gaming', color: '#7928ca' },
   { id: 'vehicule', emoji: '🚗', title: 'Véhicule', desc: 'F1, Mécanicien IA, VIN, Auto', color: '#e74c3c' },
   { id: 'justice', emoji: '⚖️', title: 'Justice', desc: 'Avocat IA · Lois · Courriers', color: '#1a1a2e' },
+  { id: 'voyage', emoji: '✈️', title: 'Voyage', desc: 'Budget, destinations, conseils', color: '#00b4d8' },
+
 ];
 
 function Home({ onSelect }) {
@@ -63,6 +67,8 @@ function Assistant({ id, onBack }) {
   if (id === 'game') return <Game onBack={onBack} />;
   if (id === 'vehicule') return <Vehicule onBack={onBack} />;
   if (id === 'justice') return <Justice onBack={onBack} />;
+  if (id === 'voyage') return <Voyage onBack={onBack} />;
+
   return (
     <div className="assistant">
       <button className="back-btn" onClick={onBack}>← Retour</button>
