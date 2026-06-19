@@ -24,6 +24,59 @@ export default function Voyage({ onBack }) {
   const [voyageurs, setVoyageurs] = useState('solo');
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [visaPays, setVisaPays] = useState('');
+const [visaResult, setVisaResult] = useState(null);
+const [visaLoading, setVisaLoading] = useState(false);
+
+
+const verifierVisa = async () => {
+  setVisaLoading(true);
+  setVisaResult(null);
+  try {
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Tu es un expert en voyage international pour les citoyens français.
+
+Pour la destination : ${visaPays}
+
+Donne les informations suivantes :
+
+🛂 VISA
+- Visa requis pour passeport français ? (oui/non/e-visa)
+- Durée de séjour autorisée
+- Coût et procédure si visa requis
+- Délai d'obtention
+
+💉 VACCINS
+- Vaccins obligatoires
+- Vaccins recommandés
+- Médicaments préventifs (ex: antipaludéens)
+
+🔒 SÉCURITÉ (niveau comme diplomatie.gouv.fr)
+- Niveau : Normale / Vigilance renforcée / Déconseillé sauf raison impérative / Formellement déconseillé
+- Zones à éviter si applicable
+- Conseils de sécurité principaux
+
+📞 CONTACTS UTILES
+- Ambassade/Consulat de France
+- Numéro d'urgence local
+
+Sois précis et à jour avec les informations 2024-2025.`
+        }]
+      })
+    });
+    const data = await response.json();
+    setVisaResult(data.content[0].text);
+  } catch {
+    setVisaResult('Erreur — vérifiez que le serveur tourne');
+  }
+  setVisaLoading(false);
+};
+
 
   const chercherDestinations = async () => {
     if (!budget || !duree) return;
@@ -71,7 +124,7 @@ Termine avec un conseil personnalisé selon le profil.`
   };
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div style={styles.container}>
   <button onClick={onBack} style={styles.backBtn}>← Retour</button>
 
     <div style={styles.container}>
@@ -79,8 +132,9 @@ Termine avec un conseil personnalisé selon le profil.`
         <div style={styles.cardTitle}>✈️ Optimiseur de voyage</div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <input style={styles.input} placeholder="Budget total (€)" type="number" value={budget} onChange={e => setBudget(e.target.value)} />
-          <input style={styles.input} placeholder="Durée (jours)" type="number" value={duree} onChange={e => setDuree(e.target.value)} />
+          <input style={styles.input} placeholder="Budget total (ex: 1500)" value={budget} onChange={e => setBudget(e.target.value)} />
+<input style={styles.input} placeholder="Durée (ex: 10 jours)" value={duree} onChange={e => setDuree(e.target.value)} />
+
         </div>
 
         <input style={styles.input} placeholder="Ville de départ (ex: Paris, Lyon...)" value={depart} onChange={e => setDepart(e.target.value)} />
@@ -111,6 +165,31 @@ Termine avec un conseil personnalisé selon le profil.`
         </button>
         </div>
       </div>
+{/* VISA + VACCINS + SÉCURITÉ */}
+<div style={styles.card}>
+  <div style={styles.cardTitle}>🛂 Visa · Vaccins · Sécurité</div>
+  <input style={styles.input} 
+    placeholder="Destination (ex: Thaïlande, Brésil, Japon...)" 
+    value={visaPays} 
+    onChange={e => setVisaPays(e.target.value)} />
+  <button style={{ ...styles.searchBtn, opacity: (!visaPays || visaLoading) ? 0.6 : 1 }}
+    onClick={verifierVisa}
+    disabled={!visaPays || visaLoading}>
+    {visaLoading ? '⏳ Vérification...' : '🔍 Vérifier'}
+  </button>
+  {visaResult && (
+    <div>
+      <div style={styles.result}>{visaResult}</div>
+      <div style={styles.disclaimer}>
+        <p style={{ color: '#ffc107', fontSize: 11, margin: 0 }}>
+          ⚠️ Informations indicatives — vérifiez sur diplomatie.gouv.fr avant votre départ.
+        </p>
+      </div>
+    </div>
+  )}
+</div>
+
+
 
       {result && (
         <div style={styles.card}>
