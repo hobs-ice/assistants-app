@@ -9,9 +9,13 @@ const styles = {
   searchBtn: { width: '100%', background: 'linear-gradient(135deg, #667eea, #764ba2)', border: 'none', borderRadius: 10, padding: '13px', color: 'white', fontWeight: 700, fontSize: 15, cursor: 'pointer', marginBottom: 10 },
   result: { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 16, color: 'rgba(255,255,255,0.85)', fontSize: 14, lineHeight: 1.7, whiteSpace: 'pre-wrap' },
   disclaimer: { background: 'rgba(255,193,7,0.1)', border: '1px solid rgba(255,193,7,0.3)', borderRadius: 10, padding: 10, marginTop: 12 },
+  backBtn: { background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 14, marginBottom: 16, padding: 0 },
+
 };
 
-export default function Voyage() {
+
+export default function Voyage({ onBack }) {
+
   const [budget, setBudget] = useState('');
   const [duree, setDuree] = useState('');
   const [depart, setDepart] = useState('');
@@ -67,6 +71,9 @@ Termine avec un conseil personnalisé selon le profil.`
   };
 
   return (
+    <div style={{ padding: '10px' }}>
+  <button onClick={onBack} style={styles.backBtn}>← Retour</button>
+
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.cardTitle}>✈️ Optimiseur de voyage</div>
@@ -102,6 +109,7 @@ Termine avec un conseil personnalisé selon le profil.`
           disabled={!budget || !duree || loading}>
           {loading ? '⏳ Recherche en cours...' : '🌍 Trouver mes destinations'}
         </button>
+        </div>
       </div>
 
       {result && (
