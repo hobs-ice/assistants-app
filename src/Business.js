@@ -330,7 +330,13 @@ Sois créatif, percutant et adapté au marché français.`
                   Ex: AAPL (Apple), TSLA (Tesla), MC.PA (LVMH), BNP.PA (BNP Paribas)
                 </div>
               </>
-            )}
+          )}
+<div style={{ background: 'rgba(45,206,137,0.1)', border: '1px solid rgba(45,206,137,0.3)', borderRadius: 10, padding: 12, marginBottom: 12 }}>
+  <p style={{ color: '#2dce89', fontSize: 12, margin: 0, textAlign: 'center' }}>
+    📊 Seul le prix des cryptos du Top évolue en temps réel
+  </p>
+</div>
+
           </div>
 
           {/* RÉSULTAT BOURSE */}
@@ -472,8 +478,6 @@ Sois créatif, percutant et adapté au marché français.`
   ))}
 </div>
     
-
-  
   </div>
 )}
 
@@ -489,8 +493,8 @@ Sois créatif, percutant et adapté au marché français.`
 
             <input style={styles.input} placeholder="Actif (ex: BTC, AAPL, TSLA...)" value={pfNom} onChange={e => setPfNom(e.target.value)} />
             <div style={{ display: 'flex', gap: 8 }}>
-              <input style={{ ...styles.input, flex: 1 }} placeholder="Montant investi (€)" type="number" value={pfMontant} onChange={e => setPfMontant(e.target.value)} />
-              <input style={{ ...styles.input, flex: 1 }} placeholder="Prix d'achat (€)" type="number" value={pfPrix} onChange={e => setPfPrix(e.target.value)} />
+              <input style={{ ...styles.input, flex: 1 }} placeholder="Montant investi ($)" type="number" value={pfMontant} onChange={e => setPfMontant(e.target.value)} />
+              <input style={{ ...styles.input, flex: 1 }} placeholder="Prix d'achat ($)" type="number" value={pfPrix} onChange={e => setPfPrix(e.target.value)} />
             </div>
             <button style={styles.searchBtn} onClick={ajouterPortefeuille} disabled={!pfNom || !pfMontant || !pfPrix}>
               ➕ Ajouter au portefeuille
@@ -509,11 +513,11 @@ Sois créatif, percutant et adapté au marché français.`
                       <div style={{ flex: 1 }}>
                         <div style={{ color: 'white', fontWeight: 700 }}>{p.nom}</div>
                         <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 11 }}>
-                          Investi : {p.montant}€ · Achat : {p.prixAchat}€ · {p.date}
+                          Investi : {p.montant}$ · Achat : {p.prixAchat}$ · {p.date}
                         </div>
                         {valeurActuelle && (
                           <div style={{ fontSize: 12, color: gainPerte >= 0 ? '#2dce89' : '#e74c3c', fontWeight: 600 }}>
-                            Valeur : {valeurActuelle.toFixed(2)}€ ({gainPerte >= 0 ? '+' : ''}{gainPerte.toFixed(2)}€)
+                            Valeur : {valeurActuelle.toFixed(2)}$ ({gainPerte >= 0 ? '+' : ''}{gainPerte.toFixed(2)}$)
                           </div>
                         )}
                       </div>
@@ -528,7 +532,7 @@ Sois créatif, percutant et adapté au marché français.`
   <div style={styles.macroBox}>
     <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, marginBottom: 4 }}>Total investi</div>
     <div style={{ color: 'white', fontSize: 20, fontWeight: 800 }}>
-      {portefeuille.reduce((sum, p) => sum + p.montant, 0).toFixed(2)}€
+      {portefeuille.reduce((sum, p) => sum + p.montant, 0).toFixed(2)}$
     </div>
   </div>
   <div style={styles.macroBox}>
@@ -546,7 +550,7 @@ Sois créatif, percutant et adapté au marché français.`
         const cryptoPrix = cryptoList.find(c => c.symbol.toUpperCase() === p.nom.toUpperCase())?.current_price;
         if (!cryptoPrix) return sum + p.montant;
         return sum + (cryptoPrix * (p.montant / p.prixAchat));
-      }, 0).toFixed(2)}€
+      }, 0).toFixed(2)}$
     </div>
   </div>
 </div>
@@ -556,11 +560,6 @@ Sois créatif, percutant et adapté au marché français.`
         </div>
       )}
 
-<div style={{ background: 'rgba(45,206,137,0.1)', border: '1px solid rgba(45,206,137,0.3)', borderRadius: 10, padding: 12, marginBottom: 12 }}>
-  <p style={{ color: '#2dce89', fontSize: 12, margin: 0, textAlign: 'center' }}>
-    📊 Seul le prix des cryptos du Top évolue en temps réel
-  </p>
-</div>
 
       {/* BUSINESS PLAN */}
       {section === 'businessplan' && (
@@ -595,9 +594,9 @@ Sois créatif, percutant et adapté au marché français.`
         <div>
           <div style={styles.card}>
             <div style={styles.cardTitle}>💰 Calculateur de rentabilité</div>
-            <input style={styles.input} placeholder="Chiffre d'affaires annuel (€)" type="number" value={rentCA} onChange={e => setRentCA(e.target.value)} />
-            <input style={styles.input} placeholder="Charges totales annuelles (€)" type="number" value={rentCharges} onChange={e => setRentCharges(e.target.value)} />
-            <input style={styles.input} placeholder="Investissement initial (€) — optionnel" type="number" value={rentInvest} onChange={e => setRentInvest(e.target.value)} />
+            <input style={styles.input} placeholder="Chiffre d'affaires annuel ($)" type="number" value={rentCA} onChange={e => setRentCA(e.target.value)} />
+            <input style={styles.input} placeholder="Charges totales annuelles ($)" type="number" value={rentCharges} onChange={e => setRentCharges(e.target.value)} />
+            <input style={styles.input} placeholder="Investissement initial ($) — optionnel" type="number" value={rentInvest} onChange={e => setRentInvest(e.target.value)} />
             <button style={styles.searchBtn} onClick={calculerRentabilite} disabled={!rentCA || !rentCharges}>
               💰 Calculer
             </button>
@@ -607,7 +606,7 @@ Sois créatif, percutant et adapté au marché français.`
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div style={styles.macroBox}>
                   <div style={{ fontSize: 22, fontWeight: 800, color: rentResult.benefice >= 0 ? '#2dce89' : '#e74c3c' }}>
-                    {rentResult.benefice.toLocaleString('fr-FR')}€
+                    {rentResult.benefice.toLocaleString('fr-FR')}$
                   </div>
                   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12 }}>Bénéfice net</div>
                 </div>

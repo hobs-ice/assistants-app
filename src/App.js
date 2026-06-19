@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import Medicaments from './Medicaments';
 import Urgences from './Urgences';
@@ -11,6 +11,9 @@ import Sport from './Sport';
 import Game from './Game';
 import Vehicule from './Vehicule';
 import Justice from './Justice';
+import { supabase } from './supabase';
+import Auth from './Auth';
+
 
 const assistants = [
   { id: 'medicaments', emoji: '💊', title: 'Médicaments', desc: 'Posologie, recommandations, pharmacies', color: '#667eea' },
@@ -76,7 +79,20 @@ function Assistant({ id, onBack }) {
 }
 
 function App() {
+  const [session, setSession] = useState(null);
   const [current, setCurrent] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (!session) return <Auth />;
 
   return (
     <div className="app">
@@ -88,5 +104,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

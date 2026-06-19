@@ -185,8 +185,10 @@ const lancerSimulateur = async () => {
         messages: [{
           role: 'user',
           content: `Tu es un recruteur RH expert français.
-          
-Génère exactement 5 questions d'entretien professionnelles pour le poste : ${simulateurPoste}
+
+IMPORTANT : Si le poste demandé est illégal, dangereux, contraire à l'éthique ou à la loi (ex: tueur à gage, trafiquant, hacker malveillant, etc.), refuse poliment et demande un poste légal. Ne génère PAS de questions pour ces postes.
+
+Si le poste est légal, génère exactement 5 questions d'entretien professionnelles pour le poste : ${simulateurPoste}
 
 Les questions doivent être :
 - Réalistes et utilisées par de vrais recruteurs
@@ -200,6 +202,7 @@ Format exact :
 3. Question 3
 4. Question 4
 5. Question 5`
+
         }]
       })
     });
