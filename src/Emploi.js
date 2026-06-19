@@ -149,8 +149,11 @@ const estimerSalaire = async () => {
         messages: [{
           role: 'user',
           content: `Tu es un expert RH français spécialisé dans les salaires.
-          
-Donne une estimation salariale détaillée pour :
+
+IMPORTANT : Si le poste est illégal, dangereux ou contraire à l'éthique (ex: tueur à gage, trafiquant, hacker malveillant...), refuse poliment et demande un poste légal. Ne donne PAS d'estimation pour ces postes.
+
+Si le poste est légal, donne une estimation salariale détaillée pour :
+
 - Poste : ${salairePoste}
 - Ville : ${salaireVille || 'France (moyenne nationale)'}
 - Expérience : ${niveauxExperience.find(n => n.id === salaireExp)?.label} (${niveauxExperience.find(n => n.id === salaireExp)?.desc})
