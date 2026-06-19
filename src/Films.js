@@ -185,7 +185,7 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
           { id: 'acteurs', label: '🎭 Acteurs' },
           { id: 'cinema', label: '🎞️ Cinéma' },
           { id: 'musique', label: '🎵 Musique' },
-          { id: 'shazam', label: '🔮 Trouver' },
+          { id: 'shazam', label: '🔮 Sesha' },
         ].map(s => (
           <button key={s.id} onClick={() => { setSection(s.id); if (s.id === 'cinema') chargerCinema(); }}
             style={{ ...styles.navBtn, ...(section === s.id ? styles.navBtnActive : {}), fontSize: 11 }}>

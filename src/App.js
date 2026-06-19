@@ -33,7 +33,7 @@ function Home({ onSelect }) {
   return (
     <div className="home">
       <div className="header">
-        <h1>🧠 Mes Assistants</h1>
+        <h1>🧠 MacAIfer</h1>
         <p>Choisissez un assistant pour commencer</p>
       </div>
       <div className="grid">
