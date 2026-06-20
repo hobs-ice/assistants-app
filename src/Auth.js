@@ -31,7 +31,7 @@ export default function Auth() {
       <div style={{ background: '#0e1420', border: '1px solid #1c2535', borderRadius: 18, padding: 32, width: '100%', maxWidth: 400 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{ fontSize: 48, marginBottom: 12 }}>🤖</div>
-          <div style={{ fontFamily: 'sans-serif', fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>Mes Assistants</div>
+          <div style={{ fontFamily: 'sans-serif', fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>MacAIfer</div>
           <div style={{ color: '#64748b', fontSize: 14, marginTop: 8 }}>Vos assistants IA personnels</div>
         </div>
 
