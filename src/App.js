@@ -86,11 +86,10 @@ console.log('Session token:', currentSession?.access_token);
   const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
     method: 'POST',
     headers: { 
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl3dG5nZG12bGZnb3B0d2RlamplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NjIyMzksImV4cCI6MjA5NzQzODIzOX0.2wFMBxHWhNinbsJd_dZ4W4SR7btKlJhJSe-x__5Q1aY`,
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+},
 
-
-    },
     body: JSON.stringify({
       priceId: 'price_1TkJOgCdR1GrgAhcS0fd5gzc',
       userId: currentSession?.user?.id,
