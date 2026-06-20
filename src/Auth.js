@@ -30,7 +30,34 @@ export default function Auth() {
     <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#0e1420', border: '1px solid #1c2535', borderRadius: 18, padding: 32, width: '100%', maxWidth: 400 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🤖</div>
+          <div style={{ marginBottom: 16 }}>
+  <svg width="80" height="90" viewBox="0 0 80 90">
+    {/* Corps sphère */}
+    <circle cx="40" cy="62" r="26" fill="#1e293b" stroke="#f0b429" strokeWidth="2"/>
+    {/* Détails corps */}
+    <path d="M15 62 Q40 50 65 62" stroke="#f0b429" strokeWidth="1.5" fill="none" opacity="0.6"/>
+    <path d="M16 68 Q40 80 64 68" stroke="#f0b429" strokeWidth="1.5" fill="none" opacity="0.4"/>
+    <circle cx="30" cy="68" r="8" fill="none" stroke="#6366f1" strokeWidth="1.5"/>
+    <circle cx="52" cy="60" r="5" fill="none" stroke="#f0b429" strokeWidth="1.5"/>
+    
+    {/* Tête */}
+    <ellipse cx="40" cy="22" rx="18" ry="16" fill="#1e293b" stroke="#f0b429" strokeWidth="2"/>
+    {/* Œil principal */}
+    <circle cx="44" cy="20" r="8" fill="#0a0f1a" stroke="#6366f1" strokeWidth="2"/>
+    <circle cx="44" cy="20" r="5" fill="#6366f1" opacity="0.8"/>
+    <circle cx="44" cy="20" r="2" fill="white" opacity="0.9"/>
+    {/* Petit œil */}
+    <circle cx="32" cy="24" r="3" fill="#f0b429" opacity="0.8"/>
+    {/* Antenne */}
+    <line x1="38" y1="6" x2="35" y2="1" stroke="#6366f1" strokeWidth="1.5"/>
+    <circle cx="35" cy="1" r="2" fill="#f0b429"/>
+    <line x1="42" y1="6" x2="46" y2="2" stroke="#6366f1" strokeWidth="1.5"/>
+    <circle cx="46" cy="2" r="1.5" fill="#6366f1"/>
+    {/* Cou */}
+    <rect x="34" y="36" width="12" height="6" rx="2" fill="#1e293b" stroke="#f0b429" strokeWidth="1"/>
+  </svg>
+</div>
+
           <div style={{ fontFamily: 'sans-serif', fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>MacAIfer</div>
           <div style={{ color: '#64748b', fontSize: 14, marginTop: 8 }}>Vos assistants IA personnels</div>
         </div>
