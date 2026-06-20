@@ -42,29 +42,28 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
       <div className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <h1 style={{ margin: 0 }}>🧠 MacAIfer</h1>
-          <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             {isPremium && (
-  <button onClick={async () => {
-    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: userEmail,
-        returnUrl: window.location.origin,
-      })
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px', marginTop: 8 }}>
-    💎 Gérer mon abonnement
-  </button>
-)}
-
-            Déconnexion
-          </button>
+              <button onClick={async () => {
+                const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ email: userEmail, returnUrl: window.location.origin })
+                });
+                const data = await res.json();
+                if (data.url) window.location.href = data.url;
+              }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
+                💎 Gérer abonnement
+              </button>
+            )}
+            <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
+              Déconnexion
+            </button>
+          </div>
         </div>
         <p>{trialExpired ? '⏰ Essai terminé — Passez Premium !' : '✨ Essai gratuit 48h actif'}</p>
       </div>
+
 
       <div className="grid">
         {assistants.map(a => {
