@@ -78,9 +78,28 @@ function Assistant({ id, onBack, hasAccess }) {
         <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
-        <button onClick={onBack} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
-          💎 Passer Premium — 4,99€/mois
-        </button>
+        <button onClick={async () => {
+  const { data: { session: currentSession } } = await supabase.auth.getSession();
+  const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${currentSession?.access_token}`,
+    },
+    body: JSON.stringify({
+      priceId: 'price_1TkJOgCdR1GrgAhcS0fd5gzc',
+      userId: currentSession?.user?.id,
+      email: currentSession?.user?.email,
+      successUrl: window.location.origin + '?premium=success',
+      cancelUrl: window.location.origin,
+    })
+  });
+  const data = await res.json();
+  if (data.url) window.location.href = data.url;
+}} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
+  💎 Passer Premium — 4,99€/mois
+</button>
+
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
           ← Retour
         </button>
