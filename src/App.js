@@ -33,13 +33,33 @@ const assistants = [
 
 ];
 
-function Home({ onSelect, hasAccess, onLogout, trialExpired }) {
+
+
+function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmail }) {
+
   return (
     <div className="home">
       <div className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
           <h1 style={{ margin: 0 }}>🧠 MacAIfer</h1>
           <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
+            {isPremium && (
+  <button onClick={async () => {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userEmail,
+        returnUrl: window.location.origin,
+      })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px', marginTop: 8 }}>
+    💎 Gérer mon abonnement
+  </button>
+)}
+
             Déconnexion
           </button>
         </div>
@@ -80,7 +100,7 @@ function Assistant({ id, onBack, hasAccess }) {
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         <button onClick={async () => {
           const { data: { session: currentSession } } = await supabase.auth.getSession();
-console.log('Session token:', currentSession?.access_token);
+
 
   
   const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
@@ -149,9 +169,9 @@ function App() {
   
 
   const loadProfile = async (userId, currentSession) => {
-  console.log('Loading profile for:', userId);
+ 
   const { data: profileData, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
-  console.log('Profile data:', profileData, 'Error:', error);
+  
   if (profileData) {
     setProfile(profileData);
   } else {
@@ -207,6 +227,8 @@ const hasAccess = (id) => {
       )}
     </div>
   );
+  <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
+
 }
 
 
