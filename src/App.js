@@ -79,6 +79,9 @@ function Assistant({ id, onBack, hasAccess }) {
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         <button onClick={async () => {
+          const { data: { session: currentSession } } = await supabase.auth.getSession();
+console.log('Session token:', currentSession?.access_token);
+
   const { data: { session: currentSession } } = await supabase.auth.getSession();
   const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
     method: 'POST',
@@ -100,6 +103,7 @@ function Assistant({ id, onBack, hasAccess }) {
   if (data.url) window.location.href = data.url;
 }} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
   💎 Passer Premium — 4,99€/mois
+  
 </button>
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
