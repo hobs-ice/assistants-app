@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { supabase } from './supabase';
+import Legal from './Legal';
+
 
 export default function Auth() {
   const [email, setEmail] = useState('');
@@ -7,6 +9,8 @@ export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [showLegal, setShowLegal] = useState(null);
+
 
   const handleAuth = async () => {
     setLoading(true);
@@ -25,8 +29,10 @@ export default function Auth() {
     }
     setLoading(false);
   };
+if (showLegal) return <Legal type={showLegal} onBack={() => setShowLegal(null)} />;
 
   return (
+    
     <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
       <div style={{ background: '#0e1420', border: '1px solid #1c2535', borderRadius: 18, padding: 32, width: '100%', maxWidth: 400 }}>
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
@@ -76,6 +82,14 @@ export default function Auth() {
             {message}
           </div>
         )}
+{!isLogin && (
+  <div style={{ fontSize: 11, color: '#64748b', textAlign: 'center', marginBottom: 12 }}>
+    En vous inscrivant vous acceptez nos{' '}
+    <button onClick={() => setShowLegal('cgu')} style={{ background: 'none', border: 'none', color: '#f0b429', cursor: 'pointer', fontSize: 11, padding: 0 }}>CGU</button>
+    {' '}et notre{' '}
+    <button onClick={() => setShowLegal('privacy')} style={{ background: 'none', border: 'none', color: '#f0b429', cursor: 'pointer', fontSize: 11, padding: 0 }}>Politique de confidentialité</button>
+  </div>
+)}
 
         <button onClick={handleAuth} disabled={loading}
           style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: '#f0b429', color: '#080b12', fontWeight: 800, fontSize: 15, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, marginBottom: 12 }}>
@@ -93,6 +107,9 @@ export default function Auth() {
     Mot de passe oublié ?
   </button>
 )}
+
+
+
 
         <button onClick={() => setIsLogin(!isLogin)}
           style={{ width: '100%', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>
