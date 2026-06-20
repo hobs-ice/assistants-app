@@ -14,12 +14,6 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-
-  // Log pour debug
-  const authHeader = req.headers.get("authorization");
-  console.log("Auth header:", authHeader?.slice(0, 50));
-
-
   const { priceId, userId, email, successUrl, cancelUrl } = await req.json();
 
   try {
