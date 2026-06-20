@@ -82,7 +82,7 @@ function Assistant({ id, onBack, hasAccess }) {
           const { data: { session: currentSession } } = await supabase.auth.getSession();
 console.log('Session token:', currentSession?.access_token);
 
-  const { data: { session: currentSession } } = await supabase.auth.getSession();
+  
   const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
     method: 'POST',
     headers: { 
