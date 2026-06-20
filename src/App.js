@@ -170,7 +170,8 @@ function App() {
 
   const loadProfile = async (userId, currentSession) => {
  
-  const { data: profileData, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  const { data: profileData } = await supabase.from('profiles')
+.select('*').eq('id', userId).single();
   
   if (profileData) {
     setProfile(profileData);
@@ -214,22 +215,17 @@ const hasAccess = (id) => {
 };
 
 
-  return (
+    return (
     <div className="app">
       {current ? (
         <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} />
-
       ) : (
-        
-        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} />
-
-
+        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
       )}
     </div>
   );
-  <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
-
 }
+
 
 
 export default App;
