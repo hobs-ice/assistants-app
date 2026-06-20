@@ -33,27 +33,61 @@ const assistants = [
 
 ];
 
-function Home({ onSelect }) {
+function Home({ onSelect, hasAccess, onLogout, trialExpired }) {
   return (
     <div className="home">
       <div className="header">
-        <h1>🧠 MacAIfer</h1>
-        <p>Choisissez un assistant pour commencer</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+          <h1 style={{ margin: 0 }}>🧠 MacAIfer</h1>
+          <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
+            Déconnexion
+          </button>
+        </div>
+        <p>{trialExpired ? '⏰ Essai terminé — Passez Premium !' : '✨ Essai gratuit 48h actif'}</p>
       </div>
+
       <div className="grid">
-        {assistants.map(a => (
-          <div key={a.id} className="card" onClick={() => onSelect(a.id)} style={{ borderTop: `4px solid ${a.color}` }}>
-            <div className="card-emoji">{a.emoji}</div>
-            <div className="card-title">{a.title}</div>
-            <div className="card-desc">{a.desc}</div>
-          </div>
-        ))}
+        {assistants.map(a => {
+          const accessible = hasAccess(a.id);
+          return (
+            <div key={a.id} className="card" 
+              onClick={() => onSelect(a.id)} 
+              style={{ borderTop: `4px solid ${a.color}`, opacity: accessible ? 1 : 0.7, position: 'relative' }}>
+              {!accessible && (
+                <div style={{ position: 'absolute', top: 8, right: 8, fontSize: 16 }}>🔒</div>
+              )}
+              <div className="card-emoji">{a.emoji}</div>
+              <div className="card-title">{a.title}</div>
+              <div className="card-desc">{a.desc}</div>
+              {!accessible && (
+                <div style={{ fontSize: 10, color: '#f0b429', marginTop: 4, fontWeight: 600 }}>Premium 4,99€/mois</div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-function Assistant({ id, onBack }) {
+
+function Assistant({ id, onBack, hasAccess }) {
+  if (!hasAccess(id)) return (
+    <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
+        <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
+        <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
+        <button onClick={onBack} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
+          💎 Passer Premium — 4,99€/mois
+        </button>
+        <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
+          ← Retour
+        </button>
+      </div>
+    </div>
+  );
+
   const a = assistants.find(x => x.id === id);
 
   if (id === 'medicaments') return <Medicaments onBack={onBack} />;
@@ -87,10 +121,34 @@ function Assistant({ id, onBack }) {
 function App() {
   const [session, setSession] = useState(null);
   const [current, setCurrent] = useState(null);
+  const [profile, setProfile] = useState(null);
+  
+
+  const loadProfile = async (userId, currentSession) => {
+  console.log('Loading profile for:', userId);
+  const { data: profileData, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+  console.log('Profile data:', profileData, 'Error:', error);
+  if (profileData) {
+    setProfile(profileData);
+  } else {
+    const { data: newProfile } = await supabase.from('profiles').insert({
+      id: userId,
+      email: currentSession?.user?.email,
+      trial_started_at: new Date().toISOString(),
+    }).select().single();
+    setProfile(newProfile);
+  }
+};
+
+
+
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
+      if (session) loadProfile(session.user.id, session);
+
+
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
@@ -99,13 +157,29 @@ function App() {
   }, []);
 
   if (!session) return <Auth />;
+  const trialExpired = profile && !profile.is_premium && 
+  profile.trial_started_at && 
+  new Date() - new Date(profile.trial_started_at) > 48 * 60 * 60 * 1000;
+
+const hasAccess = (id) => {
+  const freeAssistants = ['urgences', 'medicaments'];
+  if (freeAssistants.includes(id)) return true;
+  if (profile?.is_premium) return true;
+  if (!trialExpired) return true; // Dans les 48h
+  return false;
+};
+
 
   return (
     <div className="app">
       {current ? (
-        <Assistant id={current} onBack={() => setCurrent(null)} />
+        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} />
+
       ) : (
-        <Home onSelect={setCurrent} />
+        
+        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} />
+
+
       )}
     </div>
   );

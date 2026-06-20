@@ -54,6 +54,18 @@ export default function Auth() {
           style={{ width: '100%', padding: '13px', borderRadius: 10, border: 'none', background: '#f0b429', color: '#080b12', fontWeight: 800, fontSize: 15, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1, marginBottom: 12 }}>
           {loading ? '⏳...' : isLogin ? '🔐 Se connecter' : '✨ S\'inscrire'}
         </button>
+        {isLogin && (
+  <button onClick={async () => {
+    if (!email) { setMessage('Entrez votre email d\'abord'); return; }
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin,
+    });
+    if (error) setMessage(error.message);
+    else setMessage('✅ Email de réinitialisation envoyé !');
+  }} style={{ width: '100%', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 12, marginBottom: 8 }}>
+    Mot de passe oublié ?
+  </button>
+)}
 
         <button onClick={() => setIsLogin(!isLogin)}
           style={{ width: '100%', background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: 13 }}>
