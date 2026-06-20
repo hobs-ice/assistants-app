@@ -1,46 +1,60 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Setup type definitions for built-in Supabase Runtime APIs
-import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
+const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-console.log("Hello from Functions!");
-
-// This endpoint uses 'publishable' | 'secret' access, apiKey is required.
-// Use publishable for Client-facing, key-validated endpoints
-// Use secret for Server-to-server, internal calls
-export default {
-  fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
-    // Called by another service with a secret key
-    // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-    /*
-    if (ctx.authMode === "secret") {
-      const { user_id } = await req.json();
-      const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
-
-      return Response.json({
-        email: data?.user?.email,
-      });
-    }
-    */
-
-    const { name } = await req.json();
-
-    return Response.json({
-      message: `Hello ${name}!`,
-    });
-  }),
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-/* To invoke locally:
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
 
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
+  // Log pour debug
+  const authHeader = req.headers.get("authorization");
+  console.log("Auth header:", authHeader?.slice(0, 50));
 
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/create-checkout' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --data '{"name":"Functions"}'
 
-*/
+  const { priceId, userId, email, successUrl, cancelUrl } = await req.json();
+
+  try {
+    const params = new URLSearchParams();
+    params.append("mode", "subscription");
+    params.append("payment_method_types[]", "card");
+    params.append("line_items[0][price]", priceId);
+    params.append("line_items[0][quantity]", "1");
+    params.append("success_url", successUrl);
+    params.append("cancel_url", cancelUrl);
+    params.append("customer_email", email);
+    params.append("metadata[userId]", userId);
+    params.append("allow_promotion_codes", "true");
+
+    const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${STRIPE_SECRET_KEY}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: params.toString(),
+    });
+
+    const session = await res.json();
+    if (session.error) throw new Error(session.error.message);
+
+    return new Response(
+      JSON.stringify({ url: session.url }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+
+  } catch (err: any) {
+    return new Response(
+      JSON.stringify({ error: err.message }),
+      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});

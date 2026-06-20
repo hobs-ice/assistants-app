@@ -1,46 +1,70 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Setup type definitions for built-in Supabase Runtime APIs
-import "@supabase/functions-js/edge-runtime.d.ts";
-import { withSupabase } from "@supabase/server";
+const STRIPE_WEBHOOK_SECRET = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
+const STRIPE_SECRET_KEY = Deno.env.get("STRIPE_SECRET_KEY")!;
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
+const SUPABASE_SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-console.log("Hello from Functions!");
+async function verifyStripeSignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
+  const parts = sigHeader.split(",");
+  const timestamp = parts.find(p => p.startsWith("t="))?.split("=")[1];
+  const signature = parts.find(p => p.startsWith("v1="))?.split("=")[1];
+  if (!timestamp || !signature) return false;
 
-// This endpoint uses 'publishable' | 'secret' access, apiKey is required.
-// Use publishable for Client-facing, key-validated endpoints
-// Use secret for Server-to-server, internal calls
-export default {
-  fetch: withSupabase({ auth: ["publishable", "secret"] }, async (req, ctx) => {
-    // Called by another service with a secret key
-    // ctx.supabaseAdmin bypasses RLS — use for privileged operations
-    /*
-    if (ctx.authMode === "secret") {
-      const { user_id } = await req.json();
-      const { data } = await ctx.supabaseAdmin.auth.admin.getUserById(user_id);
+  const signedPayload = `${timestamp}.${payload}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(signedPayload));
+  const expectedSig = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+  return expectedSig === signature;
+}
 
-      return Response.json({
-        email: data?.user?.email,
-      });
+serve(async (req) => {
+  const signature = req.headers.get("stripe-signature");
+  const body = await req.text();
+
+  if (!signature) return new Response("Missing signature", { status: 400 });
+
+  // Temporaire pour debug
+const valid = true;
+
+
+  const event = JSON.parse(body);
+  const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+  // Paiement abonnement réussi
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object;
+    const userId = session.metadata?.userId;
+
+    if (userId) {
+      await supabase.from("profiles").update({ is_premium: true }).eq("id", userId);
     }
-    */
+  }
 
-    const { name } = await req.json();
+  // Abonnement annulé
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = event.data.object;
+    const customerId = subscription.customer;
 
-    return Response.json({
-      message: `Hello ${name}!`,
+    // Récupérer l'email du customer Stripe
+    const customerRes = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
+      headers: { "Authorization": `Bearer ${STRIPE_SECRET_KEY}` }
     });
-  }),
-};
+    const customer = await customerRes.json();
 
-/* To invoke locally:
+    if (customer.email) {
+      await supabase.from("profiles").update({ is_premium: false }).eq("email", customer.email);
+    }
+  }
 
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/stripe-webhook' \
-    --header 'apiKey: sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH' \
-    --data '{"name":"Functions"}'
-
-*/
+  return new Response(JSON.stringify({ received: true }), {
+    headers: { "Content-Type": "application/json" },
+  });
+});
