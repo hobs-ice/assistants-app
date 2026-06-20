@@ -55,7 +55,10 @@ export default function Vehicule({ onBack }) {
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert en Formule 1 avec une connaissance encyclopédique de toute l'histoire de ce sport.
+            content: `Tu es exclusivement un expert en Formule 1 dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée à la F1, la course automobile ou le sport automobile, réponds : "Je suis l'assistant Véhicule 🚗 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en Formule 1 avec une connaissance encyclopédique de toute l'histoire de ce sport.
 
 Question ou simulation : "${f1Question}"
 
@@ -84,7 +87,10 @@ Sois passionné, précis et détaillé. Maximum 400 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un mécanicien expert avec 20 ans d'expérience en automobile et moto.
+            content: `Tu es exclusivement un mécanicien expert dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée à l'automobile, la moto ou la mécanique, réponds : "Je suis l'assistant Véhicule 🚗 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un mécanicien expert avec 20 ans d'expérience en automobile et moto.
 
 Un client décrit ce problème : "${panneProblem}"
 

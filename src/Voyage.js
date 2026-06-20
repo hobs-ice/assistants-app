@@ -39,7 +39,10 @@ const verifierVisa = async () => {
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es un expert en voyage international pour les citoyens français.
+          content: `Tu es exclusivement un expert en voyage international pour les citoyens français dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au voyage, visa, vaccins ou sécurité à l'étranger, réponds : "Je suis l'assistant Voyage ✈️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en voyage international.
 
 Pour la destination : ${visaPays}
 
@@ -90,7 +93,10 @@ Sois précis et à jour avec les informations 2024-2025.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert en voyage et optimisation de budget.
+            content: `Tu es exclusivement un expert en voyage et optimisation de budget dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au voyage ou budget voyage, réponds : "Je suis l'assistant Voyage ✈️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en voyage et optimisation de budget.
 
 Un voyageur cherche des destinations avec ces critères :
 - Budget total : ${budget}€ (tout inclus : vol, hébergement, repas, activités)

@@ -175,7 +175,11 @@ const [mesCryptos, setMesCryptos] = useState(() => {
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert en création d'entreprise. Génère un business plan structuré.
+            content: `Tu es exclusivement un expert en création d'entreprise dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au business, entrepreneuriat ou création d'entreprise, réponds : "Je suis l'assistant Business 📈 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en création d'entreprise. Génère un business plan structuré.
+
 
 Secteur : ${bpSecteur}
 Produit/Service : ${bpProduit}
@@ -219,7 +223,11 @@ Sois concret, chiffré quand possible. Maximum 600 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert juridique spécialisé en ${categories[juridiqueCategorie]}.
+            content: `Tu es exclusivement un expert juridique spécialisé en ${categories[juridiqueCategorie]} dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au droit des affaires ou entrepreneuriat, réponds : "Je suis l'assistant Business 📈 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert juridique spécialisé en ${categories[juridiqueCategorie]}.
+
 
 Question : "${juridiqueQuestion}"
 
@@ -259,7 +267,11 @@ Maximum 300 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert en marketing digital français.
+            content: `Tu es exclusivement un expert en marketing digital français dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au marketing ou business, réponds : "Je suis l'assistant Business 📈 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en marketing digital français.
+
 
 Produit/Service : ${marketingProduit}
 Tâche : ${types[marketingType]}
@@ -636,7 +648,7 @@ Sois créatif, percutant et adapté au marché français.`
       {section === 'juridique' && (
         <div>
           <div style={styles.card}>
-            <div style={styles.cardTitle}>⚖️ Conseils juridiques — IA</div>
+            <div style={styles.cardTitle}>⚖️ Conseils juridiques </div>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 16 }}>
               {[
                 { id: 'statuts', label: '🏢 Statuts' },

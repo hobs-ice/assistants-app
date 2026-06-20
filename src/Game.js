@@ -75,11 +75,15 @@ const genres = [
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert gaming et esports. Réponds à cette question :
+            content: `Tu es exclusivement un expert gaming et esports dans l'app MacAlfer.
 
+IMPORTANT : Si la question n'est PAS liée au gaming, jeux vidéo, esports ou culture gaming, réponds uniquement : "Je suis l'assistant Gaming 🎮 Je ne peux pas répondre à cette question. Essayez un autre assistant MacAlfer plus adapté !"
+
+Si la question est liée au gaming, réponds à :
 "${iaQuestion}"
 
 Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
+
           }]
         })
       });

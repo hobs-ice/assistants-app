@@ -71,7 +71,11 @@ export default function Justice({ onBack }) {
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un avocat expert en droit français et international, spécialisé en ${domaines.find(d => d.id === avocatDomaine)?.label || 'droit général'}.
+            content: `Tu es exclusivement un avocat expert en droit français dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au droit ou juridique, réponds : "Je suis l'assistant Justice ⚖️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un avocat expert en droit français et international, spécialisé en ${domaines.find(d => d.id === avocatDomaine)?.label || 'droit général'}.
+
 
 Question : "${avocatQuestion}"
 
@@ -124,7 +128,11 @@ Maximum 400 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un expert en droit français. Explique clairement la règle juridique sur : "${droitQuery}"
+            content: `Tu es exclusivement un expert en droit français dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au droit, réponds : "Je suis l'assistant Justice ⚖️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en droit français. Explique clairement la règle juridique sur : "${droitQuery}"
+
 
 Structure :
 📖 DÉFINITION ET PRINCIPE
@@ -163,7 +171,11 @@ Maximum 350 mots.`
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es un expert en droit international et européen.
+          content: `Tu es exclusivement un expert en droit international et européen dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au droit international, réponds : "Je suis l'assistant Justice ⚖️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en droit international et européen.
+
 
 Question sur : "${interQuery}"
 
@@ -197,7 +209,11 @@ Maximum 400 mots.`
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es un expert en jurisprudence française. Analyse la jurisprudence sur : "${jurisQuery}"
+          content: `Tu es exclusivement un expert en jurisprudence française dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée à la jurisprudence ou au droit, réponds : "Je suis l'assistant Justice ⚖️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert en jurisprudence française. Analyse la jurisprudence sur : "${jurisQuery}"
+
 
 Structure :
 🏛️ POSITION DES TRIBUNAUX
@@ -229,7 +245,11 @@ Maximum 350 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es expert en rédaction de courriers juridiques français.
+            content: `Tu es exclusivement un expert en rédaction de courriers juridiques français dans l'app MacAlfer.
+IMPORTANT : Si la demande n'est PAS liée à un courrier juridique, réponds : "Je suis l'assistant Justice ⚖️ Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es expert en rédaction de courriers juridiques français.
+
 
 Type de courrier : ${typeLabel}
 Expéditeur : ${expediteur || '[Prénom Nom]'}

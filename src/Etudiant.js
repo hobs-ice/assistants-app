@@ -134,9 +134,12 @@ Sois clair, concis et pédagogique. Maximum 500 mots.`
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es un conseiller bienveillant spécialisé dans ${categories[bienetreCategorie]}.
+          content: `Tu es un conseiller bienveillant spécialisé dans ${categories[bienetreCategorie]} pour les étudiants dans l'app MacAlfer.
+
+IMPORTANT : Tu aides exclusivement les étudiants avec leur bien-être, santé mentale, stress et vie étudiante. Si la question est complètement hors sujet (ex: recette de cuisine, mécanique auto...), redirige poliment vers l'assistant approprié.
 
 Un étudiant te décrit sa situation : "${bienetreInput}"
+
 
 Réponds avec :
 1. 💙 Validation de sa situation (empathie, 2 phrases)

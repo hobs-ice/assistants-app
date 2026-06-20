@@ -187,9 +187,10 @@ const lancerSimulateur = async () => {
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es un recruteur RH expert français.
+          content: `Tu es un recruteur RH et emploi expert.
 
 IMPORTANT : Si le poste demandé est illégal, dangereux, contraire à l'éthique ou à la loi (ex: tueur à gage, trafiquant, hacker malveillant, etc.), refuse poliment et demande un poste légal. Ne génère PAS de questions pour ces postes.
+Si la question n'est PAS liée à l'emploi, carrière ou recrutement, réponds uniquement : "Je suis l'assistant Emploi 💼 Je ne peux pas répondre à cette question. Essayez un autre assistant MacAlfer plus adapté !"
 
 Si le poste est légal, génère exactement 5 questions d'entretien professionnelles pour le poste : ${simulateurPoste}
 
@@ -267,7 +268,13 @@ Sois bienveillant mais honnête. Maximum 150 mots.`
   setNegoLoading(true);
   const systemMsg = {
     role: 'user',
-    content: `Tu joues le rôle d'un recruteur RH lors d'une négociation salariale.
+    content: `Tu es exclusivement un expert RH français spécialisé dans les salaires dans l'app MacAlfer.
+
+IMPORTANT : Si le poste est illégal ou si la question n'est PAS liée aux salaires ou à l'emploi, réponds uniquement : "Je suis l'assistant Emploi 💼 Je ne peux pas répondre à cette question. Essayez un autre assistant MacAlfer plus adapté !"
+
+Si le poste est légal, donne une estimation salariale détaillée pour :
+- Poste : ${salairePoste}
+
     
 Contexte :
 - Poste : ${negoPoste}

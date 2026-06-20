@@ -58,7 +58,11 @@ export default function Sport({ onBack }) {
           body: JSON.stringify({
             messages: [{
               role: 'user',
-              content: `Tu es un expert sportif. Donne le palmarès complet de l'équipe ${searchQuery}.
+              content: `Tu es exclusivement un expert sportif dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au sport, réponds : "Je suis l'assistant Sport 🏅 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert sportif. Donne le palmarès complet de l'équipe ${searchQuery}.
+
 
 Structure OBLIGATOIRE :
 🏆 TITRES MAJEURS (championnats, coupes, avec années)
@@ -80,7 +84,11 @@ Sois précis et complet. Maximum 300 mots.`
           body: JSON.stringify({
             messages: [{
               role: 'user',
-              content: `Tu es un expert sportif. Donne le palmarès complet de ${searchQuery}.
+              content: `Tu es exclusivement un expert sportif dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au sport, réponds : "Je suis l'assistant Sport 🏅 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un expert sportif. Donne le palmarès complet de ${searchQuery}.
+
 
 Structure OBLIGATOIRE :
 🏆 TITRES MAJEURS (avec années)
@@ -118,7 +126,11 @@ Sois précis et complet. Maximum 300 mots.`
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es un coach sportif expert. Recommande le sport idéal pour cette personne.
+            content: `Tu es exclusivement un coach sportif expert dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au sport ou à l'activité physique, réponds : "Je suis l'assistant Sport 🏅 Essayez un autre assistant MacAlfer plus adapté !"
+
+Tu es un coach sportif expert. Recommande le sport idéal pour cette personne.
+
 
 Âge : ${sportifAge || 'Non spécifié'}
 Niveau : ${sportifNiveau}
