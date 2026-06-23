@@ -42,7 +42,8 @@ serve(async (req) => {
 
     const searchParams = new URLSearchParams();
     if (keywords) searchParams.append("motsCles", keywords);
-    if (location) searchParams.append("commune", location);
+    if (location) searchParams.append("lieuTravail", location);
+
     if (contractType) searchParams.append("typeContrat", contractType);
     searchParams.append("range", "0-9");
 
