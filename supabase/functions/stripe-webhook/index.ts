@@ -31,8 +31,9 @@ serve(async (req) => {
 
   if (!signature) return new Response("Missing signature", { status: 400 });
 
-  // Temporaire pour debug
-const valid = true;
+ const valid = await verifyStripeSignature(body, signature, STRIPE_WEBHOOK_SECRET);
+if (!valid) return new Response("Invalid signature", { status: 400 });
+
 
 
   const event = JSON.parse(body);

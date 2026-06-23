@@ -62,7 +62,26 @@ const [simulateurFeedback, setSimulateurFeedback] = useState({});
 const [simulateurEtape, setSimulateurEtape] = useState(0);
 const [simulateurLoading, setSimulateurLoading] = useState(false);
 const [offreDetail, setOffreDetail] = useState(null);
-const [offres] = useState([]);
+const [offres, setOffres] = useState([]);
+const [offresLoading, setOffresLoading] = useState(false);
+const rechercherOffres = async () => {
+  if (!metier.trim()) return;
+  setOffresLoading(true);
+  try {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/france-travail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ keywords: metier, location: ville })
+    });
+    const data = await res.json();
+    setOffres(data.offers || []);
+  } catch {
+    setOffres([]);
+  }
+  setOffresLoading(false);
+};
+
+
   // Lettre motivation
   const [offreTexte, setOffreTexte] = useState('');
   const [nomPrenom, setNomPrenom] = useState('');
@@ -373,7 +392,10 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
-            
+            <button style={styles.searchBtn} onClick={rechercherOffres} disabled={offresLoading || !metier}>
+  {offresLoading ? '⏳ Recherche...' : '🔍 Rechercher sur France Travail'}
+</button>
+
             {/* Liens alternatifs */}
             <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
               <a href={`https://www.linkedin.com/jobs/search/?keywords=${encodeURIComponent(metier)}&location=${encodeURIComponent(ville)}`}
