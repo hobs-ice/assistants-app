@@ -45,6 +45,9 @@ export default function Emploi({ onBack }) {
   
   
   const [secteurSelec, setSecteurSelec] = useState(null);
+  const [offresPage, setOffresPage] = useState(0);
+const [offresTotal, setOffresTotal] = useState(0);
+
   
  const [categorieEntretien, setCategorieEntretien] = useState('generales');
 const [negoActif, setNegoActif] = useState(false);
@@ -64,23 +67,25 @@ const [simulateurLoading, setSimulateurLoading] = useState(false);
 const [offreDetail, setOffreDetail] = useState(null);
 const [offres, setOffres] = useState([]);
 const [offresLoading, setOffresLoading] = useState(false);
-const rechercherOffres = async () => {
+const rechercherOffres = async (page = 0) => {
   if (!metier.trim()) return;
   setOffresLoading(true);
-  
   try {
     const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/france-travail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keywords: metier, location: ville })
+      body: JSON.stringify({ keywords: metier, location: ville, page })
     });
     const data = await res.json();
     setOffres(data.offers || []);
+    setOffresTotal(data.total || 0);
+    setOffresPage(page);
   } catch {
     setOffres([]);
   }
   setOffresLoading(false);
 };
+
 
 
   // Lettre motivation
@@ -459,7 +464,26 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
         </div>
       )}
 
+{offresTotal > 10 && (
+  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
+    <button onClick={() => rechercherOffres(offresPage - 1)} 
+      disabled={offresPage === 0}
+      style={{ ...styles.searchBtn, width: 'auto', padding: '8px 16px', opacity: offresPage === 0 ? 0.4 : 1 }}>
+      ← Précédent
+    </button>
+    <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: 12, alignSelf: 'center' }}>
+      Page {offresPage + 1} · {offresTotal} offres
+    </span>
+    <button onClick={() => rechercherOffres(offresPage + 1)}
+      disabled={(offresPage + 1) * 10 >= offresTotal}
+      style={{ ...styles.searchBtn, width: 'auto', padding: '8px 16px', opacity: (offresPage + 1) * 10 >= offresTotal ? 0.4 : 1 }}>
+      Suivant →
+    </button>
+  </div>
+)}
+
       {/* LETTRE DE MOTIVATION */}
+      
       {section === 'lettre' && (
         <div>
           <div style={styles.card}>

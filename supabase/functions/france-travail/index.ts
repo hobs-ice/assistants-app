@@ -45,7 +45,11 @@ serve(async (req) => {
     if (location) searchParams.append("lieuTravail", location);
 
     if (contractType) searchParams.append("typeContrat", contractType);
-    searchParams.append("range", "0-9");
+    const page = body.page ?? 0;
+const start = page * 10;
+const end = start + 9;
+searchParams.append("range", `${start}-${end}`);
+
 
     const offresRes = await fetch("https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?" + searchParams.toString(), {
       headers: {
