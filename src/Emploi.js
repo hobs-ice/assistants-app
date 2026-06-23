@@ -398,7 +398,8 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
-            <button style={styles.searchBtn} onClick={rechercherOffres} disabled={offresLoading || !metier}>
+            <button style={styles.searchBtn} onClick={() => rechercherOffres(0)} disabled={offresLoading || !metier}>
+
   {offresLoading ? '⏳ Recherche...' : '🔍 Rechercher sur France Travail'}
 </button>
 
