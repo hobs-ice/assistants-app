@@ -67,6 +67,7 @@ const [offresLoading, setOffresLoading] = useState(false);
 const rechercherOffres = async () => {
   if (!metier.trim()) return;
   setOffresLoading(true);
+  console.log('Recherche France Travail:', metier, ville);
   try {
     const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/france-travail', {
       method: 'POST',
