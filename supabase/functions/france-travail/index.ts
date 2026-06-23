@@ -29,13 +29,15 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  let keywords = "", location = "", contractType = "";
+  let keywords = "", location = "", contractType = "", page = 0;
   try {
     const body = await req.json();
     keywords = body.keywords ?? "";
     location = body.location ?? "";
     contractType = body.contractType ?? "";
+    page = body.page ?? 0;
   } catch { /* ok */ }
+
 
   try {
     const token = await getToken();
@@ -45,7 +47,8 @@ serve(async (req) => {
     if (location) searchParams.append("lieuTravail", location);
 
     if (contractType) searchParams.append("typeContrat", contractType);
-    const page = body.page ?? 0;
+    const page = 0;
+
 const start = page * 10;
 const end = start + 9;
 searchParams.append("range", `${start}-${end}`);
