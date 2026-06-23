@@ -63,6 +63,8 @@ searchParams.append("range", `${start}-${end}`);
 
     const text = await offresRes.text();
     const data = JSON.parse(text);
+    const data = JSON.parse(text);
+
 
     return new Response(
       JSON.stringify({ offers: data.resultats || [], total: data.nbResultats || 0 }),
