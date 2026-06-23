@@ -78,6 +78,8 @@ const rechercherOffres = async (page = 0) => {
     });
     const data = await res.json();
     setOffres(data.offers || []);
+    console.log('Total offres:', data.total);
+
     setOffresTotal(data.total || 0);
     setOffresPage(page);
   } catch {
