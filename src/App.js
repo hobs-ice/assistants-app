@@ -41,8 +41,10 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
     <div className="home">
       <div className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h1 style={{ margin: 0 }}>🧠 MacAIfer</h1>
-          <div style={{ display: 'flex', gap: 8 }}>
+          <h1 style={{ margin: 0 }}>MacAIfer</h1>
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, flexWrap: 'wrap', gap: 8 }}>
+
             {isPremium && (
               <button onClick={async () => {
                 const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
