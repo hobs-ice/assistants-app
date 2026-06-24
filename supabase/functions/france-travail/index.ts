@@ -38,21 +38,16 @@ serve(async (req) => {
     page = body.page ?? 0;
   } catch { /* ok */ }
 
-
   try {
     const token = await getToken();
 
     const searchParams = new URLSearchParams();
     if (keywords) searchParams.append("motsCles", keywords);
     if (location) searchParams.append("lieuTravail", location);
-
     if (contractType) searchParams.append("typeContrat", contractType);
-    const page = 0;
-
-const start = page * 10;
-const end = start + 9;
-searchParams.append("range", `${start}-${end}`);
-
+    const start = page * 10;
+    const end = start + 9;
+    searchParams.append("range", `${start}-${end}`);
 
     const offresRes = await fetch("https://api.francetravail.io/partenaire/offresdemploi/v2/offres/search?" + searchParams.toString(), {
       headers: {
@@ -62,12 +57,12 @@ searchParams.append("range", `${start}-${end}`);
     });
 
     const text = await offresRes.text();
-    const data = JSON.parse(text);
-    const data = JSON.parse(text);
+    const result = JSON.parse(text);
+const total = parseInt(offresRes.headers.get("Content-Range")?.split("/")[1] || "0");
 
+return new Response(
+  JSON.stringify({ offers: result.resultats || [], total }),
 
-    return new Response(
-      JSON.stringify({ offers: data.resultats || [], total: data.nbResultats || 0 }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
 
