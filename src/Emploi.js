@@ -445,26 +445,28 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
 <div style={{ marginTop: 12 }}>
   <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginBottom: 8, fontWeight: 700 }}>🏛️ Fonction Publique</div>
   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-    <a href={`https://www.place-emploi-public.gouv.fr/offre-emploi/liste/?q=${encodeURIComponent(metier)}`}
-      target="_blank" rel="noreferrer"
-      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #1a3a6b, #0d2244)' }}>
-      🏛️ Place Emploi Public
-    </a>
-    <a href={`https://www.cap-territorial.fr/nos-offres-d-emploi.html?search=${encodeURIComponent(metier)}`}
-      target="_blank" rel="noreferrer"
-      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #2c5f8a, #1a3d5c)' }}>
-      🏙️ Cap Territorial
-    </a>
-    <a href={`https://www.hospitalia.fr/offres-emploi/?q=${encodeURIComponent(metier)}`}
-      target="_blank" rel="noreferrer"
-      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #1a6b4a, #0d4430)' }}>
-      🏥 Hospitalia
-    </a>
-    <a href={`https://www.education.gouv.fr/les-concours-de-recrutement-d-enseignants-1162`}
-      target="_blank" rel="noreferrer"
-      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #6b1a1a, #4a0d0d)' }}>
-      🎓 Concours Enseignement
-    </a>
+    <a href="https://www.emploi-territorial.fr"
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #2c5f8a, #1a3d5c)' }}>
+  🏙️ Emploi Territorial
+</a>
+<a href="https://www.devenirenseignant.gouv.fr"
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #6b1a1a, #4a0d0d)' }}>
+  🎓 Devenir Enseignant
+</a>
+<a href="https://solidarites-sante.gouv.fr/metiers-et-concours"
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #1a6b4a, #0d4430)' }}>
+  🏥 Santé & Concours
+</a>
+<a href="https://www.fonction-publique.gouv.fr"
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #1a3a6b, #0d2244)' }}>
+  🏛️ Concours État
+</a>
+
+
   </div>
 </div>
 
