@@ -469,6 +469,34 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
 
   </div>
 </div>
+{/* Liens International */}
+<div style={{ marginTop: 12 }}>
+  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, marginBottom: 8, fontWeight: 700 }}>🌍 International</div>
+  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+    <a href={`https://www.usajobs.gov/search/?k=${encodeURIComponent(metier)}`}
+      target="_blank" rel="noreferrer"
+      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #1a3a6b, #0d2244)' }}>
+      🇺🇸 USAJOBS
+    </a>
+    <a href={`https://www.arbeitnow.com/jobs?search=${encodeURIComponent(metier)}`}
+      target="_blank" rel="noreferrer"
+      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #2c5f2e, #1a3d1c)' }}>
+      🌍 Arbeitnow Europe
+    </a>
+    <a href={`https://www.arbeitsagentur.de/jobsuche/suche?was=${encodeURIComponent(metier)}`}
+      target="_blank" rel="noreferrer"
+      style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #8a2c2c, #5c1a1a)' }}>
+      🇩 Arbeitsagentur
+    </a>
+    <a href={`https://www.jobijoba.com/fr/jobs/?q=${encodeURIComponent(metier)}`}
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.linkBtn, background: 'linear-gradient(135deg, #6b4a1a, #4a300d)' }}>
+  🌐 Jobijoba
+</a>
+
+  </div>
+</div>
+
 
 
           {offreDetail ? (
