@@ -402,7 +402,8 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
-            <select style={styles.select} value={secteur} onChange={e => setSecteur(e.target.value)}>
+            <select style={{ ...styles.select, marginBottom: 12 }} value={secteur} onChange={e => setSecteur(e.target.value)}>
+
   <option value="">🔍 Tous secteurs</option>
   <option value="84">🏛️ Administration publique</option>
   <option value="85">🎓 Enseignement</option>
