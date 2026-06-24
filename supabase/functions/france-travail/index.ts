@@ -29,14 +29,16 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  let keywords = "", location = "", contractType = "", page = 0;
+  let keywords = "", location = "", contractType = "", page = 0, secteur = "";
   try {
     const body = await req.json();
     keywords = body.keywords ?? "";
     location = body.location ?? "";
     contractType = body.contractType ?? "";
     page = body.page ?? 0;
+    secteur = body.secteur ?? "";
   } catch { /* ok */ }
+
 
   try {
     const token = await getToken();

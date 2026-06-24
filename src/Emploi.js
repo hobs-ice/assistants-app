@@ -47,6 +47,7 @@ export default function Emploi({ onBack }) {
   const [secteurSelec, setSecteurSelec] = useState(null);
   const [offresPage, setOffresPage] = useState(0);
 const [offresTotal, setOffresTotal] = useState(0);
+const [secteur, setSecteur] = useState('');
 
   
  const [categorieEntretien, setCategorieEntretien] = useState('generales');
@@ -74,7 +75,8 @@ const rechercherOffres = async (page = 0) => {
     const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/france-travail', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ keywords: metier, location: ville, page })
+      body: JSON.stringify({ keywords: metier, location: ville, page, secteur })
+
     });
     const data = await res.json();
     setOffres(data.offers || []);
@@ -400,6 +402,13 @@ Continue la négociation en tant que recruteur. Réponds en 2-3 phrases.`
             
             <input style={styles.input} placeholder="Métier (ex: développeur, infirmier...)" value={metier} onChange={e => setMetier(e.target.value)} />
             <input style={styles.input} placeholder="Ville (ex: Paris, Lyon...)" value={ville} onChange={e => setVille(e.target.value)} />
+            <select style={styles.select} value={secteur} onChange={e => setSecteur(e.target.value)}>
+  <option value="">🔍 Tous secteurs</option>
+  <option value="O">🏛️ Fonction publique</option>
+  <option value="P">🎓 Enseignement</option>
+  <option value="Q">🏥 Santé publique</option>
+</select>
+
             <button style={styles.searchBtn} onClick={() => rechercherOffres(0)} disabled={offresLoading || !metier}>
 
   {offresLoading ? '⏳ Recherche...' : '🔍 Rechercher sur France Travail'}
