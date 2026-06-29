@@ -19,5 +19,19 @@
   "theme_color": "#0a0f1a",
   "background_color": "#0a0f1a",
   "description": "Le couteau suisse numérique du quotidien",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "screenshots": [
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
 }
