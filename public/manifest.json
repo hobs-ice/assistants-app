@@ -1,6 +1,6 @@
 {
   "short_name": "Macaifer",
-  "name": "Create React App Sample",
+  "name": "MacAlfer — Assistants IA",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +20,8 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0a0f1a",
+  "background_color": "#0a0f1a",
+  "description": "Vos assistants IA personnels",
+  "orientation": "portrait"
 }
