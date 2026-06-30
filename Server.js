@@ -24,28 +24,59 @@ console.log('GROQ KEY:', GROQ_API_KEY ? 'présente' : 'ABSENTE');
 app.post('/api/claude', async (req, res) => {
   console.log('📨 Requête reçue');
   try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${GROQ_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: req.body.messages,
-        max_tokens: 1000,
-        temperature: 0.7
-      })
-    });
-    const data = await response.json();
-    console.log('✅ Réponse Groq reçue');
-    const text = data.choices?.[0]?.message?.content || data.error?.message || 'Erreur Groq';
-res.json({ content: [{ text }] });
-  } catch (error) {
-    console.error('❌ Erreur:', error);
-    res.status(500).json({ error: error.message });
+    const hasImage = req.body.messages?.some(m => 
+  Array.isArray(m.content) && m.content.some(c => 
+    c.type === 'image' || c.type === 'image_url' || c.source?.type === 'base64'
+  )
+  
+);
+console.log('hasImage:', hasImage);
+console.log('messages type:', typeof req.body.messages?.[0]?.content);
+
+
+
+    if (hasImage) {
+      // Utiliser Claude pour les images
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 1000,
+          messages: req.body.messages
+        })
+      });
+      const data = await response.json();
+      res.json({ content: data.content });
+    } else {
+      // Utiliser Groq pour le texte
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: req.body.messages,
+          max_tokens: 1000,
+          temperature: 0.7
+        })
+      });
+      const data = await response.json();
+      res.json({ content: [{ text: data.choices[0].message.content }] });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
+
+    
 
 
 app.get('/test', (req, res) => {

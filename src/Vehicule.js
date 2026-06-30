@@ -28,6 +28,11 @@ export default function Vehicule({ onBack }) {
   const [rechBudget, setRechBudget] = useState('');
   const [rechKm, setRechKm] = useState('');
   const [rechAnnee, setRechAnnee] = useState('');
+  const [pieceImage, setPieceImage] = useState(null);
+const [pieceResult, setPieceResult] = useState('');
+const [pieceLoading, setPieceLoading] = useState(false);
+const [pieceNom, setPieceNom] = useState('');
+
 
   const chargerF1 = async (type) => {
     setF1Loading(true);
@@ -126,6 +131,55 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
     setVinLoading(false);
   };
 
+const reconnaitrePiece = async () => {
+  if (!pieceImage) return;
+  setPieceLoading(true);
+  setPieceResult('');
+  try {
+    const response = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: pieceImage.type,
+                data: pieceImage.data,
+              }
+            },
+            {
+              type: 'text',
+              text: `Tu es un expert en mécanique automobile. Analyse cette image et :
+1. 🔧 Identifie la pièce automobile
+2. 📝 Explique son rôle dans le véhicule
+3. ⚠️ Indique si elle semble en bon état ou à remplacer
+4. 💰 Donne une fourchette de prix moyenne pour cette pièce
+5. 🔍 Donne le nom exact pour la rechercher chez un vendeur
+
+Sois précis et concis.`
+            }
+          ]
+        }]
+      })
+    });
+    const data = await response.json();
+    const text = data.content[0].text;
+    setPieceResult(text);
+    // Extraire le nom de la pièce pour la recherche
+    const match = text.match(/\*\*(.*?)\*\*/);
+    if (match) setPieceNom(match[1]);
+    else setPieceNom(text.split('\n')[0].replace(/[^a-zA-ZÀ-ÿ\s]/g, '').trim());
+  } catch {
+    setPieceResult('Erreur — vérifiez que le serveur tourne');
+  }
+  setPieceLoading(false);
+};
+
+
   return (
     <div style={{ padding: '10px' }}>
       <button onClick={onBack} style={styles.backBtn}>← Retour</button>
@@ -143,6 +197,8 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
           { id: 'mecanicien', label: '🔧 Mécanicien IA' },
           { id: 'vin', label: '🔍 Décodeur VIN' },
           { id: 'recherche', label: '🚗 Trouver un véhicule' },
+          { id: 'pieces', label: '📸 Reconnaître une pièce' },
+
         ].map(s => (
           <button key={s.id} onClick={() => setSection(s.id)}
             style={{ ...styles.navBtn, ...(section === s.id ? styles.navBtnActive : {}), fontSize: 11 }}>
@@ -408,6 +464,71 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
           </div>
         </div>
       )}
+
+      {/* RECONNAISSANCE PIÈCE */}
+{section === 'pieces' && (
+  <div>
+    <div style={styles.card}>
+      <div style={styles.cardTitle}>📸 Reconnaître une pièce auto</div>
+      <div style={{ ...styles.infoBox, marginBottom: 12 }}>
+        <p style={{ fontSize: 12, color: '#555', margin: 0 }}>
+          📷 Prenez en photo une pièce auto — l'IA l'identifie et vous aide à l'acheter !
+        </p>
+      </div>
+
+      <input type="file" accept="image/*" capture="environment" onChange={async e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const canvas = document.createElement('canvas');
+  const img = new Image();
+  img.onload = () => {
+    const MAX = 800;
+    let w = img.width, h = img.height;
+    if (w > MAX) { h = h * MAX / w; w = MAX; }
+    if (h > MAX) { w = w * MAX / h; h = MAX; }
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    const base64 = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+    setPieceImage({ data: base64, type: 'image/jpeg' });
+  };
+  img.src = URL.createObjectURL(file);
+}} style={{ color: 'white', marginBottom: 12, fontSize: 13 }} />
+
+
+      {pieceImage && (
+        <button style={styles.searchBtn} onClick={reconnaitrePiece} disabled={pieceLoading}>
+          {pieceLoading ? '⏳ Analyse en cours...' : '🔍 Identifier la pièce'}
+        </button>
+      )}
+    </div>
+
+    {pieceResult && (
+      <div style={styles.card}>
+        <div style={styles.cardTitle}>🔧 Pièce identifiée</div>
+        <div style={{ ...styles.infoBox, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.8, color: '#333', marginBottom: 16 }}>
+          {pieceResult}
+        </div>
+
+        {/* ACHETER LA PIÈCE */}
+        <div style={styles.cardTitle}>🛒 Acheter cette pièce</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <a href={`https://www.oscaro.com/recherche?q=${encodeURIComponent(pieceNom)}`}
+            target="_blank" rel="noreferrer"
+            style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
+            🔴 Acheter sur Oscaro
+          </a>
+          <a href={`https://www.mister-auto.com/recherche/?q=${encodeURIComponent(pieceNom)}`}
+            target="_blank" rel="noreferrer"
+            style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #2980b9, #1a5276)' }}>
+            🔵 Acheter sur Mister-Auto
+          </a>
+        </div>
+      </div>
+    )}
+  </div>
+)}
+
     </div>
   );
 }
