@@ -43,9 +43,31 @@ serve(async (req) => {
   try {
     const token = await getToken();
 
+    
+
+
     const searchParams = new URLSearchParams();
     if (keywords) searchParams.append("motsCles", keywords);
-    if (location) searchParams.append("lieuTravail", location);
+    if (location) {
+  // Mapping villes principales → départements
+  const deptMap = {
+    'paris': '75', 'lyon': '69', 'marseille': '13', 'toulouse': '31',
+    'nice': '06', 'nantes': '44', 'bordeaux': '33', 'lille': '59',
+    'strasbourg': '67', 'montpellier': '34', 'rennes': '35',
+    'grenoble': '38', 'rouen': '76', 'toulon': '83', 'dijon': '21'
+  };
+  const dept = deptMap[location.toLowerCase()];
+  if (dept) {
+    searchParams.append("departement", dept);
+  } else {
+    searchParams.append("lieuTravail", location);
+  }
+}
+
+
+
+
+
     if (contractType) searchParams.append("typeContrat", contractType);
     const start = page * 10;
     const end = start + 9;
