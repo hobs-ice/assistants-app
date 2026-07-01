@@ -59,7 +59,9 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
             💎 Gérer abonnement
           </button>
         )}
-        <p>{trialExpired ? '⏰ Essai terminé — Passez Premium !' : '✨ Essai gratuit 48h actif'}</p>
+        <p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé — Passez Premium !' : '✨ Essai gratuit 48h actif'}</p>
+
+
       </div>
 
 
