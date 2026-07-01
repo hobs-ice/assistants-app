@@ -178,15 +178,7 @@ export default function Urgences({ onBack, isPremium }) {
       </div>
 
       {/* BOUTONS APPEL RAPIDE */}
-      {!isPremium && (
-  <div style={{ background: '#1a1a2e', border: '1px solid #2a2a3e', borderRadius: 8, padding: 16, marginBottom: 12, textAlign: 'center' }}>
-    <div style={{ fontSize: 9, color: '#444', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1 }}>Publicité</div>
-    <div style={{ fontSize: 13, color: '#888' }}>🚀 Espace publicitaire disponible</div>
-    <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Premium → sans publicité</div>
-  </div>
-)}
-
-      <div style={styles.card}>
+     <div style={styles.card}>
         <div style={styles.cardTitle}>📞 Appel rapide</div>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           {numerosUrgence.slice(0, 4).map((n, i) => (

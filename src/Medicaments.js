@@ -215,13 +215,6 @@ export default function Medicaments({ onBack, isPremium }) {
       </div>
 
 {/* INDICATIONS FDA */}
-{!isPremium && (
-  <div style={{ background: '#1a1a2e', border: '1px solid #2a2a3e', borderRadius: 8, padding: 16, marginBottom: 12, textAlign: 'center' }}>
-    <div style={{ fontSize: 9, color: '#444', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1 }}>Publicité</div>
-    <div style={{ fontSize: 13, color: '#888' }}>🚀 Espace publicitaire disponible</div>
-    <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Premium → sans publicité</div>
-  </div>
-)}
 
 {result && result !== 'notfound' && result.fda && (
   <div style={styles.card}>
