@@ -41,7 +41,7 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
     <div className="home">
       <div className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h1 style={{ margin: 0 }}>MacAIfer</h1>
+          <h1 style={{ margin: 0 }}>MACAIFER</h1>
           <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
             Déconnexion
           </button>
