@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+
 
 const SERVER = 'https://assistants-app-production.up.railway.app';
 
@@ -133,51 +135,39 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
 
 const reconnaitrePiece = async () => {
   if (!pieceImage) return;
+  console.log('Image size:', pieceImage.data.length, 'type:', pieceImage.type);
   setPieceLoading(true);
-  setPieceResult('');
+
   try {
-    const response = await fetch(`${SERVER}/api/claude`, {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/analyze-image', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: pieceImage.type,
-                data: pieceImage.data,
-              }
-            },
-            {
-              type: 'text',
-              text: `Tu es un expert en mécanique automobile. Analyse cette image et :
-1. 🔧 Identifie la pièce automobile
-2. 📝 Explique son rôle dans le véhicule
-3. ⚠️ Indique si elle semble en bon état ou à remplacer
-4. 💰 Donne une fourchette de prix moyenne pour cette pièce
-5. 🔍 Donne le nom exact pour la rechercher chez un vendeur
-
-Sois précis et concis.`
-            }
-          ]
-        }]
+        imageData: pieceImage.data,
+        mediaType: pieceImage.type,
       })
     });
-    const data = await response.json();
-    const text = data.content[0].text;
-    setPieceResult(text);
-    // Extraire le nom de la pièce pour la recherche
-    const match = text.match(/\*\*(.*?)\*\*/);
-    if (match) setPieceNom(match[1]);
-    else setPieceNom(text.split('\n')[0].replace(/[^a-zA-ZÀ-ÿ\s]/g, '').trim());
-  } catch {
-    setPieceResult('Erreur — vérifiez que le serveur tourne');
+    const data = await res.json();
+    if (data.error) {
+      setPieceResult('Erreur: ' + data.error);
+      return;
+    }
+    setPieceResult(data.text);
+    // Extraire le terme de recherche depuis le bloc 🔍
+const searchMatch = data.text.match(/[""`]([^""`\n]+)[""`]/);
+const boldMatch = data.text.match(/\*\*([^*]+)\*\*/);
+let nom = searchMatch ? searchMatch[1] : boldMatch ? boldMatch[1] : data.text.split('\n')[0];
+// Limiter à 30 caractères max
+nom = nom.replace(/[^a-zA-ZÀ-ÿ\s\-]/g, '').trim().slice(0, 30);
+setPieceNom(nom);
+
+  } catch (err) {
+    console.error('Erreur:', err);
+    setPieceResult('Erreur — réessayez');
   }
   setPieceLoading(false);
 };
+
 
 
   return (
@@ -482,14 +472,14 @@ Sois précis et concis.`
   const canvas = document.createElement('canvas');
   const img = new Image();
   img.onload = () => {
-    const MAX = 800;
+    const MAX = 400;
     let w = img.width, h = img.height;
     if (w > MAX) { h = h * MAX / w; w = MAX; }
     if (h > MAX) { w = w * MAX / h; h = MAX; }
     canvas.width = w;
     canvas.height = h;
     canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-    const base64 = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+    const base64 = canvas.toDataURL('image/jpeg', 0.3).split(',')[1];
     setPieceImage({ data: base64, type: 'image/jpeg' });
   };
   img.src = URL.createObjectURL(file);
@@ -507,22 +497,19 @@ Sois précis et concis.`
       <div style={styles.card}>
         <div style={styles.cardTitle}>🔧 Pièce identifiée</div>
         <div style={{ ...styles.infoBox, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.8, color: '#333', marginBottom: 16 }}>
-          {pieceResult}
+          <ReactMarkdown>{pieceResult}</ReactMarkdown>
+
         </div>
 
         {/* ACHETER LA PIÈCE */}
         <div style={styles.cardTitle}>🛒 Acheter cette pièce</div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <a href={`https://www.oscaro.com/recherche?q=${encodeURIComponent(pieceNom)}`}
-            target="_blank" rel="noreferrer"
-            style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #e74c3c, #c0392b)' }}>
-            🔴 Acheter sur Oscaro
-          </a>
-          <a href={`https://www.mister-auto.com/recherche/?q=${encodeURIComponent(pieceNom)}`}
-            target="_blank" rel="noreferrer"
-            style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center', background: 'linear-gradient(135deg, #2980b9, #1a5276)' }}>
-            🔵 Acheter sur Mister-Auto
-          </a>
+          <a href={`https://www.google.com/search?q=${encodeURIComponent(pieceNom + ' prix acheter pièce auto')}`}
+  target="_blank" rel="noreferrer"
+  style={{ ...styles.searchBtn, textDecoration: 'none', textAlign: 'center' }}>
+  🛒 Trouver cette pièce en ligne
+</a>
+
         </div>
       </div>
     )}
