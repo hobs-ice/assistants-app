@@ -113,7 +113,8 @@ const addToHistory = (nom) => {
   localStorage.setItem(HISTORY_KEY, JSON.stringify(h.slice(0, 10)));
 };
 
-export default function Medicaments({ onBack }) {
+export default function Medicaments({ onBack, isPremium }) {
+
   const [search, setSearch] = useState('');
   const [profile, setProfile] = useState('adulte');
   const [ville, setVille] = useState('');
@@ -121,6 +122,7 @@ export default function Medicaments({ onBack }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
+  
 
   useEffect(() => { setHistory(getHistory()); }, []);
 
@@ -213,6 +215,14 @@ export default function Medicaments({ onBack }) {
       </div>
 
 {/* INDICATIONS FDA */}
+{!isPremium && (
+  <div style={{ background: '#1a1a2e', border: '1px solid #2a2a3e', borderRadius: 8, padding: 16, marginBottom: 12, textAlign: 'center' }}>
+    <div style={{ fontSize: 9, color: '#444', marginBottom: 4, textTransform: 'uppercase', letterSpacing: 1 }}>Publicité</div>
+    <div style={{ fontSize: 13, color: '#888' }}>🚀 Espace publicitaire disponible</div>
+    <div style={{ fontSize: 11, color: '#555', marginTop: 4 }}>Premium → sans publicité</div>
+  </div>
+)}
+
 {result && result !== 'notfound' && result.fda && (
   <div style={styles.card}>
     <div style={styles.cardTitle}>💡 Indications et usage</div>
