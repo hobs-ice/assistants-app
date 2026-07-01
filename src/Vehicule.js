@@ -135,7 +135,7 @@ Sois clair, pratique et honnête. Maximum 300 mots.`
 
 const reconnaitrePiece = async () => {
   if (!pieceImage) return;
-  console.log('Image size:', pieceImage.data.length, 'type:', pieceImage.type);
+  
   setPieceLoading(true);
 
   try {

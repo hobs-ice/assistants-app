@@ -12,23 +12,13 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 const GROQ_API_KEY = process.env.GROQ_API_KEY;
 
-console.log("=== GROQ DEBUG ===");
-
-console.log({
-  exists: !!process.env.GROQ_API_KEY,
-  length: process.env.GROQ_API_KEY?.length,
-  preview: process.env.GROQ_API_KEY?.slice(0, 10),
-  raw: JSON.stringify(process.env.GROQ_API_KEY)
-});
 
 
-console.log('GROQ KEY:', GROQ_API_KEY ? 'présente' : 'ABSENTE');
+
+
 app.post('/api/claude', async (req, res) => {
-  console.log('Body keys:', Object.keys(req.body));
-console.log('Messages count:', req.body.messages?.length);
-console.log('First message content type:', typeof req.body.messages?.[0]?.content);
+  
 
-  console.log('📨 Requête reçue')
   try {
     const hasImage = req.body.messages?.some(m => 
   Array.isArray(m.content) && m.content.some(c => 
@@ -36,14 +26,14 @@ console.log('First message content type:', typeof req.body.messages?.[0]?.conten
   )
   
 );
-console.log('hasImage:', hasImage);
-console.log('messages type:', typeof req.body.messages?.[0]?.content);
+
+
 
 
 
     if (hasImage) {
       // Utiliser Claude pour les images
-      console.log('Sending to Claude:', JSON.stringify(req.body.messages).slice(0, 300));
+      
 const response = await fetch('https://api.anthropic.com/v1/messages', {
 
         method: 'POST',
