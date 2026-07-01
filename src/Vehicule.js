@@ -158,7 +158,8 @@ const searchMatch = data.text.match(/[""`]([^""`\n]+)[""`]/);
 const boldMatch = data.text.match(/\*\*([^*]+)\*\*/);
 let nom = searchMatch ? searchMatch[1] : boldMatch ? boldMatch[1] : data.text.split('\n')[0];
 // Limiter à 30 caractères max
-nom = nom.replace(/[^a-zA-ZÀ-ÿ\s\-]/g, '').trim().slice(0, 30);
+nom = nom.replace(/[^a-zA-ZÀ-ÿ\s-]/g, '').trim().slice(0, 30);
+
 setPieceNom(nom);
 
   } catch (err) {
