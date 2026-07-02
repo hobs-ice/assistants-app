@@ -91,7 +91,8 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
 }
 
 
-function Assistant({ id, onBack, hasAccess }) {
+function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
+
   if (!hasAccess(id)) return (
     <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ textAlign: 'center' }}>
@@ -134,7 +135,10 @@ function Assistant({ id, onBack, hasAccess }) {
 
   const a = assistants.find(x => x.id === id);
 
-  if (id === 'medicaments') return <Medicaments onBack={onBack} />;
+  if (id === 'medicaments') return <Medicaments onBack={onBack} isPremium={isPremium} trialExpired={trialExpired} />;
+
+
+
   if (id === 'urgences') return <Urgences onBack={onBack} />;
   if (id === 'nutrition') return <Nutrition onBack={onBack} />;
   if (id === 'emploi') return <Emploi onBack={onBack} />;
@@ -218,7 +222,8 @@ const hasAccess = (id) => {
     return (
     <div className="app">
       {current ? (
-        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} />
+        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
+
       ) : (
         <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
       )}
