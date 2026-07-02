@@ -220,7 +220,9 @@ const [medImageLoading, setMedImageLoading] = useState(false);
       body: JSON.stringify({
         imageData: medImage.data,
         mediaType: medImage.type,
-        prompt: `Tu es un pharmacien expert. Analyse cette image et :
+        prompt: `Tu es un pharmacien expert UNIQUEMENT. 
+IMPORTANT : Si l'image ne montre PAS un médicament (boîte, comprimé, notice, flacon...), réponds UNIQUEMENT cette phrase exacte sans rien ajouter : "❌ Cette image ne contient pas de médicament. Veuillez photographier une boîte, des comprimés ou une notice. Pour identifier autre chose, utilisez l'assistant approprié dans Macaifer."
+
 1. 💊 Identifie le médicament (nom commercial et DCI)
 2. 📝 Explique à quoi il sert
 3. 💉 Donne la posologie habituelle
