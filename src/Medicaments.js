@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+
 
 
 
@@ -122,6 +124,10 @@ export default function Medicaments({ onBack, isPremium }) {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(false);
   const [symptom, setSymptom] = useState('');
+  const [medImage, setMedImage] = useState(null);
+const [medImageResult, setMedImageResult] = useState('');
+const [medImageLoading, setMedImageLoading] = useState(false);
+
   
 
   useEffect(() => { setHistory(getHistory()); }, []);
@@ -203,6 +209,36 @@ export default function Medicaments({ onBack, isPremium }) {
 
   
   const villeEncoded = encodeURIComponent(ville);
+  const reconnaitreMedicament = async () => {
+  if (!medImage) return;
+  setMedImageLoading(true);
+  setMedImageResult('');
+  try {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/analyze-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageData: medImage.data,
+        mediaType: medImage.type,
+        prompt: `Tu es un pharmacien expert. Analyse cette image et :
+1. 💊 Identifie le médicament (nom commercial et DCI)
+2. 📝 Explique à quoi il sert
+3. 💉 Donne la posologie habituelle
+4. ⚠️ Indique les contre-indications principales
+5. 🔄 Cite les interactions médicamenteuses importantes
+6. ⚡ Donne les effets secondaires courants
+
+IMPORTANT : Rappelle toujours de consulter un médecin ou pharmacien.`
+      })
+    });
+    const data = await res.json();
+    setMedImageResult(data.text || 'Impossible d\'analyser');
+  } catch (err) {
+    setMedImageResult('Erreur — réessayez');
+  }
+  setMedImageLoading(false);
+};
+
 
   return (
     <div style={{ padding: '10px' }}>
@@ -258,6 +294,56 @@ export default function Medicaments({ onBack, isPremium }) {
     )}
     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 8, textAlign: 'center' }}>
       Source : FDA américaine — données en anglais
+    </div>
+  </div>
+)}
+
+{/* RECONNAISSANCE MÉDICAMENT */}
+<div style={styles.card}>
+  <div style={styles.cardTitle}>📸 Reconnaître un médicament</div>
+  <div style={{ ...styles.infoBox, marginBottom: 12 }}>
+    <p style={{ fontSize: 12, color: '#555', margin: 0 }}>
+      📷 Prenez en photo un médicament — l'IA l'identifie et vous donne toutes les informations !
+    </p>
+  </div>
+
+  <input type="file" accept="image/*" capture="environment" onChange={async e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const canvas = document.createElement('canvas');
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 400;
+      let w = img.width, h = img.height;
+      if (w > MAX) { h = h * MAX / w; w = MAX; }
+      if (h > MAX) { w = w * MAX / h; h = MAX; }
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const base64 = canvas.toDataURL('image/jpeg', 0.3).split(',')[1];
+      setMedImage({ data: base64, type: 'image/jpeg' });
+    };
+    img.src = URL.createObjectURL(file);
+  }} style={{ color: 'white', marginBottom: 12, fontSize: 13 }} />
+
+  {medImage && (
+    <button style={styles.searchBtn} onClick={reconnaitreMedicament} disabled={medImageLoading}>
+      {medImageLoading ? '⏳ Analyse en cours...' : '💊 Identifier le médicament'}
+    </button>
+  )}
+</div>
+
+{medImageResult && (
+  <div style={styles.card}>
+    <div style={styles.cardTitle}>💊 Médicament identifié</div>
+    <div style={{ ...styles.infoBox, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.8, color: '#333' }}>
+      <ReactMarkdown>{medImageResult}</ReactMarkdown>
+
+    </div>
+    <div style={{ marginTop: 12, background: 'rgba(243,156,18,0.1)', border: '1px solid rgba(243,156,18,0.3)', borderRadius: 10, padding: 12 }}>
+      <p style={{ color: '#f39c12', fontSize: 12, margin: 0 }}>
+        ⚠️ Ces informations sont indicatives. Consultez toujours un médecin ou pharmacien.
+      </p>
     </div>
   </div>
 )}

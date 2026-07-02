@@ -64,7 +64,7 @@ if (showLegal) return <Legal type={showLegal} onBack={() => setShowLegal(null)} 
   </svg>
 </div>
 
-          <div style={{ fontFamily: 'sans-serif', fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>MacAIfer</div>
+          <div style={{ fontFamily: 'sans-serif', fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>Macaifer</div>
           <div style={{ color: '#64748b', fontSize: 14, marginTop: 8 }}>Le couteau suisse numérique du quotidien
 </div>
         </div>

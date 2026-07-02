@@ -13,7 +13,8 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData, mediaType } = await req.json();
+    const { imageData, mediaType, prompt } = await req.json();
+
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -38,7 +39,7 @@ serve(async (req) => {
             },
             {
               type: "text",
-              text: `Tu es un expert en mécanique automobile. Analyse cette image et :
+              text: prompt || `Tu es un expert en mécanique automobile. Analyse cette image et 
 1. 🔧 Identifie la pièce automobile
 2. 📝 Explique son rôle dans le véhicule
 3. ⚠️ Indique si elle semble en bon état ou à remplacer
