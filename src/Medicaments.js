@@ -302,7 +302,19 @@ IMPORTANT : Rappelle toujours de consulter un médecin ou pharmacien.`
 )}
 
 {/* RECONNAISSANCE MÉDICAMENT */}
-{(!trialExpired || isPremium) && (
+{trialExpired && !isPremium ? (
+  <div style={styles.card}>
+    <div style={styles.cardTitle}>📸 Reconnaître un médicament</div>
+    <div style={{ textAlign: 'center', padding: 20 }}>
+      <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
+      <div style={{ color: 'white', fontWeight: 700, marginBottom: 8 }}>Fonctionnalité Premium</div>
+      <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 16 }}>
+        La reconnaissance de médicament par photo est disponible avec l'abonnement Premium.
+      </div>
+    </div>
+  </div>
+) : (
+
   <>
     <div style={styles.card}>
       <div style={styles.cardTitle}>📸 Reconnaître un médicament</div>
