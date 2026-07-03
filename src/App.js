@@ -200,8 +200,10 @@ function App() {
 
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+  setSession(session);
+  if (session) loadProfile(session.user.id, session);
+});
+
     return () => subscription.unsubscribe();
   }, []);
 
