@@ -78,7 +78,8 @@ if (type === "cancel_premium") {
         <h1 style="color: #f1f5f9; font-size: 24px; margin: 16px 0;">Votre abonnement a été résilié</h1>
       </div>
       <p>Bonjour 👋</p>
-      <p>Votre abonnement MacAlfer Premium a bien été résilié. Vous conservez l'accès jusqu'à la fin de la période en cours.</p>
+      <p>Votre abonnement MacAlfer Premium a été résilié. Votre accès Premium est maintenant terminé.</p>
+
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #94a3b8;">Après expiration vous aurez toujours accès à :</p>
         <ul style="color: #94a3b8; line-height: 2;">

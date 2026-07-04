@@ -36,7 +36,10 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
 
 
 
+
+
   const event = JSON.parse(body);
+  
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
   // Paiement abonnement réussi
@@ -69,6 +72,7 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
   // Abonnement annulé
   if (event.type === "customer.subscription.deleted") {
     const subscription = event.data.object;
+    console.log("Subscription updated:", subscription.cancel_at_period_end, subscription.status);
     const customerId = subscription.customer;
 
     // Récupérer l'email du customer Stripe
@@ -98,7 +102,8 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
 
   if (event.type === "customer.subscription.updated") {
   const subscription = event.data.object;
-  if (subscription.cancel_at_period_end === true) {
+  if (subscription.cancel_at_period_end === true || subscription.status === "canceled") {
+
     const customerId = subscription.customer;
     const customerRes = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
       headers: { "Authorization": `Bearer ${STRIPE_SECRET_KEY}` }
