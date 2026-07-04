@@ -31,6 +31,40 @@ serve(async (req) => {
   const { type, email } = await req.json();
 
   try {
+
+    if (type === "welcome") {
+  await sendEmail(
+    email,
+    "🤖 Bienvenue sur MacAlfer !",
+    `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="font-size: 48px;">🤖</div>
+        <h1 style="color: #f0b429; font-size: 28px; margin: 16px 0;">Bienvenue sur MacAlfer !</h1>
+      </div>
+      <p>Bonjour 👋</p>
+      <p>Votre compte MacAlfer a été créé avec succès !</p>
+      <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
+        <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">✨ Votre essai gratuit 48h commence maintenant :</p>
+        <ul style="color: #94a3b8; line-height: 2;">
+          <li>🤖 Accès à tous les 12 assistants IA</li>
+          <li>💊 Reconnaissance médicament par photo</li>
+          <li>🚗 Reconnaissance pièce auto</li>
+          <li>💼 Offres d'emploi France Travail</li>
+        </ul>
+      </div>
+      <p style="color: #94a3b8;">Après 48h, passez Premium à 4,99€/mois pour continuer à profiter de tous les assistants !</p>
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+          🚀 Découvrir MacAlfer
+        </a>
+      </div>
+      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
+    </div>
+    `
+  );
+}
+
     if (type === "welcome_premium") {
       await sendEmail(
         email,
@@ -78,7 +112,7 @@ if (type === "cancel_premium") {
         <h1 style="color: #f1f5f9; font-size: 24px; margin: 16px 0;">Votre abonnement a été résilié</h1>
       </div>
       <p>Bonjour 👋</p>
-      <p>Votre abonnement MacAlfer Premium a été résilié. Votre accès Premium est maintenant terminé.</p>
+      <p>Votre abonnement Macaifer Premium a été résilié. Votre accès Premium est maintenant terminé.</p>
 
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #94a3b8;">Après expiration vous aurez toujours accès à :</p>

@@ -22,7 +22,18 @@ export default function Auth() {
       } else {
         const { error } = await supabase.auth.signUp({ email, password });
         if (error) setMessage(error.message);
-        else setMessage('Vérifie ton email pour confirmer ton compte !');
+        else {
+  setMessage('✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.');
+  await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/send-emails', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      type: 'welcome',
+      email: email,
+    })
+  });
+}
+
       }
     } catch (e) {
       setMessage('Erreur de connexion');
