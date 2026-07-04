@@ -96,6 +96,31 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
 
   }
 
+  if (event.type === "customer.subscription.updated") {
+  const subscription = event.data.object;
+  if (subscription.cancel_at_period_end === true) {
+    const customerId = subscription.customer;
+    const customerRes = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
+      headers: { "Authorization": `Bearer ${STRIPE_SECRET_KEY}` }
+    });
+    const customer = await customerRes.json();
+    if (customer.email) {
+      await fetch(`${SUPABASE_URL}/functions/v1/send-emails`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`
+        },
+        body: JSON.stringify({
+          type: "cancel_premium",
+          email: customer.email,
+        })
+      });
+    }
+  }
+}
+
+
   return new Response(JSON.stringify({ received: true }), {
     headers: { "Content-Type": "application/json" },
   });
