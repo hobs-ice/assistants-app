@@ -24,6 +24,7 @@ export default function Auth() {
         if (error) setMessage(error.message);
         else {
   setMessage('✅ Compte créé ! Vérifiez votre email pour confirmer votre inscription.');
+  console.log('Envoi email bienvenue à:', email);
   await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/send-emails', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
