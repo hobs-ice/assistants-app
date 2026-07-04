@@ -45,8 +45,25 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
     const userId = session.metadata?.userId;
 
     if (userId) {
-      await supabase.from("profiles").update({ is_premium: true }).eq("id", userId);
-    }
+  await supabase.from("profiles").update({ is_premium: true }).eq("id", userId);
+  
+  // Envoyer email de bienvenue Premium
+  const { data: userProfile } = await supabase.from("profiles").select("email").eq("id", userId).single();
+  if (userProfile?.email) {
+    await fetch(`${SUPABASE_URL}/functions/v1/send-emails`, {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`
+      },
+      body: JSON.stringify({
+        type: "welcome_premium",
+        email: userProfile.email,
+      })
+    });
+  }
+}
+
   }
 
   // Abonnement annulé
@@ -61,8 +78,22 @@ if (!valid) return new Response("Invalid signature", { status: 400 });
     const customer = await customerRes.json();
 
     if (customer.email) {
-      await supabase.from("profiles").update({ is_premium: false }).eq("email", customer.email);
-    }
+  await supabase.from("profiles").update({ is_premium: false }).eq("email", customer.email);
+  
+  // Email résiliation
+  await fetch(`${SUPABASE_URL}/functions/v1/send-emails`, {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`
+    },
+    body: JSON.stringify({
+      type: "cancel_premium",
+      email: customer.email,
+    })
+  });
+}
+
   }
 
   return new Response(JSON.stringify({ received: true }), {
