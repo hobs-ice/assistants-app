@@ -32,6 +32,42 @@ serve(async (req) => {
 
   try {
 
+    if (type === "trial_expired") {
+  await sendEmail(
+    email,
+    "⏰ Votre essai MacAlfer a expiré",
+    `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="font-size: 48px;">⏰</div>
+        <h1 style="color: #f0b429; font-size: 24px; margin: 16px 0;">Votre essai gratuit est terminé</h1>
+      </div>
+      <p>Bonjour 👋</p>
+      <p>Votre essai gratuit de 48h sur MacAlfer est maintenant terminé.</p>
+      <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
+        <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">💎 Passez Premium à 4,99€/mois :</p>
+        <ul style="color: #94a3b8; line-height: 2;">
+          <li>🤖 Accès illimité aux 12 assistants IA</li>
+          <li>💊 Reconnaissance médicament par photo</li>
+          <li>🚗 Reconnaissance pièce auto</li>
+          <li>💼 Offres d'emploi France Travail</li>
+          <li>✈️ Optimiseur de voyage</li>
+          <li>⚖️ Conseils juridiques</li>
+        </ul>
+      </div>
+      <p style="color: #94a3b8;">Vous gardez un accès gratuit aux assistants Urgences et Médicaments.</p>
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+          💎 Passer Premium — 4,99€/mois
+        </a>
+      </div>
+      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
+    </div>
+    `
+  );
+}
+
+
     if (type === "welcome") {
   await sendEmail(
     email,
