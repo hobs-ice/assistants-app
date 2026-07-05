@@ -170,7 +170,7 @@ function App() {
   const [session, setSession] = useState(null);
   const [current, setCurrent] = useState(null);
   const [profile, setProfile] = useState(null);
-  const [showWelcome, setShowWelcome] = useState(false);
+  
 
   
 
@@ -181,13 +181,7 @@ function App() {
   
   if (profileData) {
     setProfile(profileData);
-    const { data: newProfile } = await supabase.from('profiles').insert({
-  id: userId,
-  email: currentSession?.user?.email,
-  trial_started_at: new Date().toISOString(),
-}).select().single();
-setProfile(newProfile);
-setShowWelcome(true); // Nouveau utilisateur → affiche bienvenue
+    
   } else {
     const { data: newProfile } = await supabase.from('profiles').insert({
       id: userId,
@@ -230,39 +224,7 @@ const hasAccess = (id) => {
 };
 
 
-    return (
-    <div className="app">
-      {current ? (
-        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
-      ) : showWelcome ? (
-        <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: 'sans-serif' }}>
-          <div style={{ maxWidth: 400, width: '100%', textAlign: 'center' }}>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>🤖</div>
-            <h1 style={{ color: '#f0b429', fontSize: 28, fontWeight: 800, marginBottom: 8 }}>Bienvenue sur MacAlfer !</h1>
-            <p style={{ color: '#64748b', fontSize: 14, marginBottom: 32 }}>Le couteau suisse numérique du quotidien 🇨🇭</p>
-            <div style={{ background: '#1a1a2e', borderRadius: 12, padding: 24, marginBottom: 32, textAlign: 'left' }}>
-              <p style={{ color: '#f0b429', fontWeight: 700, marginBottom: 12 }}>✨ Votre essai gratuit 48h commence maintenant !</p>
-              <div style={{ color: '#94a3b8', lineHeight: 2, fontSize: 14 }}>
-                <div>🤖 12 assistants IA spécialisés</div>
-                <div>💊 Reconnaissance médicament par photo</div>
-                <div>🚗 Reconnaissance pièce auto</div>
-                <div>💼 Offres d'emploi France Travail</div>
-                <div>✈️ Optimiseur de voyage</div>
-                <div>⚖️ Conseils juridiques</div>
-              </div>
-            </div>
-            <button onClick={() => setShowWelcome(false)}
-              style={{ width: '100%', background: '#f0b429', border: 'none', borderRadius: 10, padding: '14px', color: '#080b12', fontWeight: 800, fontSize: 16, cursor: 'pointer' }}>
-              🚀 Commencer maintenant
-            </button>
-          </div>
-        </div>
-      ) : (
-        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
-      )}
-    </div>
-
-  );
+    
 }
 
 
