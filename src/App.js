@@ -222,6 +222,15 @@ const hasAccess = (id) => {
   if (!trialExpired) return true; // Dans les 48h
   return false;
 };
+return (
+    <div className="app">
+      {current ? (
+        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
+      ) : (
+        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
+      )}
+    </div>
+  );
 
 
     
