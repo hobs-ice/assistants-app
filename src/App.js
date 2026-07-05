@@ -112,7 +112,7 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
 },
 
     body: JSON.stringify({
-      priceId: 'price_1TkJOgCdR1GrgAhcS0fd5gzc',
+      priceId: 'price_1TprDzEH6NYbHRJeb0FeMIYP',
       userId: currentSession?.user?.id,
       email: currentSession?.user?.email,
       successUrl: window.location.origin + '?premium=success',
@@ -230,10 +230,7 @@ return (
         <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
       )}
     </div>
-  );
-
-
-    
+  ); 
 }
 
 
