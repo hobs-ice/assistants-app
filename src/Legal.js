@@ -11,15 +11,15 @@ export default function Legal({ type, onBack }) {
         { title: 'Données collectées', text: 'Nous collectons uniquement votre email et votre statut d\'abonnement. Aucune donnée personnelle supplémentaire n\'est requise.' },
         { title: 'Utilisation des données', text: 'Vos données sont utilisées uniquement pour gérer votre compte et votre abonnement MacAlfer. Elles ne sont jamais vendues à des tiers.' },
         { title: 'Hébergement', text: 'Vos données sont hébergées sur Supabase (serveurs EU) et Stripe (certifié PCI DSS). Tous les échanges sont chiffrés via HTTPS.' },
-        { title: 'Vos droits (RGPD)', text: 'Vous avez le droit d\'accéder à vos données, les rectifier ou les supprimer. Contactez-nous via l\'app pour exercer ces droits.' },
+        { title: 'Vos droits (RGPD)', text: 'Vous avez le droit d\'accéder à vos données, les rectifier ou les supprimer. Contactez-nous à contact@macaifer.com pour exercer ces droits.' },
         { title: 'Conservation', text: 'Vos données sont conservées tant que votre compte est actif. Après suppression, elles sont effacées sous 30 jours.' },
-        { title: 'Paiements', text: 'Les paiements sont gérés par Stripe. MacAlfer ne stocke aucune donnée bancaire.' },
+        { title: 'Paiements', text: 'Les paiements sont gérés par Stripe. Macaifer ne stocke aucune donnée bancaire.' },
       ]
     },
     cgu: {
       title: '📋 Conditions Générales d\'Utilisation',
       sections: [
-        { title: '1. Objet', text: 'MacAlfer est une application d\'assistants IA spécialisés. Elle fournit des informations à titre indicatif uniquement.' },
+        { title: '1. Objet', text: 'Macaifer est une application d\'assistants IA spécialisés. Elle fournit des informations à titre indicatif uniquement.' },
         { title: '2. Responsabilité', text: 'Les réponses des assistants sont générées par IA et peuvent contenir des erreurs. Consultez toujours un professionnel pour des décisions importantes.' },
         { title: '3. Abonnement', text: 'L\'abonnement Premium est à 4,99€/mois. Vous pouvez annuler à tout moment via le portail de gestion d\'abonnement.' },
         { title: '4. Essai gratuit', text: 'Un essai gratuit de 48h est offert à la première connexion. Après expiration, un abonnement Premium est requis pour accéder aux assistants premium.' },
