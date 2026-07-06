@@ -294,7 +294,13 @@ const verifierReponse = (reponse) => {
     {panneauResult && (
       <div style={styles.card}>
         <div style={styles.cardTitle}>🚦 Panneau identifié</div>
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{panneauResult}</ReactMarkdown>
+        <div style={{ color: 'white', fontSize: 13, lineHeight: 1.7 }}>
+  <div className="panneau-result" style={{ color: 'white', fontSize: 13, lineHeight: 1.7 }}>
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>{panneauResult}</ReactMarkdown>
+</div>
+
+</div>
+
 
 
       </div>
@@ -345,6 +351,16 @@ const verifierReponse = (reponse) => {
         )}
       </div>
     )}
+
+    <style>{`
+  .panneau-result table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  .panneau-result td, .panneau-result th { border: 1px solid rgba(255,255,255,0.2); padding: 6px 8px; font-size: 12px; }
+  .panneau-result th { background: rgba(33,150,243,0.3); }
+  .panneau-result h2 { font-size: 15px; color: #2196f3; margin: 12px 0 6px; }
+  .panneau-result p { margin: 6px 0; }
+  .panneau-result ul { padding-left: 16px; }
+`}</style>
+
   </div>
 )}
 
