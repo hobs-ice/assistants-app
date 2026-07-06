@@ -1,4 +1,8 @@
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
+
 
 const SERVER = 'https://assistants-app-production.up.railway.app';
 
@@ -23,6 +27,16 @@ export default function Permis({ onBack }) {
   const [loading, setLoading] = useState(false);
   const [ville, setVille] = useState('');
   const [manoeuvre, setManoeuvre] = useState('creneau');
+  const [panneauImage, setPanneauImage] = useState(null);
+const [panneauResult, setPanneauResult] = useState('');
+const [panneauLoading, setPanneauLoading] = useState(false);
+const [quizQuestion, setQuizQuestion] = useState(null);
+const [quizReponse, setQuizReponse] = useState('');
+const [quizLoading, setQuizLoading] = useState(false);
+const [quizScore, setQuizScore] = useState(0);
+const [quizTotal, setQuizTotal] = useState(0);
+
+
 
   const askIA = async (prompt) => {
     setLoading(true);
@@ -49,6 +63,73 @@ ${prompt}`
     setLoading(false);
   };
 
+const scannerPanneau = async () => {
+  if (!panneauImage) return;
+  setPanneauLoading(true);
+  setPanneauResult('');
+  try {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/analyze-image', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        imageData: panneauImage.data,
+        mediaType: panneauImage.type,
+        prompt: `Tu es un expert du code de la route français.
+IMPORTANT : Si l'image ne montre PAS un panneau de signalisation routière, réponds UNIQUEMENT : "❌ Cette image ne contient pas de panneau de signalisation. Veuillez photographier un panneau routier."
+
+Si c'est bien un panneau, analyse et donne :
+1. 🚦 Nom officiel du panneau
+2. 📝 Signification exacte
+3. ⚖️ Obligation légale (que doit faire le conducteur ?)
+4. ⚠️ Sanctions en cas de non-respect
+5. 💡 Astuce pour le mémoriser`
+      })
+    });
+    const data = await res.json();
+    setPanneauResult(data.text || 'Impossible d\'analyser');
+  } catch {
+    setPanneauResult('Erreur — réessayez');
+  }
+  setPanneauLoading(false);
+};
+
+const genererQuestion = async () => {
+  setQuizLoading(true);
+  setQuizReponse('');
+  setQuizQuestion(null);
+  try {
+    const response = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Génère une question ${quizScore >= 10 ? 'DIFFICILE et piégeuse' : quizScore >= 5 ? 'de niveau intermédiaire' : 'de niveau débutant'} de code de la route français sur un thème aléatoire (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
+${quizScore >= 10 ? 'Les questions doivent être subtiles avec des détails précis (distances exactes, exceptions aux règles, cas particuliers...)' : ''}
+Réponds UNIQUEMENT en JSON avec ce format exact :
+{"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
+
+        }]
+      })
+    });
+    const data = await response.json();
+    const clean = data.content[0].text.replace(/\`\`\`json|\`\`\`/g, '').trim();
+    setQuizQuestion(JSON.parse(clean));
+  } catch {
+    setQuizQuestion(null);
+  }
+  setQuizLoading(false);
+};
+
+const verifierReponse = (reponse) => {
+  setQuizReponse(reponse);
+  setQuizTotal(t => t + 1);
+  if (reponse[0] === quizQuestion.bonne_reponse) {
+    setQuizScore(s => s + 1);
+  }
+};
+
+
   return (
     <div style={styles.container}>
       <button onClick={onBack} style={styles.backBtn}>← Retour</button>
@@ -66,6 +147,9 @@ ${prompt}`
           { id: 'manoeuvres', label: '🔄 Manœuvres' },
           { id: 'autoecole', label: '🏫 Auto-école' },
           { id: 'types', label: '📋 Types de permis' },
+          { id: 'panneau', label: '📸 Scanner panneau' },
+          { id: 'quiz', label: '🎯 Quiz code' },
+
         ].map(s => (
           <button key={s.id} onClick={() => { setSection(s.id); setResult(''); }}
             style={{ ...styles.navBtn, ...(section === s.id ? styles.navBtnActive : {}), fontSize: 11 }}>
@@ -175,6 +259,95 @@ ${prompt}`
           {result && <div style={styles.card}><div style={styles.result}>{result}</div></div>}
         </div>
       )}
+
+      {/* SCANNER PANNEAU */}
+{section === 'panneau' && (
+  <div>
+    <div style={styles.card}>
+      <div style={styles.cardTitle}>📸 Scanner un panneau</div>
+      <div style={{ ...styles.result, marginBottom: 12, fontSize: 12 }}>
+        📷 Prenez en photo un panneau de signalisation — l'IA l'identifie et explique sa signification !
+      </div>
+      <input type="file" accept="image/*" capture="environment" onChange={async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const canvas = document.createElement('canvas');
+        const img = new Image();
+        img.onload = () => {
+          const MAX = 400;
+          let w = img.width, h = img.height;
+          if (w > MAX) { h = h * MAX / w; w = MAX; }
+          if (h > MAX) { w = w * MAX / h; h = MAX; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const base64 = canvas.toDataURL('image/jpeg', 0.3).split(',')[1];
+          setPanneauImage({ data: base64, type: 'image/jpeg' });
+        };
+        img.src = URL.createObjectURL(file);
+      }} style={{ color: 'white', marginBottom: 12, fontSize: 13 }} />
+      {panneauImage && (
+        <button style={styles.searchBtn} onClick={scannerPanneau} disabled={panneauLoading}>
+          {panneauLoading ? '⏳ Analyse en cours...' : '🚦 Identifier le panneau'}
+        </button>
+      )}
+    </div>
+    {panneauResult && (
+      <div style={styles.card}>
+        <div style={styles.cardTitle}>🚦 Panneau identifié</div>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{panneauResult}</ReactMarkdown>
+
+
+      </div>
+    )}
+  </div>
+)}
+
+{/* QUIZ */}
+{section === 'quiz' && (
+  <div>
+    <div style={styles.card}>
+      <div style={styles.cardTitle}>🎯 Quiz Code de la Route</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
+        <button onClick={() => { setQuizScore(0); setQuizTotal(0); setQuizQuestion(null); setQuizReponse(''); }}
+          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
+          Réinitialiser
+        </button>
+      </div>
+      <button style={styles.searchBtn} onClick={genererQuestion} disabled={quizLoading}>
+        {quizLoading ? '⏳ Génération...' : quizQuestion ? '➡️ Question suivante' : '🎯 Commencer le quiz'}
+      </button>
+    </div>
+
+    {quizQuestion && (
+      <div style={styles.card}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, marginBottom: 16 }}>{quizQuestion.question}</div>
+        {quizQuestion.reponses.map((r, i) => {
+          let bg = 'rgba(255,255,255,0.05)';
+          if (quizReponse) {
+            if (r[0] === quizQuestion.bonne_reponse) bg = 'rgba(46,204,113,0.3)';
+            else if (r === quizReponse) bg = 'rgba(231,76,60,0.3)';
+          }
+          return (
+            <button key={i} onClick={() => !quizReponse && verifierReponse(r)}
+              style={{ width: '100%', background: bg, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 14px', color: 'white', cursor: quizReponse ? 'default' : 'pointer', fontSize: 13, marginBottom: 8, textAlign: 'left' }}>
+              {r}
+            </button>
+          );
+        })}
+        {quizReponse && (
+          <div style={{ marginTop: 12, padding: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+            <div style={{ color: quizReponse[0] === quizQuestion.bonne_reponse ? '#2ecc71' : '#e74c3c', fontWeight: 700, marginBottom: 6 }}>
+              {quizReponse[0] === quizQuestion.bonne_reponse ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{quizQuestion.explication}</div>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+)}
+
     </div>
   );
 }
