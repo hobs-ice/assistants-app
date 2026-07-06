@@ -113,7 +113,7 @@ Réponds UNIQUEMENT en JSON avec ce format exact :
       })
     });
     const data = await response.json();
-    const clean = data.content[0].text.replace(/\`\`\`json|\`\`\`/g, '').trim();
+    const clean = data.content[0].text.replace(/```json|```/g, '').trim();
     setQuizQuestion(JSON.parse(clean));
   } catch {
     setQuizQuestion(null);
