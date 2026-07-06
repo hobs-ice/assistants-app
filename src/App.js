@@ -14,6 +14,8 @@ import Justice from './Justice';
 import { supabase } from './supabase';
 import Auth from './Auth';
 import Voyage from './Voyage';
+import Permis from './Permis';
+
 
 
 
@@ -30,6 +32,8 @@ const assistants = [
   { id: 'vehicule', emoji: '🚗', title: 'Véhicule', desc: 'F1, Mécanicien IA, VIN, Auto', color: '#e74c3c' },
   { id: 'justice', emoji: '⚖️', title: 'Justice', desc: 'Avocat IA · Lois · Courriers', color: '#1a1a2e' },
   { id: 'voyage', emoji: '✈️', title: 'Voyage', desc: 'Budget, destinations, conseils', color: '#00b4d8' },
+  { id: 'permis', emoji: '🚗', title: 'Permis', desc: 'Code, manœuvres, auto-écoles, conseils', color: '#2196f3' },
+
 
 ];
 
@@ -150,6 +154,8 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
   if (id === 'vehicule') return <Vehicule onBack={onBack} />;
   if (id === 'justice') return <Justice onBack={onBack} />;
   if (id === 'voyage') return <Voyage onBack={onBack} />;
+  if (id === 'permis') return <Permis onBack={onBack} />;
+
 
   return (
     <div className="assistant">
