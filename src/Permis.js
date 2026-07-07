@@ -24,7 +24,10 @@ export default function Permis({ onBack }) {
   const [typePermis, setTypePermis] = useState('B');
   const [question, setQuestion] = useState('');
   const [result, setResult] = useState('');
-  const [loading, setLoading] = useState(false);
+const [loading, setLoading] = useState(false);
+const [manoeuvreResult, setManoeuvreResult] = useState('');
+const [manoeuvreLoading, setManoeuvreLoading] = useState(false);
+
   const [ville, setVille] = useState('');
   const [manoeuvre, setManoeuvre] = useState('creneau');
   const [panneauImage, setPanneauImage] = useState(null);
@@ -38,6 +41,9 @@ const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau') || '1'));
 const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
 const [pays, setPays] = useState('France');
+const [typeResult, setTypeResult] = useState('');
+const [typeLoading, setTypeLoading] = useState(false);
+
 
 
 
@@ -219,7 +225,8 @@ const verifierReponse = (reponse) => {
               {loading ? '⏳ Réponse en cours...' : '💡 Obtenir des conseils'}
             </button>
           </div>
-          {result && <div style={styles.card}><div style={styles.result}>{result}</div></div>}
+          {typeResult && <div style={styles.card}><div style={styles.result}>{typeResult}</div></div>}
+
         </div>
       )}
 
@@ -228,7 +235,8 @@ const verifierReponse = (reponse) => {
         <div>
           <div style={styles.card}>
             <div style={styles.cardTitle}>🔄 Guide des manœuvres</div>
-            <select style={styles.select} value={manoeuvre} onChange={e => setManoeuvre(e.target.value)}>
+            <select style={styles.select} value={manoeuvre} onChange={e => { setManoeuvre(e.target.value); setResult(''); }}>
+
               <option value="creneau">🅿️ Créneau</option>
               <option value="bataille">🔄 Bataille</option>
               <option value="demi-tour">↩️ Demi-tour</option>
@@ -238,12 +246,35 @@ const verifierReponse = (reponse) => {
               <option value="rond-point">🔵 Rond-point</option>
             </select>
             <button style={styles.searchBtn} disabled={loading}
-              onClick={() => askIA(`Explique-moi étape par étape comment réussir la manœuvre : ${manoeuvre}\n\nDonne des astuces pratiques, les erreurs à éviter et les points clés pour l'examinateur.`)}>
-              {loading ? '⏳ Chargement...' : '🔄 Voir le guide'}
-            </button>
-          </div>
-          {result && <div style={styles.card}><div style={styles.result}>{result}</div></div>}
-        </div>
+              onClick={async () => {
+  setManoeuvreLoading(true);
+  setManoeuvreResult('');
+  try {
+    const response = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Tu es exclusivement un expert du permis de conduire français dans l'app MacAlfer.
+Explique-moi étape par étape comment réussir la manœuvre : ${manoeuvre}
+Donne des astuces pratiques, les erreurs à éviter et les points clés pour l'examinateur.`
+        }]
+      })
+    });
+    const data = await response.json();
+    setManoeuvreResult(data.content[0].text);
+  } catch {
+    setManoeuvreResult('Erreur');
+  }
+  setManoeuvreLoading(false);
+}}>
+  {manoeuvreLoading ? '⏳ Chargement...' : '🔄 Voir le guide'}
+</button>
+</div>
+{manoeuvreResult && <div style={styles.card}><div style={styles.result}>{manoeuvreResult}</div></div>}
+</div>
+
       )}
 
       {/* AUTO-ÉCOLE */}
@@ -292,13 +323,41 @@ const verifierReponse = (reponse) => {
               <option value="fluvial">🚤 Permis fluvial</option>
             </select>
             <button style={styles.searchBtn} disabled={loading}
-              onClick={() => askIA(`Explique-moi tout sur le permis ${typePermis} en France :\n1. Les conditions d'accès (âge, prérequis)\n2. Les étapes pour l'obtenir\n3. Le coût moyen\n4. La durée de formation\n5. Ce qu'il permet de conduire\n6. Les spécificités et astuces`)}>
-              {loading ? '⏳ Chargement...' : '📋 En savoir plus'}
-            </button>
-          </div>
-          {result && <div style={styles.card}><div style={styles.result}>{result}</div></div>}
-        </div>
-      )}
+              onClick={async () => {
+  setTypeLoading(true);
+  setTypeResult('');
+  try {
+    const response = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Tu es exclusivement un expert du permis de conduire dans l'app MacAlfer.
+Explique-moi tout sur le permis ${typePermis} en France :
+1. Les conditions d'accès (âge, prérequis)
+2. Les étapes pour l'obtenir
+3. Le coût moyen
+4. La durée de formation
+5. Ce qu'il permet de conduire
+6. Les spécificités et astuces`
+        }]
+      })
+    });
+    const data = await response.json();
+    setTypeResult(data.content[0].text);
+  } catch {
+    setTypeResult('Erreur');
+  }
+  setTypeLoading(false);
+}}>
+  {typeLoading ? '⏳ Chargement...' : '📋 En savoir plus'}
+</button>
+</div>
+{typeResult && <div style={styles.card}><div style={styles.result}>{typeResult}</div></div>}
+</div>
+)}
+
 
       {/* SCANNER PANNEAU */}
 {section === 'panneau' && (
