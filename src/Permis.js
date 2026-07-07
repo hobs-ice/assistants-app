@@ -52,6 +52,7 @@ const [typeLoading, setTypeLoading] = useState(false);
   const askIA = async (prompt) => {
     setLoading(true);
     setResult('');
+    
     try {
       const response = await fetch(`${SERVER}/api/claude`, {
         method: 'POST',
@@ -59,7 +60,7 @@ const [typeLoading, setTypeLoading] = useState(false);
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es exclusivement un expert du permis de conduire dans l'app MacAlfer.
+            content: `Tu es exclusivement un expert du permis de conduire dans l'app Macaifer.
 IMPORTANT : Si la question n'est PAS liée au permis de conduire ou au code de la route, réponds UNIQUEMENT : "Je suis l'assistant Permis 🪪 Essayez un autre assistant MacAlfer !"
 
 Pays : ${pays}
@@ -121,7 +122,9 @@ const genererQuestion = async () => {
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Génère une question de niveau ${niveauLabel} sur le code de la route français sur un thème aléatoire (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
+          content: `Génère une question DIFFÉRENTE et UNIQUE de niveau ${niveauLabel} sur le code de la route de ${pays}. Thème aléatoire parmi : priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements. Numéro aléatoire pour varier : ${Math.random()}.
+
+ (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
 Réponds UNIQUEMENT en JSON avec ce format exact :
 {"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
         }]
@@ -225,6 +228,8 @@ const verifierReponse = (reponse) => {
               {loading ? '⏳ Réponse en cours...' : '💡 Obtenir des conseils'}
             </button>
           </div>
+          {result && <div style={styles.card}><div style={styles.result}>{result}</div></div>}
+
           {typeResult && <div style={styles.card}><div style={styles.result}>{typeResult}</div></div>}
 
         </div>
@@ -256,7 +261,7 @@ const verifierReponse = (reponse) => {
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es exclusivement un expert du permis de conduire français dans l'app MacAlfer.
+          content: `Tu es exclusivement un expert du permis de conduire français dans l'app Macaifer.
 Explique-moi étape par étape comment réussir la manœuvre : ${manoeuvre}
 Donne des astuces pratiques, les erreurs à éviter et les points clés pour l'examinateur.`
         }]
@@ -333,7 +338,7 @@ Donne des astuces pratiques, les erreurs à éviter et les points clés pour l'e
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Tu es exclusivement un expert du permis de conduire dans l'app MacAlfer.
+          content: `Tu es exclusivement un expert du permis de conduire dans l'app Macaifer.
 Explique-moi tout sur le permis ${typePermis} en France :
 1. Les conditions d'accès (âge, prérequis)
 2. Les étapes pour l'obtenir
@@ -412,6 +417,14 @@ Explique-moi tout sur le permis ${typePermis} en France :
   <div>
     <div style={styles.card}>
       <div style={styles.cardTitle}>🎯 Quiz Code de la Route</div>
+      <select style={styles.select} value={pays} onChange={e => { setPays(e.target.value); setQuizQuestion(null); setQuizReponse(''); }}>
+  <option value="France">🇫🇷 France</option>
+  <option value="Belgique">🇧🇪 Belgique</option>
+  <option value="Suisse">🇨🇭 Suisse</option>
+  <option value="Canada">🇨🇦 Canada</option>
+  <option value="Luxembourg">🇱🇺 Luxembourg</option>
+</select>
+
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
   <div>
     <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
