@@ -57,9 +57,10 @@ serve(async (req) => {
       </div>
       <p style="color: #94a3b8;">Vous gardez un accès gratuit aux assistants Urgences et Médicaments.</p>
       <div style="text-align: center; margin-top: 32px;">
-        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
-          💎 Passer Premium — 4,99€/mois
-        </a>
+        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 20px; border-radius: 10px; text-decoration: none; font-weight: 700; display: block; text-align: center; max-width: 280px; margin: 0 auto; word-break: keep-all;">
+  💎 Passer Premium — 4,99€/mois
+</a>
+
       </div>
       <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
     </div>
