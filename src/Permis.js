@@ -37,6 +37,8 @@ const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total') || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau') || '1'));
 const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+const [pays, setPays] = useState('France');
+
 
 
 
@@ -51,10 +53,15 @@ const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
         body: JSON.stringify({
           messages: [{
             role: 'user',
-            content: `Tu es exclusivement un expert du permis de conduire français dans l'app MacAlfer.
-IMPORTANT : Si la question n'est PAS liée au permis de conduire, réponds uniquement : "Je suis l'assistant Permis 🚗 Essayez un autre assistant MacAlfer plus adapté !"
+            content: `Tu es exclusivement un expert du permis de conduire dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée au permis de conduire ou au code de la route, réponds UNIQUEMENT : "Je suis l'assistant Permis 🪪 Essayez un autre assistant MacAlfer !"
 
-${prompt}`
+Pays : ${pays}
+Permis ${typePermis} — Question : ${question}
+
+Donne des conseils pratiques adaptés aux règles de ${pays}.`
+
+
           }]
         })
       });
@@ -193,6 +200,18 @@ const verifierReponse = (reponse) => {
               <option value="BE">🚐 Permis BE (remorque)</option>
               <option value="bateau">⛵ Permis bateau (permis côtier)</option>
             </select>
+            <select style={styles.select} value={pays} onChange={e => setPays(e.target.value)}>
+  <option value="France">🇫🇷 France</option>
+  <option value="Belgique">🇧🇪 Belgique</option>
+  <option value="Suisse">🇨🇭 Suisse</option>
+  <option value="Canada">🇨🇦 Canada</option>
+  <option value="Maroc">🇲🇦 Maroc</option>
+  <option value="Sénégal">🇸🇳 Sénégal</option>
+  <option value="Côte d'Ivoire">🇨🇮 Côte d'Ivoire</option>
+  <option value="Algérie">🇩🇿 Algérie</option>
+  <option value="Tunisie">🇹🇳 Tunisie</option>
+</select>
+
             <input style={styles.input} placeholder="Votre question (ex: comment réussir le créneau ?)"
               value={question} onChange={e => setQuestion(e.target.value)} />
             <button style={styles.searchBtn} disabled={loading || !question}
