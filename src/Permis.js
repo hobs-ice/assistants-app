@@ -33,8 +33,11 @@ const [panneauLoading, setPanneauLoading] = useState(false);
 const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
-const [quizScore, setQuizScore] = useState(0);
-const [quizTotal, setQuizTotal] = useState(0);
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score') || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total') || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau') || '1'));
+const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+
 
 
 
@@ -98,17 +101,16 @@ const genererQuestion = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
+    const niveauLabel = quizNiveau === 1 ? 'DÉBUTANT (questions simples et basiques)' : quizNiveau === 2 ? 'INTERMÉDIAIRE (questions plus précises avec des chiffres et détails)' : 'EXPERT (questions très difficiles, cas particuliers et exceptions)';
     const response = await fetch(`${SERVER}/api/claude`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Génère une question ${quizScore >= 10 ? 'DIFFICILE et piégeuse' : quizScore >= 5 ? 'de niveau intermédiaire' : 'de niveau débutant'} de code de la route français sur un thème aléatoire (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
-${quizScore >= 10 ? 'Les questions doivent être subtiles avec des détails précis (distances exactes, exceptions aux règles, cas particuliers...)' : ''}
+          content: `Génère une question de niveau ${niveauLabel} sur le code de la route français sur un thème aléatoire (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
 Réponds UNIQUEMENT en JSON avec ce format exact :
 {"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
-
         }]
       })
     });
@@ -121,13 +123,32 @@ Réponds UNIQUEMENT en JSON avec ce format exact :
   setQuizLoading(false);
 };
 
+
 const verifierReponse = (reponse) => {
   setQuizReponse(reponse);
-  setQuizTotal(t => t + 1);
+  const newTotal = quizTotal + 1;
+  setQuizTotal(newTotal);
+  localStorage.setItem('quiz_total', newTotal);
+  
   if (reponse[0] === quizQuestion.bonne_reponse) {
-    setQuizScore(s => s + 1);
+    const newScore = quizScore + 1;
+    const newConsecutives = bonnesConsecutives + 1;
+    setQuizScore(newScore);
+    setBonnesConsecutives(newConsecutives);
+    localStorage.setItem('quiz_score', newScore);
+    
+    // Passage au niveau supérieur après 20 bonnes réponses consécutives
+    if (newConsecutives >= 20 && quizNiveau < 3) {
+      const newNiveau = quizNiveau + 1;
+      setQuizNiveau(newNiveau);
+      setBonnesConsecutives(0);
+      localStorage.setItem('quiz_niveau', newNiveau);
+    }
+  } else {
+    setBonnesConsecutives(0);
   }
 };
+
 
 
   return (
@@ -314,12 +335,23 @@ const verifierReponse = (reponse) => {
     <div style={styles.card}>
       <div style={styles.cardTitle}>🎯 Quiz Code de la Route</div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-        <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
-        <button onClick={() => { setQuizScore(0); setQuizTotal(0); setQuizQuestion(null); setQuizReponse(''); }}
-          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
-          Réinitialiser
-        </button>
-      </div>
+  <div>
+    <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
+    <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
+      {quizNiveau === 1 ? '🟢 Débutant' : quizNiveau === 2 ? '🟡 Intermédiaire' : '🔴 Expert'}
+    </span>
+  </div>
+  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+    <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+      {20 - bonnesConsecutives} bonne(s) pour niveau suivant
+    </span>
+    <button onClick={() => { setQuizScore(0); setQuizTotal(0); setQuizQuestion(null); setQuizReponse(''); setBonnesConsecutives(0); setQuizNiveau(1); localStorage.removeItem('quiz_score'); localStorage.removeItem('quiz_total'); localStorage.removeItem('quiz_niveau'); }}
+      style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
+      Réinitialiser
+    </button>
+  </div>
+</div>
+
       <button style={styles.searchBtn} onClick={genererQuestion} disabled={quizLoading}>
         {quizLoading ? '⏳ Génération...' : quizQuestion ? '➡️ Question suivante' : '🎯 Commencer le quiz'}
       </button>

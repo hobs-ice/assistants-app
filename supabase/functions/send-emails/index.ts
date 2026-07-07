@@ -47,7 +47,7 @@ serve(async (req) => {
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">💎 Passez Premium à 4,99€/mois :</p>
         <ul style="color: #94a3b8; line-height: 2;">
-          <li>🤖 Accès illimité aux 12 assistants IA</li>
+          <li>🤖 Accès illimité aux assistants IA</li>
           <li>💊 Reconnaissance médicament par photo</li>
           <li>🚗 Reconnaissance pièce auto</li>
           <li>💼 Offres d'emploi France Travail</li>
@@ -83,7 +83,7 @@ serve(async (req) => {
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">✨ Votre essai gratuit 48h commence maintenant :</p>
         <ul style="color: #94a3b8; line-height: 2;">
-          <li>🤖 Accès à tous les 12 assistants IA</li>
+          <li>🤖 Accès à tous les assistants IA</li>
           <li>💊 Reconnaissance médicament par photo</li>
           <li>🚗 Reconnaissance pièce auto</li>
           <li>💼 Offres d'emploi France Travail</li>
