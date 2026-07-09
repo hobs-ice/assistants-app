@@ -144,6 +144,9 @@ Réponds UNIQUEMENT en JSON :
     setQuizQuestion(parsed);
     const newVues = [...questionsDejaVues.slice(-10), parsed.question];
 setQuestionsDejaVues(newVues);
+localStorage.setItem(`quiz_questions_${quizType}`, JSON.stringify(newVues));
+console.log('Sauvegardé:', newVues.length, 'questions');
+
 
 
 
