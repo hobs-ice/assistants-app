@@ -708,9 +708,13 @@ const verifierQuizDroit = (reponse) => {
   setQuizReponse('');
   setQuestionsDejaVues([]);
   setBonnesConsecutives(0);
-  setQuizScore(parseInt(localStorage.getItem(`quiz_score_droit_${newDomaine}`) || '0'));
-  setQuizTotal(parseInt(localStorage.getItem(`quiz_total_droit_${newDomaine}`) || '0'));
-  setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_droit_${newDomaine}`) || '1'));
+  const savedScore = parseInt(localStorage.getItem(`quiz_score_droit_${newDomaine}`) || '0');
+const savedTotal = parseInt(localStorage.getItem(`quiz_total_droit_${newDomaine}`) || '0');
+const savedNiveau = parseInt(localStorage.getItem(`quiz_niveau_droit_${newDomaine}`) || '1');
+setQuizScore(savedScore);
+setQuizTotal(savedTotal);
+setQuizNiveau(savedNiveau);
+
 }}>
         <option value="general">
 ⚖️ Droit général</option>
