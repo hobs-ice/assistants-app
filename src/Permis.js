@@ -36,17 +36,13 @@ const [panneauLoading, setPanneauLoading] = useState(false);
 const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
-const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score') || '0'));
-const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total') || '0'));
-const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau') || '1'));
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_permis_France') || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_permis_France') || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_permis_France') || '1'));
+const [bonnesConsecutives, setBonnesConsecutives] = useState(() => parseInt(localStorage.getItem('quiz_consecutives_permis_France') || '0'));
 const [questionsDejaVues, setQuestionsDejaVues] = useState(() => 
-  JSON.parse(localStorage.getItem('quiz_questions_permis') || '[]')
+  JSON.parse(localStorage.getItem('quiz_questions_permis_France') || '[]')
 );
-
-const [bonnesConsecutives, setBonnesConsecutives] = useState(() => 
-  parseInt(localStorage.getItem('quiz_consecutives_permis') || '0')
-);
-
 const [pays, setPays] = useState('France');
 const [typeResult, setTypeResult] = useState('');
 const [typeLoading, setTypeLoading] = useState(false);
@@ -146,7 +142,8 @@ Réponds UNIQUEMENT en JSON avec ce format exact :
 setQuizQuestion(parsed);
 const newVues = [...questionsDejaVues.slice(-10), parsed.question];
 setQuestionsDejaVues(newVues);
-localStorage.setItem('quiz_questions_permis', JSON.stringify(newVues));
+localStorage.setItem(`quiz_questions_permis_${pays}`, JSON.stringify(newVues));
+
 
   } catch {
     setQuizQuestion(null);
@@ -159,23 +156,23 @@ const verifierReponse = (reponse) => {
   setQuizReponse(reponse);
   const newTotal = quizTotal + 1;
   setQuizTotal(newTotal);
-  localStorage.setItem('quiz_total', newTotal);
+  localStorage.setItem(`quiz_total_permis_${pays}`, newTotal);
   
   if (reponse[0] === quizQuestion.bonne_reponse) {
     const newScore = quizScore + 1;
     const newConsecutives = bonnesConsecutives + 1;
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
-    localStorage.setItem('quiz_consecutives_permis', newConsecutives);
+    localStorage.setItem(`quiz_consecutives_permis_${pays}`, newConsecutives);
 
-    localStorage.setItem('quiz_score', newScore);
+    localStorage.setItem(`quiz_score_permis_${pays}`, newScore);
     
     // Passage au niveau supérieur après 20 bonnes réponses consécutives
     if (newConsecutives >= 20 && quizNiveau < 3) {
       const newNiveau = quizNiveau + 1;
       setQuizNiveau(newNiveau);
       setBonnesConsecutives(0);
-      localStorage.setItem('quiz_niveau', newNiveau);
+      localStorage.setItem(`quiz_niveau_permis_${pays}`, newNiveau);
     }
   } else {
     setBonnesConsecutives(0);
@@ -434,7 +431,18 @@ Explique-moi tout sur le permis ${typePermis} en France :
   <div>
     <div style={styles.card}>
       <div style={styles.cardTitle}>🎯 Quiz Code de la Route</div>
-      <select style={styles.select} value={pays} onChange={e => { setPays(e.target.value); setQuizQuestion(null); setQuizReponse(''); }}>
+      <select style={styles.select} value={pays} onChange={e => { 
+  const newPays = e.target.value;
+  setPays(newPays);
+  setQuizQuestion(null);
+  setQuizReponse('');
+  setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_permis_${newPays}`) || '[]'));
+  setBonnesConsecutives(parseInt(localStorage.getItem(`quiz_consecutives_permis_${newPays}`) || '0'));
+  setQuizScore(parseInt(localStorage.getItem(`quiz_score_permis_${newPays}`) || '0'));
+  setQuizTotal(parseInt(localStorage.getItem(`quiz_total_permis_${newPays}`) || '0'));
+  setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_permis_${newPays}`) || '1'));
+}}
+>
   <option value="France">🇫🇷 France</option>
   <option value="Belgique">🇧🇪 Belgique</option>
   <option value="Suisse">🇨🇭 Suisse</option>
