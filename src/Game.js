@@ -21,6 +21,8 @@ const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('gaming_quiz_total') || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('gaming_quiz_niveau') || '1'));
 const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+const [questionsDejaVues, setQuestionsDejaVues] = useState([]);
+
 
 
   /* eslint-disable react-hooks/exhaustive-deps */
@@ -114,28 +116,28 @@ const genererQuizQuestion = async () => {
   try {
     const niveauLabel = quizNiveau === 1 ? 'DÉBUTANT' : quizNiveau === 2 ? 'INTERMÉDIAIRE' : 'EXPERT';
     const sujet = quizType === 'gaming' ? 'jeux vidéo, consoles, personnages, studios, esports, histoire du gaming' : 'manga, anime, personnages, auteurs, studios d\'animation, histoire du manga et anime';
-    const response = await fetch(`${SERVER}/api/claude`, {
+    const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        messages: [{
-          role: 'user',
-          content: `Génère une question UNIQUE de niveau ${niveauLabel} sur : ${sujet}. Ne répète jamais les mêmes questions. Seed unique: ${quizType}-${Date.now()}-${Math.random()}.
-
-
+        prompt: `Génère une question UNIQUE et DIFFÉRENTE de niveau ${niveauLabel} sur : ${sujet}.
+IMPORTANT : Ne génère PAS ces questions déjà posées : ${questionsDejaVues.slice(-5).join(' | ')}
+Seed: ${Date.now()}-${Math.random()}.
 Réponds UNIQUEMENT en JSON :
 {"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
-        }]
       })
     });
     const data = await response.json();
-    const clean = data.content[0].text.replace(/```json|```/g, '').trim();
-    setQuizQuestion(JSON.parse(clean));
+    const clean = data.text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    setQuizQuestion(parsed);
+    setQuestionsDejaVues(prev => [...prev.slice(-10), parsed.question]);
   } catch {
     setQuizQuestion(null);
   }
   setQuizLoading(false);
 };
+
 
 const verifierQuizReponse = (reponse) => {
   setQuizReponse(reponse);
