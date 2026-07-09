@@ -29,7 +29,7 @@ const [bonnesConsecutives, setBonnesConsecutives] = useState(() =>
 const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem(`quiz_score_gaming`) || '0'));
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem(`quiz_total_gaming`) || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem(`quiz_niveau_gaming`) || '1'));
-const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+
 
 
 
