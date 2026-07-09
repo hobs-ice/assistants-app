@@ -690,12 +690,11 @@ const verifierQuizDroit = (reponse) => {
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
+           )}
 
-  {/* QUIZ DROIT */}
-{section === 'quiz' && (
+      {/* QUIZ DROIT */}
+      {section === 'quiz' && (
+
   <div>
     <div style={styles.card}>
       <div style={styles.cardTitle}>🎯 Quiz Droit Français</div>
@@ -761,10 +760,12 @@ const verifierQuizDroit = (reponse) => {
         )}
       </div>
     )}
-  </div>
+    </div>
 )}
-
+    </div>
+  );
 }
+
 
 const styles = {
   backBtn: { background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 10, cursor: 'pointer', fontSize: 14, marginBottom: 20 },
