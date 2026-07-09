@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+
 
 export default function Business({ onBack }) {
   const [section, setSection] = useState('bourse');
@@ -590,7 +593,10 @@ Sois créatif, percutant et adapté au marché français.`
             <div style={styles.card}>
               <div style={styles.cardTitle}>📋 Votre Business Plan</div>
               <div style={{ ...styles.infoBox, whiteSpace: 'pre-wrap', fontSize: 14, lineHeight: 1.8, color: '#333' }}>
-                {bpResult}
+                <div style={{ color: '#333', fontSize: 13, lineHeight: 1.7 }}>
+  <ReactMarkdown remarkPlugins={[remarkGfm]}>{bpResult}</ReactMarkdown>
+</div>
+
               </div>
               <button onClick={() => navigator.clipboard.writeText(bpResult).then(() => alert('Copié !'))}
                 style={{ ...styles.searchBtn, marginTop: 12, background: 'linear-gradient(135deg, #667eea, #764ba2)' }}>
