@@ -17,11 +17,13 @@ export default function Game({ onBack }) {
 const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
-const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('gaming_quiz_score') || '0'));
-const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('gaming_quiz_total') || '0'));
-const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('gaming_quiz_niveau') || '1'));
-const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
 const [questionsDejaVues, setQuestionsDejaVues] = useState([]);
+
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem(`quiz_score_gaming`) || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem(`quiz_total_gaming`) || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem(`quiz_niveau_gaming`) || '1'));
+const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+
 
 
 
@@ -145,18 +147,18 @@ const verifierQuizReponse = (reponse) => {
   setQuizReponse(reponse);
   const newTotal = quizTotal + 1;
   setQuizTotal(newTotal);
-  localStorage.setItem('gaming_quiz_total', newTotal);
+  localStorage.setItem(`quiz_total_${quizType}`, newTotal);
   if (reponse[0] === quizQuestion.bonne_reponse) {
     const newScore = quizScore + 1;
     const newConsecutives = bonnesConsecutives + 1;
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
-    localStorage.setItem('gaming_quiz_score', newScore);
+    localStorage.setItem(`quiz_score_${quizType}`, newScore);
     if (newConsecutives >= 20 && quizNiveau < 6) {
       const newNiveau = quizNiveau + 1;
       setQuizNiveau(newNiveau);
       setBonnesConsecutives(0);
-      localStorage.setItem('gaming_quiz_niveau', newNiveau);
+      localStorage.setItem(`quiz_niveau_${quizType}`, newNiveau);
     }
   } else {
     setBonnesConsecutives(0);
@@ -430,7 +432,17 @@ const verifierQuizReponse = (reponse) => {
       {/* Sélection type */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
         {[{ id: 'gaming', label: '🎮 Gaming' }, { id: 'manga', label: '🈵 Manga/Anime' }].map(t => (
-          <button key={t.id} onClick={() => { setQuizType(t.id); setQuizQuestion(null); setQuizReponse(''); }}
+          <button key={t.id} onClick={() => { 
+  setQuizType(t.id); 
+  setQuizQuestion(null); 
+  setQuizReponse('');
+  setQuestionsDejaVues([]);
+  setQuizScore(parseInt(localStorage.getItem(`quiz_score_${t.id}`) || '0'));
+  setQuizTotal(parseInt(localStorage.getItem(`quiz_total_${t.id}`) || '0'));
+  setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_${t.id}`) || '1'));
+  setBonnesConsecutives(0);
+}}
+
             style={{ flex: 1, padding: '8px', borderRadius: 8, border: 'none', background: quizType === t.id ? '#7928ca' : '#333', color: 'white', cursor: 'pointer', fontWeight: quizType === t.id ? 700 : 400, fontSize: 13 }}>
             {t.label}
           </button>
@@ -452,9 +464,10 @@ const verifierQuizReponse = (reponse) => {
           <button onClick={() => { 
             setQuizScore(0); setQuizTotal(0); setQuizQuestion(null); 
             setQuizReponse(''); setBonnesConsecutives(0); setQuizNiveau(1);
-            localStorage.removeItem('gaming_quiz_score');
-            localStorage.removeItem('gaming_quiz_total');
-            localStorage.removeItem('gaming_quiz_niveau');
+            localStorage.removeItem(`quiz_score_${quizType}`);
+localStorage.removeItem(`quiz_total_${quizType}`);
+localStorage.removeItem(`quiz_niveau_${quizType}`);
+
           }} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
             Réinitialiser
           </button>
