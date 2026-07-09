@@ -39,15 +39,16 @@ export default function Justice({ onBack }) {
   const [interDecisions, setInterDecisions] = useState([]);
 
 // Quiz
-  const [quizQuestion, setQuizQuestion] = useState(null);
+const [quizDomaine, setQuizDomaine] = useState('general');
+const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
 const [questionsDejaVues, setQuestionsDejaVues] = useState([]);
-const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_droit') || '0'));
-const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_droit') || '0'));
-const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_droit') || '1'));
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_droit_general') || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_droit_general') || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_droit_general') || '1'));
 const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
-const [quizDomaine, setQuizDomaine] = useState('general');
+
 
 
   const domaines = [
@@ -349,18 +350,18 @@ const verifierQuizDroit = (reponse) => {
   setQuizReponse(reponse);
   const newTotal = quizTotal + 1;
   setQuizTotal(newTotal);
-  localStorage.setItem('quiz_total_droit', newTotal);
+  localStorage.setItem(`quiz_total_droit_${quizDomaine}`, newTotal);
   if (reponse[0] === quizQuestion.bonne_reponse) {
     const newScore = quizScore + 1;
     const newConsecutives = bonnesConsecutives + 1;
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
-    localStorage.setItem('quiz_score_droit', newScore);
+    localStorage.setItem(`quiz_score_droit_${quizDomaine}`, newScore);
     if (newConsecutives >= 20 && quizNiveau < 6) {
       const newNiveau = quizNiveau + 1;
       setQuizNiveau(newNiveau);
       setBonnesConsecutives(0);
-      localStorage.setItem('quiz_niveau_droit', newNiveau);
+      localStorage.setItem(`quiz_niveau_droit_${quizDomaine}`, newNiveau);
     }
   } else {
     setBonnesConsecutives(0);
@@ -700,8 +701,19 @@ const verifierQuizDroit = (reponse) => {
       <div style={styles.cardTitle}>🎯 Quiz Droit Français</div>
       
       {/* Domaine */}
-      <select style={styles.select} value={quizDomaine} onChange={e => { setQuizDomaine(e.target.value); setQuizQuestion(null); setQuizReponse(''); }}>
-        <option value="general">⚖️ Droit général</option>
+      <select style={styles.select} value={quizDomaine} onChange={e => {
+  const newDomaine = e.target.value;
+  setQuizDomaine(newDomaine);
+  setQuizQuestion(null);
+  setQuizReponse('');
+  setQuestionsDejaVues([]);
+  setBonnesConsecutives(0);
+  setQuizScore(parseInt(localStorage.getItem(`quiz_score_droit_${newDomaine}`) || '0'));
+  setQuizTotal(parseInt(localStorage.getItem(`quiz_total_droit_${newDomaine}`) || '0'));
+  setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_droit_${newDomaine}`) || '1'));
+}}>
+        <option value="general">
+⚖️ Droit général</option>
         <option value="travail">💼 Droit du travail</option>
         <option value="penal">🚔 Droit pénal</option>
         <option value="civil">🏠 Droit civil</option>
@@ -720,9 +732,10 @@ const verifierQuizDroit = (reponse) => {
           <button onClick={() => {
             setQuizScore(0); setQuizTotal(0); setQuizQuestion(null);
             setQuizReponse(''); setBonnesConsecutives(0); setQuizNiveau(1);
-            localStorage.removeItem('quiz_score_droit');
-            localStorage.removeItem('quiz_total_droit');
-            localStorage.removeItem('quiz_niveau_droit');
+            localStorage.removeItem(`quiz_score_droit_${quizDomaine}`);
+localStorage.removeItem(`quiz_total_droit_${quizDomaine}`);
+localStorage.removeItem(`quiz_niveau_droit_${quizDomaine}`);
+
           }} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
             Réinitialiser
           </button>
