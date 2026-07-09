@@ -114,7 +114,9 @@ const genererQuizQuestion = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveauLabel = quizNiveau === 1 ? 'DÉBUTANT' : quizNiveau === 2 ? 'INTERMÉDIAIRE' : 'EXPERT';
+    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT ABSOLU'];
+const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+
     const sujet = quizType === 'gaming' ? 'jeux vidéo, consoles, personnages, studios, esports, histoire du gaming' : 'manga, anime, personnages, auteurs, studios d\'animation, histoire du manga et anime';
     const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {
       method: 'POST',
@@ -150,7 +152,7 @@ const verifierQuizReponse = (reponse) => {
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
     localStorage.setItem('gaming_quiz_score', newScore);
-    if (newConsecutives >= 20 && quizNiveau < 3) {
+    if (newConsecutives >= 20 && quizNiveau < 6) {
       const newNiveau = quizNiveau + 1;
       setQuizNiveau(newNiveau);
       setBonnesConsecutives(0);
@@ -439,7 +441,8 @@ const verifierQuizReponse = (reponse) => {
         <div>
           <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
           <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
-            {quizNiveau === 1 ? '🟢 Débutant' : quizNiveau === 2 ? '🟡 Intermédiaire' : '🔴 Expert'}
+            {['', '⚔️ Padawan', '🌟 Jedi', '💥 Ultra-Big Ball Rasenshuriken', '🔥 Bajrang Gun', '⚡ Ultra Instinct', '🏛️ Athena Exclamation'][quizNiveau] || '⚔️ Padawan'}
+
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
