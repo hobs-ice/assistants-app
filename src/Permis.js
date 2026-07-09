@@ -43,7 +43,10 @@ const [questionsDejaVues, setQuestionsDejaVues] = useState(() =>
   JSON.parse(localStorage.getItem('quiz_questions_permis') || '[]')
 );
 
-const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+const [bonnesConsecutives, setBonnesConsecutives] = useState(() => 
+  parseInt(localStorage.getItem('quiz_consecutives_permis') || '0')
+);
+
 const [pays, setPays] = useState('France');
 const [typeResult, setTypeResult] = useState('');
 const [typeLoading, setTypeLoading] = useState(false);
@@ -163,6 +166,8 @@ const verifierReponse = (reponse) => {
     const newConsecutives = bonnesConsecutives + 1;
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
+    localStorage.setItem('quiz_consecutives_permis', newConsecutives);
+
     localStorage.setItem('quiz_score', newScore);
     
     // Passage au niveau supérieur après 20 bonnes réponses consécutives
