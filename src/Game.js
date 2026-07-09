@@ -13,6 +13,15 @@ export default function Game({ onBack }) {
   const [iaQuestion, setIaQuestion] = useState('');
   const [iaResult, setIaResult] = useState('');
   const [iaLoading, setIaLoading] = useState(false);
+  const [quizType, setQuizType] = useState('gaming');
+const [quizQuestion, setQuizQuestion] = useState(null);
+const [quizReponse, setQuizReponse] = useState('');
+const [quizLoading, setQuizLoading] = useState(false);
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('gaming_quiz_score') || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('gaming_quiz_total') || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('gaming_quiz_niveau') || '1'));
+const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+
 
   /* eslint-disable react-hooks/exhaustive-deps */
 useEffect(() => {
@@ -73,7 +82,12 @@ const genres = [
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          messages: [{
+  model: 'llama-3.3-70b-versatile',
+  temperature: 1,
+  seed: Date.now(),
+  messages: [{
+
+
             role: 'user',
             content: `Tu es exclusivement un expert gaming et esports dans l'app MacAlfer.
 
@@ -93,6 +107,59 @@ Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
     setIaLoading(false);
   };
 
+const genererQuizQuestion = async () => {
+  setQuizLoading(true);
+  setQuizReponse('');
+  setQuizQuestion(null);
+  try {
+    const niveauLabel = quizNiveau === 1 ? 'DÉBUTANT' : quizNiveau === 2 ? 'INTERMÉDIAIRE' : 'EXPERT';
+    const sujet = quizType === 'gaming' ? 'jeux vidéo, consoles, personnages, studios, esports, histoire du gaming' : 'manga, anime, personnages, auteurs, studios d\'animation, histoire du manga et anime';
+    const response = await fetch(`${SERVER}/api/claude`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Génère une question UNIQUE de niveau ${niveauLabel} sur : ${sujet}. Ne répète jamais les mêmes questions. Seed unique: ${quizType}-${Date.now()}-${Math.random()}.
+
+
+Réponds UNIQUEMENT en JSON :
+{"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
+        }]
+      })
+    });
+    const data = await response.json();
+    const clean = data.content[0].text.replace(/```json|```/g, '').trim();
+    setQuizQuestion(JSON.parse(clean));
+  } catch {
+    setQuizQuestion(null);
+  }
+  setQuizLoading(false);
+};
+
+const verifierQuizReponse = (reponse) => {
+  setQuizReponse(reponse);
+  const newTotal = quizTotal + 1;
+  setQuizTotal(newTotal);
+  localStorage.setItem('gaming_quiz_total', newTotal);
+  if (reponse[0] === quizQuestion.bonne_reponse) {
+    const newScore = quizScore + 1;
+    const newConsecutives = bonnesConsecutives + 1;
+    setQuizScore(newScore);
+    setBonnesConsecutives(newConsecutives);
+    localStorage.setItem('gaming_quiz_score', newScore);
+    if (newConsecutives >= 20 && quizNiveau < 3) {
+      const newNiveau = quizNiveau + 1;
+      setQuizNiveau(newNiveau);
+      setBonnesConsecutives(0);
+      localStorage.setItem('gaming_quiz_niveau', newNiveau);
+    }
+  } else {
+    setBonnesConsecutives(0);
+  }
+};
+
+
   return (
     <div style={{ padding: '10px' }}>
       <button onClick={onBack} style={styles.backBtn}>← Retour</button>
@@ -111,6 +178,8 @@ Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
           { id: 'recherche', label: '🔍 Recherche' },
           { id: 'sorties', label: '📅 Sorties' },
           { id: 'ia', label: '🤖 IA Gaming' },
+          { id: 'quiz', label: '🎯 Quiz' },
+
         ].map(s => (
           <button key={s.id} onClick={() => setSection(s.id)}
             style={{ ...styles.navBtn, ...(section === s.id ? styles.navBtnActive : {}), fontSize: 11 }}>
@@ -344,11 +413,86 @@ Sois précis, enthousiaste et donne des conseils pratiques. Maximum 300 mots.`
               </div>
             </div>
           )}
-        </div>
+                </div>
       )}
+
+      {/* QUIZ GAMING & MANGA */}
+      {section === 'quiz' && (
+
+  <div>
+    <div style={styles.card}>
+      <div style={styles.cardTitle}>🎯 Quiz Gaming & Manga</div>
+      
+      {/* Sélection type */}
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        {[{ id: 'gaming', label: '🎮 Gaming' }, { id: 'manga', label: '🈵 Manga/Anime' }].map(t => (
+          <button key={t.id} onClick={() => { setQuizType(t.id); setQuizQuestion(null); setQuizReponse(''); }}
+            style={{ flex: 1, padding: '8px', borderRadius: 8, border: 'none', background: quizType === t.id ? '#7928ca' : '#333', color: 'white', cursor: 'pointer', fontWeight: quizType === t.id ? 700 : 400, fontSize: 13 }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div>
+          <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
+          <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
+            {quizNiveau === 1 ? '🟢 Débutant' : quizNiveau === 2 ? '🟡 Intermédiaire' : '🔴 Expert'}
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+            {20 - bonnesConsecutives} pour niveau suivant
+          </span>
+          <button onClick={() => { 
+            setQuizScore(0); setQuizTotal(0); setQuizQuestion(null); 
+            setQuizReponse(''); setBonnesConsecutives(0); setQuizNiveau(1);
+            localStorage.removeItem('gaming_quiz_score');
+            localStorage.removeItem('gaming_quiz_total');
+            localStorage.removeItem('gaming_quiz_niveau');
+          }} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+
+      <button style={styles.searchBtn} onClick={genererQuizQuestion} disabled={quizLoading}>
+        {quizLoading ? '⏳ Génération...' : quizQuestion ? '➡️ Question suivante' : '🎯 Commencer le quiz'}
+      </button>
+    </div>
+
+    {quizQuestion && (
+      <div style={styles.card}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, marginBottom: 16 }}>{quizQuestion.question}</div>
+        {quizQuestion.reponses.map((r, i) => {
+          let bg = 'rgba(255,255,255,0.05)';
+          if (quizReponse) {
+            if (r[0] === quizQuestion.bonne_reponse) bg = 'rgba(46,204,113,0.3)';
+            else if (r === quizReponse) bg = 'rgba(231,76,60,0.3)';
+          }
+          return (
+            <button key={i} onClick={() => !quizReponse && verifierQuizReponse(r)}
+              style={{ width: '100%', background: bg, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 14px', color: 'white', cursor: quizReponse ? 'default' : 'pointer', fontSize: 13, marginBottom: 8, textAlign: 'left' }}>
+              {r}
+            </button>
+          );
+        })}
+        {quizReponse && (
+          <div style={{ marginTop: 12, padding: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+            <div style={{ color: quizReponse[0] === quizQuestion.bonne_reponse ? '#2ecc71' : '#e74c3c', fontWeight: 700, marginBottom: 6 }}>
+              {quizReponse[0] === quizQuestion.bonne_reponse ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{quizQuestion.explication}</div>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+)}
     </div>
   );
 }
+
 
 const styles = {
   backBtn: { background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '10px 20px', borderRadius: 10, cursor: 'pointer', fontSize: 14, marginBottom: 20 },

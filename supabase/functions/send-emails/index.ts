@@ -35,7 +35,7 @@ serve(async (req) => {
     if (type === "trial_expired") {
   await sendEmail(
     email,
-    "⏰ Votre essai MacAlfer a expiré",
+    "⏰ Votre essai Macaifer a expiré",
     `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
       <div style="text-align: center; margin-bottom: 32px;">
@@ -43,7 +43,7 @@ serve(async (req) => {
         <h1 style="color: #f0b429; font-size: 24px; margin: 16px 0;">Votre essai gratuit est terminé</h1>
       </div>
       <p>Bonjour 👋</p>
-      <p>Votre essai gratuit de 48h sur MacAlfer est maintenant terminé.</p>
+      <p>Votre essai gratuit de 48h sur Macaifer est maintenant terminé.</p>
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">💎 Passez Premium à 4,99€/mois :</p>
         <ul style="color: #94a3b8; line-height: 2;">
@@ -62,7 +62,7 @@ serve(async (req) => {
 </a>
 
       </div>
-      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
+      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">Macaifer — Le couteau suisse numérique du quotidien 🇨🇭</p>
     </div>
     `
   );
@@ -72,7 +72,7 @@ serve(async (req) => {
     if (type === "welcome") {
   await sendEmail(
     email,
-    "🤖 Bienvenue sur MacAlfer !",
+    "🤖 Bienvenue sur Macaifer !",
     `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
       <div style="text-align: center; margin-bottom: 32px;">
@@ -80,7 +80,7 @@ serve(async (req) => {
         <h1 style="color: #f0b429; font-size: 28px; margin: 16px 0;">Bienvenue sur MacAlfer !</h1>
       </div>
       <p>Bonjour 👋</p>
-      <p>Votre compte MacAlfer a été créé avec succès !</p>
+      <p>Votre compte Macaifer a été créé avec succès !</p>
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">✨ Votre essai gratuit 48h commence maintenant :</p>
         <ul style="color: #94a3b8; line-height: 2;">
@@ -92,8 +92,8 @@ serve(async (req) => {
       </div>
       <p style="color: #94a3b8;">Après 48h, passez Premium à 4,99€/mois pour continuer à profiter de tous les assistants !</p>
       <div style="text-align: center; margin-top: 32px;">
-        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
-          🚀 Découvrir MacAlfer
+        <a href="https://macaifer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+          🚀 Découvrir Macaifer
         </a>
       </div>
       <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
@@ -141,7 +141,7 @@ serve(async (req) => {
 if (type === "cancel_premium") {
   await sendEmail(
     email,
-    "😢 Votre abonnement MacAlfer Premium a été résilié",
+    "😢 Votre abonnement Macaifer Premium a été résilié",
     `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
       <div style="text-align: center; margin-bottom: 32px;">
@@ -160,7 +160,7 @@ if (type === "cancel_premium") {
       </div>
       <p style="color: #94a3b8;">Vous pouvez vous réabonner à tout moment pour retrouver tous vos assistants !</p>
       <div style="text-align: center; margin-top: 32px;">
-        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+        <a href="https://macaifer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
           🔄 Se réabonner
         </a>
       </div>
