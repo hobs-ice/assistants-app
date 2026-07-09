@@ -39,6 +39,10 @@ const [quizLoading, setQuizLoading] = useState(false);
 const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score') || '0'));
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total') || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau') || '1'));
+const [questionsDejaVues, setQuestionsDejaVues] = useState(() => 
+  JSON.parse(localStorage.getItem('quiz_questions_permis') || '[]')
+);
+
 const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
 const [pays, setPays] = useState('France');
 const [typeResult, setTypeResult] = useState('');
@@ -122,7 +126,10 @@ const genererQuestion = async () => {
       body: JSON.stringify({
         messages: [{
           role: 'user',
-          content: `Génère une question DIFFÉRENTE et UNIQUE de niveau ${niveauLabel} sur le code de la route de ${pays}. Thème aléatoire parmi : priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements. Numéro aléatoire pour varier : ${Math.random()}.
+          content: `Génère une question UNIQUE de niveau ${niveauLabel} sur le code de la route de ${pays}.
+IMPORTANT : Ne génère PAS ces questions déjà posées : ${questionsDejaVues.slice(-5).join(' | ')}
+Seed: ${Date.now()}-${Math.random()}.
+
 
  (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
 Réponds UNIQUEMENT en JSON avec ce format exact :
@@ -132,7 +139,12 @@ Réponds UNIQUEMENT en JSON avec ce format exact :
     });
     const data = await response.json();
     const clean = data.content[0].text.replace(/```json|```/g, '').trim();
-    setQuizQuestion(JSON.parse(clean));
+    const parsed = JSON.parse(clean);
+setQuizQuestion(parsed);
+const newVues = [...questionsDejaVues.slice(-10), parsed.question];
+setQuestionsDejaVues(newVues);
+localStorage.setItem('quiz_questions_permis', JSON.stringify(newVues));
+
   } catch {
     setQuizQuestion(null);
   }
