@@ -43,7 +43,11 @@ const [quizDomaine, setQuizDomaine] = useState('general');
 const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
-const [questionsDejaVues, setQuestionsDejaVues] = useState([]);
+const [questionsDejaVues, setQuestionsDejaVues] = useState(() => 
+  
+  JSON.parse(localStorage.getItem(`quiz_questions_droit_general`) || '[]')
+);
+
 const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_droit_general') || '0'));
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_droit_general') || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_droit_general') || '1'));
@@ -339,7 +343,10 @@ Réponds UNIQUEMENT en JSON :
     const clean = data.text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     setQuizQuestion(parsed);
-    setQuestionsDejaVues(prev => [...prev.slice(-10), parsed.question]);
+    const newVues = [...questionsDejaVues.slice(-10), parsed.question];
+setQuestionsDejaVues(newVues);
+localStorage.setItem(`quiz_questions_droit_${quizDomaine}`, JSON.stringify(newVues));
+
   } catch {
     setQuizQuestion(null);
   }
@@ -714,6 +721,8 @@ const savedNiveau = parseInt(localStorage.getItem(`quiz_niveau_droit_${newDomain
 setQuizScore(savedScore);
 setQuizTotal(savedTotal);
 setQuizNiveau(savedNiveau);
+setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_droit_${newDomaine}`) || '[]'));
+
 
 }}>
         <option value="general">
