@@ -347,7 +347,7 @@ Réponds UNIQUEMENT en JSON :
     const parsed = JSON.parse(clean);
     setQuizQuestion(parsed);
     const newVues = [...questionsDejaVues.slice(-10), parsed.question];
-    console.log('Questions déjà vues:', questionsDejaVues);
+    
 
 setQuestionsDejaVues(newVues);
 localStorage.setItem(`quiz_questions_droit_${quizDomaine}`, JSON.stringify(newVues));
