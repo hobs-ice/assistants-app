@@ -51,7 +51,10 @@ const [questionsDejaVues, setQuestionsDejaVues] = useState(() =>
 const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_droit_general') || '0'));
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_droit_general') || '0'));
 const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_droit_general') || '1'));
-const [bonnesConsecutives, setBonnesConsecutives] = useState(0);
+const [bonnesConsecutives, setBonnesConsecutives] = useState(() => 
+  parseInt(localStorage.getItem(`quiz_consecutives_droit_general`) || '0')
+);
+
 
 
 
@@ -369,6 +372,8 @@ const verifierQuizDroit = (reponse) => {
       setQuizNiveau(newNiveau);
       setBonnesConsecutives(0);
       localStorage.setItem(`quiz_niveau_droit_${quizDomaine}`, newNiveau);
+      localStorage.setItem(`quiz_consecutives_droit_${quizDomaine}`, newConsecutives);
+
     }
   } else {
     setBonnesConsecutives(0);
@@ -721,6 +726,8 @@ const savedNiveau = parseInt(localStorage.getItem(`quiz_niveau_droit_${newDomain
 setQuizScore(savedScore);
 setQuizTotal(savedTotal);
 setQuizNiveau(savedNiveau);
+setBonnesConsecutives(parseInt(localStorage.getItem(`quiz_consecutives_droit_${newDomaine}`) || '0'));
+
 setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_droit_${newDomaine}`) || '[]'));
 
 

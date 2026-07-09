@@ -454,6 +454,8 @@ const verifierQuizReponse = (reponse) => {
   setQuizScore(parseInt(localStorage.getItem(`quiz_score_${t.id}`) || '0'));
   setQuizTotal(parseInt(localStorage.getItem(`quiz_total_${t.id}`) || '0'));
   setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_${t.id}`) || '1'));
+  setBonnesConsecutives(parseInt(localStorage.getItem(`quiz_consecutives_${t.id}`) || '0'));
+
   setBonnesConsecutives(0);
 }}
 
