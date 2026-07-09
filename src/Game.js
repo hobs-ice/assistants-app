@@ -17,7 +17,14 @@ export default function Game({ onBack }) {
 const [quizQuestion, setQuizQuestion] = useState(null);
 const [quizReponse, setQuizReponse] = useState('');
 const [quizLoading, setQuizLoading] = useState(false);
-const [questionsDejaVues, setQuestionsDejaVues] = useState([]);
+const [questionsDejaVues, setQuestionsDejaVues] = useState(() => 
+  JSON.parse(localStorage.getItem(`quiz_questions_gaming`) || '[]')
+);
+const [bonnesConsecutives, setBonnesConsecutives] = useState(() => 
+  parseInt(localStorage.getItem(`quiz_consecutives_${quizType}`) || '0')
+);
+
+
 
 const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem(`quiz_score_gaming`) || '0'));
 const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem(`quiz_total_gaming`) || '0'));
@@ -135,7 +142,11 @@ Réponds UNIQUEMENT en JSON :
     const clean = data.text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     setQuizQuestion(parsed);
-    setQuestionsDejaVues(prev => [...prev.slice(-10), parsed.question]);
+    const newVues = [...questionsDejaVues.slice(-10), parsed.question];
+setQuestionsDejaVues(newVues);
+localStorage.setItem(`quiz_consecutives_${quizType}`, newConsecutives);
+
+
   } catch {
     setQuizQuestion(null);
   }
@@ -436,7 +447,8 @@ const verifierQuizReponse = (reponse) => {
   setQuizType(t.id); 
   setQuizQuestion(null); 
   setQuizReponse('');
-  setQuestionsDejaVues([]);
+  setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_${t.id}`) || '[]'));
+
   setQuizScore(parseInt(localStorage.getItem(`quiz_score_${t.id}`) || '0'));
   setQuizTotal(parseInt(localStorage.getItem(`quiz_total_${t.id}`) || '0'));
   setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_${t.id}`) || '1'));
