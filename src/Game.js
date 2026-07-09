@@ -144,7 +144,7 @@ Réponds UNIQUEMENT en JSON :
     setQuizQuestion(parsed);
     const newVues = [...questionsDejaVues.slice(-10), parsed.question];
 setQuestionsDejaVues(newVues);
-localStorage.setItem(`quiz_consecutives_${quizType}`, newConsecutives);
+
 
 
   } catch {
@@ -164,6 +164,8 @@ const verifierQuizReponse = (reponse) => {
     const newConsecutives = bonnesConsecutives + 1;
     setQuizScore(newScore);
     setBonnesConsecutives(newConsecutives);
+    localStorage.setItem(`quiz_consecutives_${quizType}`, newConsecutives);
+
     localStorage.setItem(`quiz_score_${quizType}`, newScore);
     if (newConsecutives >= 20 && quizNiveau < 6) {
       const newNiveau = quizNiveau + 1;
