@@ -209,6 +209,10 @@ Réponds UNIQUEMENT en JSON :
     const clean = data.text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
     setQuizQuestion(parsed);
+    const shuffled = [...parsed.reponses].sort(() => Math.random() - 0.5);
+const newBonne = shuffled.find(r => r[0] === parsed.bonne_reponse);
+setQuizQuestion({ ...parsed, reponses: shuffled, bonne_reponse: newBonne[0] });
+
     const newVues = [...questionsDejaVues.slice(-10), parsed.question];
     setQuestionsDejaVues(newVues);
     localStorage.setItem(`quiz_questions_${quizCategorie}`, JSON.stringify(newVues));

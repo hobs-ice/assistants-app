@@ -140,6 +140,10 @@ Réponds UNIQUEMENT en JSON avec ce format exact :
     const clean = data.content[0].text.replace(/```json|```/g, '').trim();
     const parsed = JSON.parse(clean);
 setQuizQuestion(parsed);
+const shuffled = [...parsed.reponses].sort(() => Math.random() - 0.5);
+const newBonne = shuffled.find(r => r[0] === parsed.bonne_reponse);
+setQuizQuestion({ ...parsed, reponses: shuffled, bonne_reponse: newBonne[0] });
+
 const newVues = [...questionsDejaVues.slice(-10), parsed.question];
 setQuestionsDejaVues(newVues);
 localStorage.setItem(`quiz_questions_permis_${pays}`, JSON.stringify(newVues));
