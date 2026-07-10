@@ -22,6 +22,18 @@ export default function Films({ onBack }) {
   const [shazamResult, setShazamResult] = useState(null);
   const [shazamLoading, setShazamLoading] = useState(false);
   const [albums, setAlbums] = useState([]);
+  const [quizCategorie, setQuizCategorie] = useState('films');
+const [quizQuestion, setQuizQuestion] = useState(null);
+const [quizReponse, setQuizReponse] = useState('');
+const [quizLoading, setQuizLoading] = useState(false);
+const [questionsDejaVues, setQuestionsDejaVues] = useState(() => 
+  JSON.parse(localStorage.getItem('quiz_questions_films') || '[]')
+);
+const [quizScore, setQuizScore] = useState(() => parseInt(localStorage.getItem('quiz_score_films') || '0'));
+const [quizTotal, setQuizTotal] = useState(() => parseInt(localStorage.getItem('quiz_total_films') || '0'));
+const [quizNiveau, setQuizNiveau] = useState(() => parseInt(localStorage.getItem('quiz_niveau_films') || '1'));
+const [bonnesConsecutives, setBonnesConsecutives] = useState(() => parseInt(localStorage.getItem('quiz_consecutives_films') || '0'));
+
    const rechercher = async () => {
     if (!search.trim()) return;
     setLoading(true);
@@ -168,6 +180,69 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
   }
   setShazamLoading(false);
 };
+
+const genererQuizFilms = async () => {
+  setQuizLoading(true);
+  setQuizReponse('');
+  setQuizQuestion(null);
+  try {
+    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT'];
+    const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+    const categories = {
+      films: 'films, cinéma, réalisateurs, acteurs, oscars, histoire du cinéma',
+      series: 'séries TV, personnages, acteurs, récompenses, streaming',
+      acteurs: 'acteurs et actrices célèbres, leur carrière, leurs films',
+      musique: 'musique, artistes, albums, Grammy, histoire de la musique'
+    };
+    const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: `Génère une question UNIQUE de niveau ${niveauLabel} sur : ${categories[quizCategorie]}.
+IMPORTANT : Ne génère PAS ces questions déjà posées : ${questionsDejaVues.slice(-5).join(' | ')}
+Seed: ${Date.now()}-${Math.random()}.
+Réponds UNIQUEMENT en JSON :
+{"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
+      })
+    });
+    const data = await response.json();
+    const clean = data.text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    setQuizQuestion(parsed);
+    const newVues = [...questionsDejaVues.slice(-10), parsed.question];
+    setQuestionsDejaVues(newVues);
+    localStorage.setItem(`quiz_questions_${quizCategorie}`, JSON.stringify(newVues));
+  } catch {
+    setQuizQuestion(null);
+  }
+  setQuizLoading(false);
+};
+
+const verifierQuizFilms = (reponse) => {
+  setQuizReponse(reponse);
+  const newTotal = quizTotal + 1;
+  setQuizTotal(newTotal);
+  localStorage.setItem(`quiz_total_${quizCategorie}`, newTotal);
+  if (reponse[0] === quizQuestion.bonne_reponse) {
+    const newScore = quizScore + 1;
+    const newConsecutives = bonnesConsecutives + 1;
+    setQuizScore(newScore);
+    setBonnesConsecutives(newConsecutives);
+    localStorage.setItem(`quiz_score_${quizCategorie}`, newScore);
+    localStorage.setItem(`quiz_consecutives_${quizCategorie}`, newConsecutives);
+    if (newConsecutives >= 20 && quizNiveau < 6) {
+      const newNiveau = quizNiveau + 1;
+      setQuizNiveau(newNiveau);
+      setBonnesConsecutives(0);
+      localStorage.setItem(`quiz_niveau_${quizCategorie}`, newNiveau);
+    }
+  } else {
+    setBonnesConsecutives(0);
+    localStorage.setItem(`quiz_consecutives_${quizCategorie}`, 0);
+  }
+};
+
+
   return (
     <div style={{ padding: '10px' }}>
       <button onClick={onBack} style={styles.backBtn}>← Retour</button>
@@ -186,12 +261,102 @@ Identifie le film ou la série et réponds UNIQUEMENT en JSON avec ce format exa
           { id: 'cinema', label: '🎞️ Cinéma' },
           { id: 'musique', label: '🎵 Musique' },
           { id: 'shazam', label: '🔮 Sesha' },
+          { id: 'quiz', label: '🎯 Quiz' },
+
         ].map(s => (
           <button key={s.id} onClick={() => { setSection(s.id); if (s.id === 'cinema') chargerCinema(); }}
             style={{ ...styles.navBtn, ...(section === s.id ? styles.navBtnActive : {}), fontSize: 11 }}>
             {s.label}
           </button>
         ))}
+
+        {/* QUIZ AUDIOVISUEL */}
+{section === 'quiz' && (
+  <div>
+    <div style={styles.card}>
+      <div style={styles.cardTitle}>🎯 Quiz Audiovisuel</div>
+      
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12, flexWrap: 'wrap' }}>
+        {[
+          { id: 'films', label: '🎬 Films' },
+          { id: 'series', label: '📺 Séries' },
+          { id: 'acteurs', label: '🎭 Acteurs' },
+          { id: 'musique', label: '🎵 Musique' },
+        ].map(t => (
+          <button key={t.id} onClick={() => {
+            const newCat = t.id;
+            setQuizCategorie(newCat);
+            setQuizQuestion(null);
+            setQuizReponse('');
+            setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_${newCat}`) || '[]'));
+            setBonnesConsecutives(parseInt(localStorage.getItem(`quiz_consecutives_${newCat}`) || '0'));
+            setQuizScore(parseInt(localStorage.getItem(`quiz_score_${newCat}`) || '0'));
+            setQuizTotal(parseInt(localStorage.getItem(`quiz_total_${newCat}`) || '0'));
+            setQuizNiveau(parseInt(localStorage.getItem(`quiz_niveau_${newCat}`) || '1'));
+          }}
+            style={{ flex: 1, padding: '8px', borderRadius: 8, border: 'none', background: quizCategorie === t.id ? '#8965e0' : '#333', color: 'white', cursor: 'pointer', fontWeight: quizCategorie === t.id ? 700 : 400, fontSize: 12 }}>
+            {t.label}
+          </button>
+        ))}
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div>
+          <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
+          <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
+            {['', '🟢 Débutant', '🟡 Intermédiaire', '🟠 Avancé', '🔴 Difficile', '⚫ Très difficile', '💀 Expert'][quizNiveau] || '🟢 Débutant'}
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>{20 - bonnesConsecutives} pour niveau suivant</span>
+          <button onClick={() => {
+            setQuizScore(0); setQuizTotal(0); setQuizQuestion(null);
+            setQuizReponse(''); setBonnesConsecutives(0); setQuizNiveau(1);
+            localStorage.removeItem(`quiz_score_${quizCategorie}`);
+            localStorage.removeItem(`quiz_total_${quizCategorie}`);
+            localStorage.removeItem(`quiz_niveau_${quizCategorie}`);
+            localStorage.removeItem(`quiz_questions_${quizCategorie}`);
+            localStorage.removeItem(`quiz_consecutives_${quizCategorie}`);
+          }} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 6, padding: '4px 10px', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 11 }}>
+            Réinitialiser
+          </button>
+        </div>
+      </div>
+
+      <button style={styles.searchBtn} onClick={genererQuizFilms} disabled={quizLoading}>
+        {quizLoading ? '⏳ Génération...' : quizQuestion ? '➡️ Question suivante' : '🎯 Commencer le quiz'}
+      </button>
+    </div>
+
+    {quizQuestion && (
+      <div style={styles.card}>
+        <div style={{ color: 'white', fontWeight: 700, fontSize: 15, marginBottom: 16 }}>{quizQuestion.question}</div>
+        {quizQuestion.reponses.map((r, i) => {
+          let bg = 'rgba(255,255,255,0.05)';
+          if (quizReponse) {
+            if (r[0] === quizQuestion.bonne_reponse) bg = 'rgba(46,204,113,0.3)';
+            else if (r === quizReponse) bg = 'rgba(231,76,60,0.3)';
+          }
+          return (
+            <button key={i} onClick={() => !quizReponse && verifierQuizFilms(r)}
+              style={{ width: '100%', background: bg, border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '10px 14px', color: 'white', cursor: quizReponse ? 'default' : 'pointer', fontSize: 13, marginBottom: 8, textAlign: 'left' }}>
+              {r}
+            </button>
+          );
+        })}
+        {quizReponse && (
+          <div style={{ marginTop: 12, padding: 12, background: 'rgba(255,255,255,0.05)', borderRadius: 8 }}>
+            <div style={{ color: quizReponse[0] === quizQuestion.bonne_reponse ? '#2ecc71' : '#e74c3c', fontWeight: 700, marginBottom: 6 }}>
+              {quizReponse[0] === quizQuestion.bonne_reponse ? '✅ Bonne réponse !' : '❌ Mauvaise réponse'}
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: 13 }}>{quizQuestion.explication}</div>
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+)}
+
 
 {/* SHAZAM FILM */}
 {section === 'shazam' && (
