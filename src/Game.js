@@ -123,8 +123,18 @@ const genererQuizQuestion = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT ABSOLU'];
-const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+    const niveaux = [
+  '',
+  'PADAWAN (ex: Quel est le personnage principal de Zelda ? Dans quel manga apparaît Goku ?)',
+  'JEDI (ex: Quelle année sort Super Mario Bros ? Quel studio anime Demon Slayer ?)',
+  'ULTRA-BIG BALL RASENSHURIKEN (ex: Quel est le vrai nom de Solid Snake ? Combien de volumes compte One Piece ?)',
+  'BAJRANG GUN (ex: Quel compositeur a fait la musique de Final Fantasy ? Quel mangaka a créé Berserk ?)',
+  'ULTRA INSTINCT (ex: Quel Easter Egg caché dans GTA San Andreas ? Quel chapitre marque la mort de L dans Death Note ?)',
+  'ATHENA EXCLAMATION (ex: Combien de lignes de code contient le premier Doom ? Quel est le nom complet de Monkey D. Luffy en japonais ?)'
+];
+
+const niveauLabel = niveaux[quizNiveau] || niveaux[1];
+
 
     const sujet = quizType === 'gaming' ? 'jeux vidéo, consoles, personnages, studios, esports, histoire du gaming' : 'manga, anime, personnages, auteurs, studios d\'animation, histoire du manga et anime';
     const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {

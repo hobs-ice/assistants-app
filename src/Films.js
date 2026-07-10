@@ -186,8 +186,17 @@ const genererQuizFilms = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT'];
-    const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+    const niveaux = [
+  '',
+  'DÉBUTANT (ex: Quel acteur joue Spider-Man ? Qui réalise Titanic ?)',
+  'INTERMÉDIAIRE (ex: Quelle année sort Le Parrain ? Combien d\'Oscars a gagné La La Land ?)',
+  'AVANCÉ (ex: Quel compositeur a fait la BO de Star Wars ? Qui double Simba en français ?)',
+  'DIFFICILE (ex: Quel film a gagné la Palme d\'Or en 1994 ? Quel acteur a refusé l\'Oscar en 1973 ?)',
+  'TRÈS DIFFICILE (ex: Dans quel film Hitchcock fait-il une apparition à 41 minutes ? Quel est le vrai nom de Cary Grant ?)',
+  'EXPERT ABSOLU (ex: Quel réalisateur a tourné 127 prises pour une scène dans Eyes Wide Shut ? Quelle actrice a été payée 1$ pour un rôle en 1999 ?)'
+];
+const niveauLabel = niveaux[quizNiveau] || niveaux[1];
+
     const categories = {
       films: 'films, cinéma, réalisateurs, acteurs, oscars, histoire du cinéma',
       series: 'séries TV, personnages, acteurs, récompenses, streaming',
@@ -308,7 +317,8 @@ const verifierQuizFilms = (reponse) => {
         <div>
           <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
           <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
-            {['', '🟢 Débutant', '🟡 Intermédiaire', '🟠 Avancé', '🔴 Difficile', '⚫ Très difficile', '💀 Expert'][quizNiveau] || '🟢 Débutant'}
+            {['', '🍿 Spectateur du dimanche', '🎬 Cinéphile', '🎭 Critique de cinéma', '🏆 Membre du jury', '🎬 Réalisateur', '🌟 Légende d\'Hollywood'][quizNiveau] || '🍿 Spectateur du dimanche'}
+
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

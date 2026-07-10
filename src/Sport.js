@@ -175,8 +175,17 @@ const genererQuizSport = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT'];
-    const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+    const niveaux = [
+  '',
+  'DÉBUTANT (ex: Combien de joueurs dans une équipe de foot ? Qui a gagné Roland Garros 2020 ?)',
+  'INTERMÉDIAIRE (ex: Quel pays a gagné le plus de Coupes du Monde ? Quel est le record du 100m ?)',
+  'AVANCÉ (ex: Combien de Grand Chelem a gagné Federer ? Quel club a gagné la Ligue des Champions en 2012 ?)',
+  'DIFFICILE (ex: Quel joueur a marqué le but de la main en 1986 ? Quel nageur a gagné 8 médailles d\'or en 2008 ?)',
+  'TRÈS DIFFICILE (ex: Quel est le record de points en NBA en un match ? Quel pays a remporté la première Coupe du Monde de Rugby ?)',
+  'EXPERT ABSOLU (ex: Quel joueur de tennis a le ratio victoires/défaites le plus élevé de l\'histoire ? Quel coureur a gagné 5 Tours de France consécutifs avant Armstrong ?)'
+];
+const niveauLabel = niveaux[quizNiveau] || niveaux[1];
+
     const sportLabel = sportsPopulaires.find(s => s.id === quizSport)?.label || quizSport;
     const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {
       method: 'POST',
@@ -477,7 +486,8 @@ const verifierQuizSport = (reponse) => {
         <div>
           <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
           <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
-            {['', '🟢 Débutant', '🟡 Intermédiaire', '🟠 Avancé', '🔴 Difficile', '⚫ Très difficile', '💀 Expert'][quizNiveau] || '🟢 Débutant'}
+            {['', '🤸 Amateur', '🏃 Licencié', '🥉 Podium régional', '🏅 Champion national', '🌍 Athlète international', '🐐 GOAT'][quizNiveau] || '🤸 Amateur'}
+
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

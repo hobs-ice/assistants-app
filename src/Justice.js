@@ -322,8 +322,17 @@ RÈGLES STRICTES :
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveaux = ['', 'DÉBUTANT', 'INTERMÉDIAIRE', 'AVANCÉ', 'DIFFICILE', 'TRÈS DIFFICILE', 'EXPERT'];
-    const niveauLabel = niveaux[quizNiveau] || 'DÉBUTANT';
+    const niveaux = [
+  '',
+  'DÉBUTANT (ex: Quel est l\'âge de la majorité en France ? Combien de jours de congés payés par an ?)',
+  'INTERMÉDIAIRE (ex: Quelle est la durée de prescription pour un délit ? Quel délai pour contester un licenciement ?)',
+  'AVANCÉ (ex: Quelle est la différence entre dol et erreur en droit des contrats ? Qu\'est-ce que la subrogation ?)',
+  'DIFFICILE (ex: Dans quel cas peut-on invoquer l\'état de nécessité en droit pénal ? Quelle est la théorie de l\'imprévision ?)',
+  'TRÈS DIFFICILE (ex: Quelle est la différence entre nullité absolue et relative ? Dans quel délai prescrire une action en responsabilité décennale ?)',
+  'EXPERT ABSOLU (ex: Qu\'est-ce que l\'exceptio non adimpleti contractus ? Quelle est la portée de l\'arrêt Blieck de 1991 ?)'
+];
+const niveauLabel = niveaux[quizNiveau] || niveaux[1];
+
     const domaines = {
       general: 'droit général français, droits des citoyens, procédures légales de base',
       travail: 'droit du travail français, contrats, licenciement, congés, salaires',
@@ -750,7 +759,8 @@ setQuestionsDejaVues(JSON.parse(localStorage.getItem(`quiz_questions_droit_${new
         <div>
           <span style={{ color: 'white', fontSize: 13 }}>Score : {quizScore}/{quizTotal}</span>
           <span style={{ marginLeft: 12, fontSize: 11, color: quizNiveau === 1 ? '#2ecc71' : quizNiveau === 2 ? '#f39c12' : '#e74c3c' }}>
-            {['', '🟢 Débutant', '🟡 Intermédiaire', '🟠 Avancé', '🔴 Difficile', '⚫ Très difficile', '💀 Expert'][quizNiveau] || '🟢 Débutant'}
+            {['', '📚 Étudiant en droit', '⚖️ Juriste', '👨‍💼 Avocat', '🏛️ Magistrat', '👨‍⚖️ Président du tribunal', '🏛️ Garde des Sceaux'][quizNiveau] || '📚 Étudiant en droit'}
+
           </span>
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>

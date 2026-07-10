@@ -118,26 +118,32 @@ const genererQuestion = async () => {
   setQuizReponse('');
   setQuizQuestion(null);
   try {
-    const niveauLabel = quizNiveau === 1 ? 'DÉBUTANT (questions simples et basiques)' : quizNiveau === 2 ? 'INTERMÉDIAIRE (questions plus précises avec des chiffres et détails)' : 'EXPERT (questions très difficiles, cas particuliers et exceptions)';
-    const response = await fetch(`${SERVER}/api/claude`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{
-          role: 'user',
-          content: `Génère une question UNIQUE de niveau ${niveauLabel} sur le code de la route de ${pays}.
-IMPORTANT : Ne génère PAS ces questions déjà posées : ${questionsDejaVues.slice(-5).join(' | ')}
+    const niveaux = [
+  '',
+  'DÉBUTANT (ex: Quelle est la vitesse maximale en ville ? Faut-il mettre sa ceinture à l\'arrière ?)',
+  'INTERMÉDIAIRE (ex: Quelle distance de sécurité sur autoroute à 130km/h ? Taux d\'alcool maximum ?)',
+  'AVANCÉ (ex: Dans quel cas peut-on dépasser par la droite ? Quelle priorité à un carrefour sans signalisation ?)',
+  'DIFFICILE (ex: Quelle est la distance d\'arrêt à 90km/h par temps de pluie ? Règle de priorité pour les véhicules d\'urgence ?)',
+  'TRÈS DIFFICILE (ex: Dans quel cas un feu orange fixe oblige-t-il à s\'arrêter ? Quelle signalisation pour une route à double sens sans marquage ?)',
+  'EXPERT ABSOLU (ex: Quelle est la règle exacte pour dépasser un tramway ? Dans quel cas précis peut-on utiliser les voies réservées aux bus ?)'
+];
+const niveauLabel = niveaux[quizNiveau] || niveaux[1];
+
+    const response = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/quiz-ia', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    prompt: `Génère une question UNIQUE de niveau ${niveauLabel} sur le code de la route de ${pays}.
+IMPORTANT : Ne génète PAS ces questions déjà posées : ${questionsDejaVues.slice(-5).join(' | ')}
 Seed: ${Date.now()}-${Math.random()}.
-
-
- (priorités, panneaux, distances, vitesses, stationnement, feux, alcool, équipements, autoroute, nuit, pluie, giratoires, dépassements...).
-Réponds UNIQUEMENT en JSON avec ce format exact :
+Réponds UNIQUEMENT en JSON :
 {"question":"...","reponses":["A. ...","B. ...","C. ...","D. ..."],"bonne_reponse":"A","explication":"..."}`
-        }]
-      })
-    });
-    const data = await response.json();
-    const clean = data.content[0].text.replace(/```json|```/g, '').trim();
+  })
+});
+const data = await response.json();
+const clean = data.text.replace(/```json|```/g, '').trim();
+
+    
     const parsed = JSON.parse(clean);
 setQuizQuestion(parsed);
 const shuffled = [...parsed.reponses].sort(() => Math.random() - 0.5);
