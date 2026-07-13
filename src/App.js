@@ -50,6 +50,25 @@ function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmai
           <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px' }}>
             Déconnexion
           </button>
+          <button onClick={async () => {
+          const message = isPremium 
+  ? 'Vous avez un abonnement Premium actif. Veuillez d\'abord annuler votre abonnement via "Gérer abonnement". Voulez-vous quand même supprimer votre compte ?'
+  : 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.';
+if (window.confirm(message)) {
+
+    const { data: { session } } = await supabase.auth.getSession();
+    await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/delete-account', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: session.user.id })
+    });
+    await supabase.auth.signOut();
+  }
+}} style={{ background: 'none', border: '1px solid rgba(255,0,0,0.3)', borderRadius: 8, color: 'rgba(255,0,0,0.5)', cursor: 'pointer', fontSize: 11, padding: '4px 8px', marginLeft: 8 }}>
+  🗑️ Supprimer compte
+</button>
+
+
         </div>
         {isPremium && (
           <button onClick={async () => {

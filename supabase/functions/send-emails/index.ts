@@ -137,6 +137,30 @@ serve(async (req) => {
         `
       );
     }
+if (type === "delete_account") {
+  await sendEmail(
+    email,
+    "🗑️ Votre compte MacAlfer a été supprimé",
+    `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0f1a; color: #f1f5f9; padding: 40px; border-radius: 16px;">
+      <div style="text-align: center; margin-bottom: 32px;">
+        <div style="font-size: 48px;">👋</div>
+        <h1 style="color: #f1f5f9; font-size: 24px; margin: 16px 0;">Votre compte a été supprimé</h1>
+      </div>
+      <p>Bonjour 👋</p>
+      <p>Votre compte MacAlfer a bien été supprimé. Toutes vos données ont été effacées.</p>
+      <p style="color: #94a3b8;">Nous espérons vous revoir bientôt !</p>
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="https://macalfer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
+          🔄 Créer un nouveau compte
+        </a>
+      </div>
+      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">MacAlfer — Le couteau suisse numérique du quotidien 🇨🇭</p>
+    </div>
+    `
+  );
+}
+
 
 if (type === "cancel_premium") {
   await sendEmail(
