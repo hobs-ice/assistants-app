@@ -127,6 +127,8 @@ if (window.confirm(message)) {
 
 
 function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
 
   if (!hasAccess(id)) return (
     <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -134,32 +136,36 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
         <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
-        <button onClick={async () => {
-          const { data: { session: currentSession } } = await supabase.auth.getSession();
+        {isIOS ? (
+  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 10, marginBottom: 12 }}>
+    Pour vous abonner visitez<br/>
+    <strong style={{ color: '#f0b429' }}>macalfer.com</strong><br/>
+    depuis un navigateur web
+  </div>
+) : (
+  <button onClick={async () => {
+    const { data: { session: currentSession } } = await supabase.auth.getSession();
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        priceId: 'price_1TprDzEH6NYbHRJeb0FeMIYP',
+        userId: currentSession?.user?.id,
+        email: currentSession?.user?.email,
+        successUrl: window.location.origin + '?premium=success',
+        cancelUrl: window.location.origin,
+      })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
+)}
 
-
-  
-  const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/create-checkout', {
-    method: 'POST',
-    headers: { 
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${process.env.REACT_APP_SUPABASE_ANON_KEY}`,
-},
-
-    body: JSON.stringify({
-      priceId: 'price_1TprDzEH6NYbHRJeb0FeMIYP',
-      userId: currentSession?.user?.id,
-      email: currentSession?.user?.email,
-      successUrl: window.location.origin + '?premium=success',
-      cancelUrl: window.location.origin,
-    })
-  });
-  const data = await res.json();
-  if (data.url) window.location.href = data.url;
-}} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
-  💎 Passer Premium — 4,99€/mois
-  
-</button>
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
           ← Retour
