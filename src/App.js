@@ -40,9 +40,12 @@ const assistants = [
 
 
 
-function Home({ onSelect, hasAccess, onLogout, trialExpired, isPremium, userEmail }) {
+function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail }) {
+
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
   return (
+    
     <div className="home">
       <div className="header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -67,30 +70,38 @@ if (window.confirm(message)) {
 }} style={{ background: 'none', border: '1px solid rgba(255,0,0,0.3)', borderRadius: 8, color: 'rgba(255,0,0,0.5)', cursor: 'pointer', fontSize: 11, padding: '4px 8px', marginLeft: 8 }}>
   🗑️ Supprimer compte
 </button>
-
-
         </div>
-        {isPremium && (
-          <button onClick={async () => {
-            const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ email: userEmail, returnUrl: window.location.origin })
-            });
-            const data = await res.json();
-            if (data.url) window.location.href = data.url;
-          }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8 }}>
-            💎 Gérer abonnement
-          </button>
-        )}
-        <p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé — Passez Premium !' : '✨ Essai gratuit 48h actif'}</p>
 
+        {isPremium && !isIOS && (
 
+  <button onClick={async () => {
+    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail, returnUrl: window.location.origin })
+    });
+    const data = await res.json();
+    if (data.url) window.location.href = data.url;
+  }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8 }}>
+    💎 Gérer abonnement
+  </button>
+)}
+{!isPremium && !isIOS && trialExpired && (
+  <button onClick={onSubscribe}
+ style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
+)}
+{!isPremium && isIOS && trialExpired && (
+  <p style={{ fontSize: 11, color: '#888', textAlign: 'center' }}>
+    Pour vous abonner visitez macalfer.com
+  </p>
+)}
+<p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé' : '✨ Essai gratuit 48h actif'}</p>
       </div>
 
-
-
       <div className="grid">
+
         {assistants.map(a => {
           const accessible = hasAccess(a.id);
           return (
@@ -253,7 +264,8 @@ return (
       {current ? (
         <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
       ) : (
-        <Home onSelect={setCurrent} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
+        <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
+
       )}
     </div>
   ); 
