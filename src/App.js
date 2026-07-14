@@ -137,11 +137,12 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         {isIOS ? (
-  <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 10, marginBottom: 12 }}>
-    Pour vous abonner visitez<br/>
-    <strong style={{ color: '#f0b429' }}>macalfer.com</strong><br/>
-    depuis un navigateur web
-  </div>
+  <a href="https://macaifer.com" target="_blank" rel="noreferrer" style={{ display: 'block', textDecoration: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 10, marginBottom: 12 }}>
+  Pour vous abonner visitez<br/>
+  <strong style={{ color: '#f0b429' }}>macaifer.com</strong><br/>
+  depuis un navigateur web 🔗
+</a>
+
 ) : (
   <button onClick={async () => {
     const { data: { session: currentSession } } = await supabase.auth.getSession();
