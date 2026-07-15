@@ -10,12 +10,13 @@ const [newPassword, setNewPassword] = useState('');
 
 useEffect(() => {
   const hash = window.location.hash;
-  if (hash && hash.includes('type=recovery')) {
+  const url = window.location.href;
+  if (hash.includes('type=recovery') || url.includes('type=recovery')) {
     setIsReset(true);
-    // Empêcher la connexion automatique
-    supabase.auth.signOut();
+    window.history.replaceState({}, '', window.location.pathname);
   }
 }, []);
+
 
 
   
