@@ -12,7 +12,7 @@ import Game from './Game';
 import Vehicule from './Vehicule';
 import Justice from './Justice';
 import { supabase } from './supabase';
-import { CdvPurchase } from 'cordova-plugin-purchase';
+
 
 import Auth from './Auth';
 import Voyage from './Voyage';
