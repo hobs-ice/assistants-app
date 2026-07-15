@@ -12,8 +12,11 @@ useEffect(() => {
   const hash = window.location.hash;
   if (hash && hash.includes('type=recovery')) {
     setIsReset(true);
+    // Empêcher la connexion automatique
+    supabase.auth.signOut();
   }
 }, []);
+
 
   
   const [email, setEmail] = useState('');
