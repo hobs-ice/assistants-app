@@ -12,6 +12,8 @@ import Game from './Game';
 import Vehicule from './Vehicule';
 import Justice from './Justice';
 import { supabase } from './supabase';
+import { CdvPurchase } from 'cordova-plugin-purchase';
+
 import Auth from './Auth';
 import Voyage from './Voyage';
 import Permis from './Permis';
@@ -92,6 +94,26 @@ if (window.confirm(message)) {
     💎 Passer Premium — 4,99€/mois
   </button>
 )}
+
+{!isPremium && !isIOS && trialExpired && (
+  <button onClick={onSubscribe}
+    style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
+)}
+{!isPremium && isIOS && trialExpired && (
+  <button onClick={() => {
+    if (window.CdvPurchase) {
+      const store = window.CdvPurchase.store;
+      const product = store.get('com.macalfer.app.premium.monthly');
+      if (product) product.getOffer()?.order();
+    }
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
+)}
+
+
 {!isPremium && isIOS && trialExpired && (
   <p style={{ fontSize: 11, color: '#888', textAlign: 'center' }}>
     Pour vous abonner visitez macalfer.com
@@ -236,6 +258,31 @@ function App() {
   }
 };
 
+useEffect(() => {
+  if (window.CdvPurchase) {
+    const store = window.CdvPurchase.store;
+    
+    store.register([{
+      id: 'com.macalfer.app.premium.monthly',
+      type: window.CdvPurchase.ProductType.PAID_SUBSCRIPTION,
+      platform: window.CdvPurchase.Platform.APPLE_APPSTORE,
+    }]);
+
+    store.when()
+      .productUpdated(() => {})
+      .approved(async (transaction) => {
+        await transaction.verify();
+        await transaction.finish();
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          await supabase.from('profiles').update({ is_premium: true }).eq('id', session.user.id);
+          window.location.reload();
+        }
+      });
+
+    store.initialize([window.CdvPurchase.Platform.APPLE_APPSTORE]);
+  }
+}, []);
 
 
 
