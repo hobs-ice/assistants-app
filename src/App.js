@@ -75,7 +75,6 @@ if (window.confirm(message)) {
         </div>
 
         {isPremium && !isIOS && (
-
   <button onClick={async () => {
     const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
       method: 'POST',
@@ -88,20 +87,14 @@ if (window.confirm(message)) {
     💎 Gérer abonnement
   </button>
 )}
-{!isPremium && !isIOS && trialExpired && (
-  <button onClick={onSubscribe}
- style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+
+{!isPremium && trialExpired && !isIOS && (
+  <button onClick={onSubscribe} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
     💎 Passer Premium — 4,99€/mois
   </button>
 )}
 
-{!isPremium && !isIOS && trialExpired && (
-  <button onClick={onSubscribe}
-    style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
-  </button>
-)}
-{!isPremium && isIOS && trialExpired && (
+{!isPremium && trialExpired && isIOS && (
   <button onClick={() => {
     if (window.CdvPurchase) {
       const store = window.CdvPurchase.store;
@@ -113,13 +106,8 @@ if (window.confirm(message)) {
   </button>
 )}
 
-
-{!isPremium && isIOS && trialExpired && (
-  <p style={{ fontSize: 11, color: '#888', textAlign: 'center' }}>
-    Pour vous abonner visitez macalfer.com
-  </p>
-)}
 <p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé' : '✨ Essai gratuit 48h actif'}</p>
+
       </div>
 
       <div className="grid">
