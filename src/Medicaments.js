@@ -323,7 +323,7 @@ IMPORTANT : Rappelle toujours de consulter un médecin ou pharmacien.`
           📷 Prenez en photo un médicament — l'IA l'identifie et vous donne toutes les informations !
         </p>
       </div>
-      <input type="file" accept="image/*" capture="environment" onChange={async e => {
+      <input type="file" accept="image/*" onChange={async e => {
         const file = e.target.files[0];
         if (!file) return;
         const canvas = document.createElement('canvas');

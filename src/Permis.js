@@ -396,7 +396,7 @@ Explique-moi tout sur le permis ${typePermis} en France :
       <div style={{ ...styles.result, marginBottom: 12, fontSize: 12 }}>
         📷 Prenez en photo un panneau de signalisation — l'IA l'identifie et explique sa signification !
       </div>
-      <input type="file" accept="image/*" capture="environment" onChange={async e => {
+      <input type="file" accept="image/*" onChange={async e => {
         const file = e.target.files[0];
         if (!file) return;
         const canvas = document.createElement('canvas');

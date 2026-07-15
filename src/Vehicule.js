@@ -467,7 +467,7 @@ setPieceNom(nom);
         </p>
       </div>
 
-      <input type="file" accept="image/*" capture="environment" onChange={async e => {
+      <input type="file" accept="image/*" onChange={async e => {
   const file = e.target.files[0];
   if (!file) return;
   const canvas = document.createElement('canvas');
