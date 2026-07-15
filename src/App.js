@@ -289,7 +289,9 @@ useEffect(() => {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (!session) return <Auth />;
+  const isRecovery = window.location.hash?.includes('type=recovery');
+if (!session || isRecovery) return <Auth />;
+
   const trialExpired = profile && !profile.is_premium && 
   profile.trial_started_at && 
   new Date() - new Date(profile.trial_started_at) > 48 * 60 * 60 * 1000;
