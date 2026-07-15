@@ -286,10 +286,16 @@ useEffect(() => {
   if (session) loadProfile(session.user.id, session);
 });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'PASSWORD_RECOVERY') {
+    setSession(null);
+    localStorage.setItem('isRecovery', 'true');
+    return;
+  }
   setSession(session);
   if (session) loadProfile(session.user.id, session);
 });
+
 
     return () => subscription.unsubscribe();
   }, []);
