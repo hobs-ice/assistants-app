@@ -277,11 +277,11 @@ useEffect(() => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
   // Ne pas connecter si c'est un reset password
-  const url = window.location.href;
-  if (url.includes('type=recovery')) {
-    setSession(null);
-    return;
-  }
+  if (localStorage.getItem('isRecovery') === 'true') {
+  setSession(null);
+  return;
+}
+
   setSession(session);
   if (session) loadProfile(session.user.id, session);
 });

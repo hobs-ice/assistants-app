@@ -10,12 +10,14 @@ const [newPassword, setNewPassword] = useState('');
 
 useEffect(() => {
   const hash = window.location.hash;
-  const url = window.location.href;
-  if (hash.includes('type=recovery') || url.includes('type=recovery')) {
+  if (hash.includes('type=recovery')) {
+    localStorage.setItem('isRecovery', 'true');
     setIsReset(true);
-    window.history.replaceState({}, '', window.location.pathname);
+  } else if (localStorage.getItem('isRecovery') === 'true') {
+    setIsReset(true);
   }
 }, []);
+
 
 
 
@@ -70,7 +72,12 @@ if (isReset) return (
       <button onClick={async () => {
         const { error } = await supabase.auth.updateUser({ password: newPassword });
         if (error) alert('Erreur: ' + error.message);
-        else { alert('✅ Mot de passe mis à jour !'); setIsReset(false); }
+        else { 
+  localStorage.removeItem('isRecovery');
+  alert('✅ Mot de passe mis à jour !'); 
+  setIsReset(false); 
+}
+
       }} style={{ width: '100%', background: '#f0b429', border: 'none', borderRadius: 8, padding: 14, color: '#080b12', fontWeight: 700, cursor: 'pointer' }}>
         Mettre à jour le mot de passe
       </button>
