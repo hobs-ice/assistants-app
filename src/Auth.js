@@ -3,13 +3,26 @@ import { supabase } from './supabase';
 import Legal from './Legal';
 
 
-export default function Auth() {
+export default function Auth() { 
+  const [isReset, setIsReset] = useState(false);
+const [newPassword, setNewPassword] = useState('');
+
+useEffect(() => {
+  const hash = window.location.hash;
+  if (hash && hash.includes('type=recovery')) {
+    setIsReset(true);
+  }
+}, []);
+
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [showLegal, setShowLegal] = useState(null);
+  
+
 
 
   const handleAuth = async () => {
@@ -41,6 +54,26 @@ export default function Auth() {
     }
     setLoading(false);
   };
+
+if (isReset) return (
+  <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+    <div style={{ maxWidth: 400, width: '100%', background: '#1a1a2e', borderRadius: 16, padding: 32 }}>
+      <h2 style={{ color: 'white', marginBottom: 24 }}>🔑 Nouveau mot de passe</h2>
+      <input type="password" placeholder="Nouveau mot de passe"
+        value={newPassword} onChange={e => setNewPassword(e.target.value)}
+        style={{ width: '100%', background: '#0a0f1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '12px 16px', color: 'white', fontSize: 14, outline: 'none', marginBottom: 12, boxSizing: 'border-box' }} />
+      <button onClick={async () => {
+        const { error } = await supabase.auth.updateUser({ password: newPassword });
+        if (error) alert('Erreur: ' + error.message);
+        else { alert('✅ Mot de passe mis à jour !'); setIsReset(false); }
+      }} style={{ width: '100%', background: '#f0b429', border: 'none', borderRadius: 8, padding: 14, color: '#080b12', fontWeight: 700, cursor: 'pointer' }}>
+        Mettre à jour le mot de passe
+      </button>
+    </div>
+  </div>
+);
+
+
 if (showLegal) return <Legal type={showLegal} onBack={() => setShowLegal(null)} />;
 
   return (
