@@ -147,12 +147,15 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         {isIOS ? (
-  <a href="https://macaifer.com" target="_blank" rel="noreferrer" style={{ display: 'block', textDecoration: 'none', color: 'rgba(255,255,255,0.5)', fontSize: 14, textAlign: 'center', padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 10, marginBottom: 12 }}>
-  Pour vous abonner visitez<br/>
-  <strong style={{ color: '#f0b429' }}>macaifer.com</strong><br/>
-  depuis un navigateur web 🔗
-</a>
-
+  <button onClick={() => {
+    if (window.CdvPurchase) {
+      const store = window.CdvPurchase.store;
+      const product = store.get('com.macaifer.app.premium.monthly');
+      if (product) product.getOffer()?.order();
+    }
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
 ) : (
   <button onClick={async () => {
     const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -176,6 +179,7 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
     💎 Passer Premium — 4,99€/mois
   </button>
 )}
+
 
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
