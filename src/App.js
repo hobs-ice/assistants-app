@@ -12,6 +12,8 @@ import Game from './Game';
 import Vehicule from './Vehicule';
 import Justice from './Justice';
 import { supabase } from './supabase';
+import { Browser } from '@capacitor/browser';
+
 
 
 import Auth from './Auth';
@@ -95,17 +97,12 @@ if (window.confirm(message)) {
   </button>
 )}
 
-{!isPremium && trialExpired && (
-  <div style={{ textAlign: 'center', marginTop: 8 }}>
-    <a href="https://macalfer.com/privacy.html" target="_blank" rel="noreferrer"
-      style={{ color: '#666', fontSize: 10, marginRight: 8 }}>
-      Confidentialité
-    </a>
-    <a href="https://macalfer.com/terms.html" target="_blank" rel="noreferrer"
-      style={{ color: '#666', fontSize: 10 }}>
-      CGU
-    </a>
-  </div>
+{!isPremium && trialExpired && isIOS && (
+  <button onClick={() => {
+    if (iapProduct) iapProduct.getOffer()?.order();
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
 )}
 
 
@@ -204,16 +201,21 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
 
 
 {!isPremium && trialExpired && (
-  <div style={{ textAlign: 'center', marginTop: 8 }}>
-    <a href="https://macalfer.com/privacy.html" target="_blank" rel="noreferrer"
-      style={{ color: '#666', fontSize: 10, marginRight: 8 }}>
-      Confidentialité
-    </a>
-    <a href="https://macalfer.com/terms.html" target="_blank" rel="noreferrer"
-      style={{ color: '#666', fontSize: 10 }}>
-      CGU
-    </a>
-  </div>
+  <div style={{ marginTop: 16, marginBottom: 16, textAlign: 'center' }}>
+  <span onClick={() => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    isIOS ? Browser.open({ url: 'https://macaifer.com/privacy.html' }) : window.open('https://macaifer.com/privacy.html', '_blank');
+  }} style={{ color: '#666', fontSize: 11, marginRight: 12, cursor: 'pointer', textDecoration: 'underline' }}>
+    Politique de confidentialité
+  </span>
+  <span onClick={() => {
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    isIOS ? Browser.open({ url: 'https://macaifer.com/terms.html' }) : window.open('https://macaifer.com/terms.html', '_blank');
+  }} style={{ color: '#666', fontSize: 11, cursor: 'pointer', textDecoration: 'underline' }}>
+    Conditions d'utilisation
+  </span>
+</div>
+
 )}
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
