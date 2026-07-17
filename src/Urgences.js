@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Browser } from '@capacitor/browser';
-import { Geolocation } from '@capacitor/geolocation';
+
 
 
 
@@ -170,7 +170,7 @@ export default function Urgences({ onBack, isPremium }) {
 
   const [section, setSection] = useState('accueil');
   const [selectedGeste, setSelectedGeste] = useState(null);
-  const [loadingGeo, setLoadingGeo] = useState(false);
+ 
 
   return (
     <div style={{ padding: '10px' }}>
@@ -246,7 +246,8 @@ export default function Urgences({ onBack, isPremium }) {
 }}
 
   style={{ ...styles.locBtn, background: 'linear-gradient(135deg, #e74c3c, #c0392b)', border: 'none', cursor: 'pointer' }}>
-  {loadingGeo ? '📍 Localisation...' : '💓 Défibrillateur proche'}
+  💓 Défibrillateur proche
+
 </button>
 
           

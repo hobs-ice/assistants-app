@@ -95,6 +95,20 @@ if (window.confirm(message)) {
   </button>
 )}
 
+{!isPremium && trialExpired && (
+  <div style={{ textAlign: 'center', marginTop: 8 }}>
+    <a href="https://macalfer.com/privacy.html" target="_blank" rel="noreferrer"
+      style={{ color: '#666', fontSize: 10, marginRight: 8 }}>
+      Confidentialité
+    </a>
+    <a href="https://macalfer.com/terms.html" target="_blank" rel="noreferrer"
+      style={{ color: '#666', fontSize: 10 }}>
+      CGU
+    </a>
+  </div>
+)}
+
+
 {!isPremium && trialExpired && isIOS && (
 <button onClick={async () => {
   if (window.CdvPurchase) {
@@ -189,6 +203,18 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
 )}
 
 
+{!isPremium && trialExpired && (
+  <div style={{ textAlign: 'center', marginTop: 8 }}>
+    <a href="https://macalfer.com/privacy.html" target="_blank" rel="noreferrer"
+      style={{ color: '#666', fontSize: 10, marginRight: 8 }}>
+      Confidentialité
+    </a>
+    <a href="https://macalfer.com/terms.html" target="_blank" rel="noreferrer"
+      style={{ color: '#666', fontSize: 10 }}>
+      CGU
+    </a>
+  </div>
+)}
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
           ← Retour
