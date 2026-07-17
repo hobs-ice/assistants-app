@@ -21,6 +21,7 @@ import Permis from './Permis';
 
 
 
+
 const assistants = [
   { id: 'medicaments', emoji: '💊', title: 'Médicaments', desc: 'Posologie, recommandations, pharmacies', color: '#667eea' },
   { id: 'nutrition', emoji: '🥗', title: 'Nutrition', desc: 'Calories, aliments, conseils nutritionnels', color: '#43e97b' },
@@ -42,7 +43,7 @@ const assistants = [
 
 
 
-function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail }) {
+function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail, iapProduct }) {
 
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -95,15 +96,18 @@ if (window.confirm(message)) {
 )}
 
 {!isPremium && trialExpired && isIOS && (
-  <button onClick={() => {
-    if (window.CdvPurchase) {
-      const store = window.CdvPurchase.store;
-      const product = store.get('com.macalfer.app.premium.monthly');
-      if (product) product.getOffer()?.order();
-    }
-  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
-  </button>
+<button onClick={async () => {
+  if (window.CdvPurchase) {
+    const store = window.CdvPurchase.store;
+    await store.update();
+    const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
+   
+    if (product) product.getOffer()?.order();
+  }
+}} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+  💎 Passer Premium — 4,99€/mois
+</button>
+
 )}
 
 <p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé' : '✨ Essai gratuit 48h actif'}</p>
@@ -147,15 +151,19 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         {isIOS ? (
-  <button onClick={() => {
-    if (window.CdvPurchase) {
-      const store = window.CdvPurchase.store;
-      const product = store.get('com.macaifer.app.premium.monthly');
-      if (product) product.getOffer()?.order();
-    }
-  }} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
-    💎 Passer Premium — 4,99€/mois
-  </button>
+  <button onClick={async () => {
+  if (window.CdvPurchase) {
+    const store = window.CdvPurchase.store;
+    await store.update();
+    const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
+    
+    if (product) product.getOffer()?.order();
+  }
+}} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+  💎 Passer Premium — 4,99€/mois
+</button>
+
+
 ) : (
   <button onClick={async () => {
     const { data: { session: currentSession } } = await supabase.auth.getSession();
@@ -228,6 +236,8 @@ function App() {
   const [session, setSession] = useState(null);
   const [current, setCurrent] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [iapProduct, setIapProduct] = useState(null);
+
   
 
   
@@ -260,8 +270,12 @@ useEffect(() => {
       platform: window.CdvPurchase.Platform.APPLE_APPSTORE,
     }]);
 
-    store.when()
-      .productUpdated(() => {})
+   store.when()
+  .productUpdated((product) => {
+    
+    setIapProduct(product);
+  })
+
       .approved(async (transaction) => {
         await transaction.verify();
         await transaction.finish();
@@ -324,7 +338,8 @@ return (
       {current ? (
         <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
       ) : (
-        <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} />
+        <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} />
+
 
       )}
     </div>
