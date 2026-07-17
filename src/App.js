@@ -98,15 +98,6 @@ if (window.confirm(message)) {
 )}
 
 {!isPremium && trialExpired && isIOS && (
-  <button onClick={() => {
-    if (iapProduct) iapProduct.getOffer()?.order();
-  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
-  </button>
-)}
-
-
-{!isPremium && trialExpired && isIOS && (
 <button onClick={async () => {
   if (window.CdvPurchase) {
     const store = window.CdvPurchase.store;
