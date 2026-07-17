@@ -1,14 +1,21 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.macaifer.app',
-  appName: 'Macaifer',
+  appId: 'com.macalfer.app',
+  appName: 'MacAlfer',
   webDir: 'build',
   ios: {
     scrollEnabled: true,
-    contentInset: 'always'
+    contentInset: 'always',
+    allowsLinkPreview: false
+  },
+  plugins: {
+    Browser: {
+      presentationStyle: 'fullscreen'
+    }
   }
 };
+
 
 export default config;
 

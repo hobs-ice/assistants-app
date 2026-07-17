@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { Browser } from '@capacitor/browser';
+import { Geolocation } from '@capacitor/geolocation';
+
+
+
 
 const numerosUrgence = [
   { numero: '15', label: 'SAMU', desc: 'Urgences médicales', color: '#e74c3c', emoji: '🏥' },
@@ -165,6 +170,7 @@ export default function Urgences({ onBack, isPremium }) {
 
   const [section, setSection] = useState('accueil');
   const [selectedGeste, setSelectedGeste] = useState(null);
+  const [loadingGeo, setLoadingGeo] = useState(false);
 
   return (
     <div style={{ padding: '10px' }}>
@@ -218,27 +224,31 @@ export default function Urgences({ onBack, isPremium }) {
             💊 Pharmacie de garde
           </a>
           <button
-  onClick={(e) => {
+  onClick={async (e) => {
   e.preventDefault();
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-        window.open(`https://openaedmap.org/en/#map=15/${lat}/${lng}`, '_blank');
-      },
-      () => {
-        window.open('https://openaedmap.org', '_blank');
-      }
-    );
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  if (isIOS) {
+    await Browser.open({ url: 'https://openaedmap.org' });
   } else {
-    window.open('https://openaedmap.org', '_blank');
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          window.open(`https://openaedmap.org/en/#map=15/${lat}/${lng}`, '_blank');
+        },
+        () => window.open('https://openaedmap.org', '_blank')
+      );
+    } else {
+      window.open('https://openaedmap.org', '_blank');
+    }
   }
 }}
 
   style={{ ...styles.locBtn, background: 'linear-gradient(135deg, #e74c3c, #c0392b)', border: 'none', cursor: 'pointer' }}>
-  💓 Défibrillateur proche
+  {loadingGeo ? '📍 Localisation...' : '💓 Défibrillateur proche'}
 </button>
+
           
           <a href="https://www.google.com/maps/search/urgences+hôpital"
             target="_blank" rel="noreferrer"
