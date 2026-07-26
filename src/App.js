@@ -13,6 +13,7 @@ import Vehicule from './Vehicule';
 import Justice from './Justice';
 import { supabase } from './supabase';
 import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 
 
 
@@ -47,7 +48,8 @@ const assistants = [
 
 function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail, iapProduct }) {
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+const isIOS = Capacitor.getPlatform() === 'ios';
 
   return (
     
@@ -98,18 +100,18 @@ if (window.confirm(message)) {
 )}
 
 {!isPremium && trialExpired && isIOS && (
-<button onClick={async () => {
-  if (window.CdvPurchase) {
-    const store = window.CdvPurchase.store;
-    await store.update();
-    const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
-   
-    if (product) product.getOffer()?.order();
-  }
-}} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-  💎 Passer Premium — 4,99€/mois
-</button>
-
+  <button onClick={() => {
+    
+    if (iapProduct) {
+      iapProduct.getOffer()?.order();
+    } else if (window.CdvPurchase) {
+      const store = window.CdvPurchase.store;
+      const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
+      if (product) product.getOffer()?.order();
+    }
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
 )}
 
 <p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé' : '✨ Essai gratuit 48h actif'}</p>
@@ -142,8 +144,8 @@ if (window.confirm(message)) {
 }
 
 
-function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct }) {
+  const isIOS = Capacitor.getPlatform() === 'ios';
 
 
   if (!hasAccess(id)) return (
@@ -153,17 +155,17 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
         <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
         <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
         {isIOS ? (
-  <button onClick={async () => {
-  if (window.CdvPurchase) {
-    const store = window.CdvPurchase.store;
-    await store.update();
-    const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
-    
-    if (product) product.getOffer()?.order();
-  }
-}} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-  💎 Passer Premium — 4,99€/mois
-</button>
+  <button onClick={() => {
+    if (iapProduct) {
+      iapProduct.getOffer()?.order();
+    } else if (window.CdvPurchase) {
+      const store = window.CdvPurchase.store;
+      const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
+      if (product) product.getOffer()?.order();
+    }
+  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    💎 Passer Premium — 4,99€/mois
+  </button>
 
 
 ) : (
@@ -194,13 +196,13 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired }) {
 {!isPremium && trialExpired && (
   <div style={{ marginTop: 16, marginBottom: 16, textAlign: 'center' }}>
   <span onClick={() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIOS = Capacitor.getPlatform() === 'ios';
     isIOS ? Browser.open({ url: 'https://macaifer.com/privacy.html' }) : window.open('https://macaifer.com/privacy.html', '_blank');
   }} style={{ color: '#666', fontSize: 11, marginRight: 12, cursor: 'pointer', textDecoration: 'underline' }}>
     Politique de confidentialité
   </span>
   <span onClick={() => {
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isIOS = Capacitor.getPlatform() === 'ios';
     isIOS ? Browser.open({ url: 'https://macaifer.com/terms.html' }) : window.open('https://macaifer.com/terms.html', '_blank');
   }} style={{ color: '#666', fontSize: 11, cursor: 'pointer', textDecoration: 'underline' }}>
     Conditions d'utilisation
@@ -267,6 +269,7 @@ function App() {
 .select('*').eq('id', userId).single();
   
   if (profileData) {
+    
     setProfile(profileData);
     
   } else {
@@ -291,19 +294,34 @@ useEffect(() => {
 
    store.when()
   .productUpdated((product) => {
+   
     
     setIapProduct(product);
   })
 
-      .approved(async (transaction) => {
-        await transaction.verify();
-        await transaction.finish();
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-          await supabase.from('profiles').update({ is_premium: true }).eq('id', session.user.id);
-          window.location.reload();
-        }
-      });
+     .approved(async (transaction) => {
+  const isMonPremium = transaction.products?.some(p => p.id === 'com.macalfer.app.premium.monthly');
+  if (!isMonPremium) {
+    await transaction.finish();
+    return;
+  }
+  
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    const originalId = transaction.originalTransactionId || transaction.transactionId;
+    console.log('💰 Premium activé | originalTransactionId:', originalId);
+    
+    await supabase.from('profiles').update({ 
+      is_premium: true,
+      apple_original_transaction_id: originalId
+    }).eq('id', session.user.id);
+    
+    await loadProfile(session.user.id, session);
+  }
+  await transaction.finish();
+});
+
+
 
     store.initialize([window.CdvPurchase.Platform.APPLE_APPSTORE]);
   }
@@ -355,7 +373,7 @@ const hasAccess = (id) => {
 return (
     <div className="app">
       {current ? (
-        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} />
+        <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} iapProduct={iapProduct} />
       ) : (
         <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} />
 

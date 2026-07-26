@@ -72,6 +72,9 @@ export default function Nutrition({ onBack }) {
   const [scannerActif, setScannerActif] = useState(false);
   const [filtres, setFiltres] = useState([]);
   const [recetteDetail, setRecetteDetail] = useState(null);
+   const [questionProduit, setQuestionProduit] = useState('');
+const [reponseIA, setReponseIA] = useState('');
+const [iaLoading, setIaLoading] = useState(false);
 
   const [recettes, setRecettes] = useState([]);
   const [recettesLoading, setRecettesLoading] = useState(false);
@@ -82,6 +85,7 @@ export default function Nutrition({ onBack }) {
     const imc = (poids / (tailleM * tailleM)).toFixed(1);
     const niveauAct = niveauxActivite.find(n => n.id === activite);
     const obj = objectifs.find(o => o.id === objectif);
+   
 
     
 
@@ -251,6 +255,52 @@ const rechercherRecettes = async () => {
   setRecettesLoading(false);
 };
 
+
+const poserQuestionProduit = async () => {
+  if (!questionProduit.trim() || !alimResult || typeof alimResult !== 'object') return;
+  setIaLoading(true);
+  setReponseIA('');
+  try {
+    const n = alimResult.nutriments || {};
+    const response = await fetch('https://assistants-app-production.up.railway.app/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{
+          role: 'user',
+          content: `Tu es exclusivement un expert en nutrition dans l'app MacAlfer.
+IMPORTANT : Si la question n'est PAS liée à la nutrition ou à l'alimentation, réponds : "Je suis l'assistant Nutrition 🥗 Essayez un autre assistant MacAlfer plus adapté !"
+
+RÈGLE MÉDICALE : Tu ne poses jamais de diagnostic et ne remplaces pas un professionnel de santé. Si la question concerne une pathologie, une allergie, un traitement ou une grossesse, donne l'information nutritionnelle utile puis invite explicitement à consulter un médecin ou un diététicien.
+
+Voici le produit scanné par l'utilisateur :
+Nom : ${alimResult.product_name || 'Non renseigné'}
+Marque : ${alimResult.brands || 'Non renseignée'}
+Nutri-Score : ${(alimResult.nutriscore_grade || '?').toUpperCase()}
+Ingrédients : ${alimResult.ingredients_text_fr || alimResult.ingredients_text || 'Non renseignés'}
+Allergènes : ${alimResult.allergens || 'Non renseignés'}
+
+Valeurs pour 100 g :
+- Énergie : ${n['energy-kcal_100g'] ?? '?'} kcal
+- Matières grasses : ${n.fat_100g ?? '?'} g (dont saturées : ${n['saturated-fat_100g'] ?? '?'} g)
+- Glucides : ${n.carbohydrates_100g ?? '?'} g (dont sucres : ${n.sugars_100g ?? '?'} g)
+- Fibres : ${n.fiber_100g ?? '?'} g
+- Protéines : ${n.proteins_100g ?? '?'} g
+- Sel : ${n.salt_100g ?? '?'} g
+
+Question de l'utilisateur : ${questionProduit}
+
+Réponds de façon claire et concrète, en te basant sur les données ci-dessus. Maximum 200 mots. Si une donnée manque, dis-le plutôt que d'inventer.`
+        }]
+      })
+    });
+    const data = await response.json();
+    setReponseIA(data.content?.[0]?.text || data.text || 'Réponse indisponible.');
+  } catch {
+    setReponseIA('⚠️ Service temporairement indisponible. Réessayez dans un instant.');
+  }
+  setIaLoading(false);
+};
 
 
   return (
@@ -429,6 +479,18 @@ const rechercherRecettes = async () => {
       </div>
     )}
 
+    {alimResult && alimResult !== 'notfound' && alimResult !== 'unavailable' &&
+ !alimResult.nutriments?.['energy-kcal_100g'] &&
+ !alimResult.nutriments?.['proteins_100g'] && (
+  <div style={{ ...styles.card, background: 'rgba(243,156,18,0.08)', border: '1px solid rgba(243,156,18,0.25)' }}>
+    <p style={{ color: '#f39c12', fontSize: 13, textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
+      ⚠️ Données nutritionnelles incomplètes pour ce produit dans Open Food Facts.
+      Les réponses de l'assistant seront donc limitées.
+    </p>
+  </div>
+)}
+
+
     {alimResult === 'unavailable' && (
       <div style={styles.card}>
         <p style={{ color: '#f39c12', textAlign: 'center', marginBottom: 12 }}>
@@ -482,6 +544,33 @@ const rechercherRecettes = async () => {
         )}
       </div>
     )}
+
+{alimResult && typeof alimResult === 'object' && (
+  <div style={styles.card}>
+    <div style={styles.cardTitle}>🤖 Une question sur ce produit ?</div>
+    <input
+      type="text"
+      value={questionProduit}
+      onChange={(e) => setQuestionProduit(e.target.value)}
+      onKeyDown={(e) => { if (e.key === 'Enter') poserQuestionProduit(); }}
+      placeholder="Ex : est-ce trop sucré pour un enfant ?"
+      style={{ width: '100%', padding: 12, borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.05)', color: 'white', fontSize: 14, marginBottom: 10, boxSizing: 'border-box' }}
+    />
+    <button
+      style={{ ...styles.searchBtn, opacity: iaLoading || !questionProduit.trim() ? 0.5 : 1 }}
+      onClick={poserQuestionProduit}
+      disabled={iaLoading || !questionProduit.trim()}>
+      {iaLoading ? '⏳ Analyse...' : '💬 Demander'}
+    </button>
+
+    {reponseIA && (
+      <div style={{ marginTop: 14, padding: 14, borderRadius: 10, background: 'rgba(67,233,123,0.08)', border: '1px solid rgba(67,233,123,0.2)', color: 'rgba(255,255,255,0.9)', fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+        {reponseIA}
+      </div>
+    )}
+  </div>
+)}
+
   </div>
 )}
 

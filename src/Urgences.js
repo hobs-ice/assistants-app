@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 
 
 
@@ -226,7 +227,7 @@ export default function Urgences({ onBack, isPremium }) {
           <button
   onClick={async (e) => {
   e.preventDefault();
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isIOS = Capacitor.getPlatform() === 'ios';
   if (isIOS) {
     await Browser.open({ url: 'https://openaedmap.org' });
   } else {
