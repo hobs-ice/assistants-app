@@ -100,21 +100,13 @@ if (window.confirm(message)) {
 )}
 
 {!isPremium && trialExpired && isIOS && (
-  <button onClick={() => {
-    
-    if (iapProduct) {
-      iapProduct.getOffer()?.order();
-    } else if (window.CdvPurchase) {
-      const store = window.CdvPurchase.store;
-      const product = store.get('com.macalfer.app.premium.monthly', window.CdvPurchase.Platform.APPLE_APPSTORE);
-      if (product) product.getOffer()?.order();
-    }
-  }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
+  <button onClick={onSubscribe} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
+    ✨ Essayer 7 jours gratuitement
   </button>
 )}
 
-<p>{isPremium ? '💎 Abonnement Premium actif' : trialExpired ? '⏰ Essai terminé' : '✨ Essai gratuit 48h actif'}</p>
+<p>{isPremium ? '💎 Abonnement Premium actif' : '🔓 2 assistants gratuits · Essayez tout 7 jours'}</p>
+
 
       </div>
 
@@ -151,9 +143,26 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct 
   if (!hasAccess(id)) return (
     <div style={{ minHeight: '100vh', background: '#0a0f1a', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 64, marginBottom: 16 }}>🔒</div>
-        <div style={{ color: 'white', fontSize: 22, fontWeight: 800, marginBottom: 8 }}>Assistant Premium</div>
-        <div style={{ color: 'rgba(255,255,255,0.5)', marginBottom: 24 }}>Votre essai gratuit de 48h est terminé</div>
+                <div style={{ fontSize: 56, marginBottom: 12 }}>🔓</div>
+        <div style={{ color: 'white', fontSize: 24, fontWeight: 800, marginBottom: 6 }}>
+          Débloquez les 13 assistants
+        </div>
+        <div style={{ color: '#f0b429', fontSize: 15, fontWeight: 700, marginBottom: 20 }}>
+          7 jours gratuits
+        </div>
+
+        <div style={{ textAlign: 'left', marginBottom: 24, color: 'rgba(255,255,255,0.75)', fontSize: 13, lineHeight: 1.9 }}>
+          <div>🥗 Nutrition · scan produits + IA</div>
+          <div>⚖️ Justice · avocat IA, courriers</div>
+          <div>💼 Emploi · CV, offres, carrière</div>
+          <div>🎓 Étudiant · cours et révisions</div>
+          <div>📈 Business · plans, stratégie</div>
+          <div>🚗 Véhicule · mécanicien IA, VIN</div>
+          <div style={{ color: 'rgba(255,255,255,0.5)' }}>+ Sport, Gaming, Audiovisuel, Voyage, Permis</div>
+        </div>
+
+        
+        
         {isIOS ? (
   <button onClick={() => {
     if (iapProduct) {
@@ -164,7 +173,7 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct 
       if (product) product.getOffer()?.order();
     }
   }} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
+    ✨ Essayer 7 jours gratuitement
   </button>
 
 
@@ -192,6 +201,15 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct 
   </button>
 )}
 
+{isIOS && (
+  <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 11, lineHeight: 1.6, marginBottom: 14, textAlign: 'center' }}>
+    7 jours gratuits, puis 4,99 €/mois. Renouvellement automatique.
+    Annulable à tout moment dans Réglages &gt; Abonnements.
+  </div>
+)}
+
+
+
 
 {!isPremium && trialExpired && (
   <div style={{ marginTop: 16, marginBottom: 16, textAlign: 'center' }}>
@@ -210,6 +228,18 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct 
 </div>
 
 )}
+
+
+{isIOS && (
+  <button onClick={async () => {
+    if (window.CdvPurchase) {
+      await window.CdvPurchase.store.restorePurchases();
+    }
+  }} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 12, padding: '8px 16px', width: '100%', marginBottom: 12 }}>
+    🔄 Restaurer mes achats
+  </button>
+)}
+
 
         <button onClick={onBack} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 13 }}>
           ← Retour
@@ -359,17 +389,15 @@ useEffect(() => {
 if (!session || isRecovery) return <Auth />;
 
 
-  const trialExpired = profile && !profile.is_premium && 
-  profile.trial_started_at && 
-  new Date() - new Date(profile.trial_started_at) > 48 * 60 * 60 * 1000;
+    const trialExpired = profile && !profile.is_premium;
 
 const hasAccess = (id) => {
   const freeAssistants = ['urgences', 'medicaments'];
   if (freeAssistants.includes(id)) return true;
   if (profile?.is_premium) return true;
-  if (!trialExpired) return true; // Dans les 48h
   return false;
 };
+
 return (
     <div className="app">
       {current ? (
