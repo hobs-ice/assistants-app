@@ -27,6 +27,8 @@ serve(async (req) => {
     params.append("customer_email", email);
     params.append("metadata[userId]", userId);
     params.append("allow_promotion_codes", "true");
+    params.append("subscription_data[trial_period_days]", "7");
+
 
     const res = await fetch("https://api.stripe.com/v1/checkout/sessions", {
       method: "POST",

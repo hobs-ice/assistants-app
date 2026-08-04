@@ -95,7 +95,8 @@ if (window.confirm(message)) {
 
 {!isPremium && trialExpired && !isIOS && (
   <button onClick={onSubscribe} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
-    💎 Passer Premium — 4,99€/mois
+        ✨ Essayer 7 jours gratuitement
+
   </button>
 )}
 
@@ -125,7 +126,8 @@ if (window.confirm(message)) {
               <div className="card-title">{a.title}</div>
               <div className="card-desc">{a.desc}</div>
               {!accessible && (
-                <div style={{ fontSize: 10, color: '#f0b429', marginTop: 4, fontWeight: 600 }}>Premium 4,99€/mois</div>
+                <div style={{ fontSize: 10, color: '#f0b429', marginTop: 4, fontWeight: 600 }}>Essai 7 jours</div>
+
               )}
             </div>
           );
@@ -197,16 +199,18 @@ function Assistant({ id, onBack, hasAccess, isPremium, trialExpired, iapProduct 
     const data = await res.json();
     if (data.url) window.location.href = data.url;
   }} style={{ background: '#f0b429', border: 'none', borderRadius: 10, padding: '12px 24px', color: '#080b12', fontWeight: 700, cursor: 'pointer', marginBottom: 12, display: 'block', width: '100%' }}>
-    💎 Passer Premium — 4,99€/mois
+        ✨ Essayer 7 jours gratuitement
+
   </button>
 )}
 
-{isIOS && (
-  <div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 11, lineHeight: 1.6, marginBottom: 14, textAlign: 'center' }}>
-    7 jours gratuits, puis 4,99 €/mois. Renouvellement automatique.
-    Annulable à tout moment dans Réglages &gt; Abonnements.
-  </div>
-)}
+<div style={{ color: 'rgba(255,255,255,0.65)', fontSize: 11, lineHeight: 1.6, marginBottom: 14, textAlign: 'center' }}>
+  7 jours gratuits, puis 4,99 €/mois. Renouvellement automatique.
+  {isIOS
+    ? ' Annulable à tout moment dans Réglages > Abonnements.'
+    : ' Annulable à tout moment depuis votre espace client.'}
+</div>
+
 
 
 
