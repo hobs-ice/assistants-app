@@ -2,7 +2,8 @@ require('dotenv').config();
 
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
-console.log('SUPA_URL présent:', !!SUPA_URL, '| SUPA_KEY présent:', !!SUPA_KEY);
+console.log('Variables SUPABASE trouvées:', Object.keys(process.env).filter(k => k.includes('SUPA')));
+
 
 
 async function logUsage(provider, model, inputTokens, outputTokens) {
