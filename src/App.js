@@ -50,48 +50,67 @@ function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPrem
 
 
 const isIOS = Capacitor.getPlatform() === 'ios';
+const [menuOuvert, setMenuOuvert] = useState(false);
+
 
   return (
     
     <div className="home">
       <div className="header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-          <h1 style={{ margin: 0 }}>MACAIFER</h1>
-          <button onClick={onLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.2)', borderRadius: 8, color: 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 12, padding: '6px 12px', marginLeft: 8 }}>
-            Déconnexion
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, position: 'relative' }}>
+          <div style={{ width: 32 }} />
+          <h1 style={{ margin: 0, flex: 1, textAlign: 'center' }}>MACAIFER</h1>
+          <button onClick={() => setMenuOuvert(!menuOuvert)}
+            style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontSize: 24, padding: 0, width: 32, lineHeight: 1 }}>
+            ☰
           </button>
-          <button onClick={async () => {
-          const message = isPremium 
-  ? 'Vous avez un abonnement Premium actif. Veuillez d\'abord annuler votre abonnement via "Gérer abonnement". Voulez-vous quand même supprimer votre compte ?'
-  : 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.';
-if (window.confirm(message)) {
 
-    const { data: { session } } = await supabase.auth.getSession();
-    await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/delete-account', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId: session.user.id })
-    });
-    await supabase.auth.signOut();
-  }
-}} style={{ background: 'none', border: '1px solid rgba(255,0,0,0.3)', borderRadius: 8, color: 'rgba(255,0,0,0.5)', cursor: 'pointer', fontSize: 11, padding: '4px 8px', marginLeft: 8 }}>
-  🗑️ Supprimer compte
-</button>
+          {menuOuvert && (
+            <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: 8, minWidth: 200, zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
+
+              {isPremium && !isIOS && (
+                <button onClick={async () => {
+                  setMenuOuvert(false);
+                  const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: userEmail, returnUrl: window.location.origin })
+                  });
+                  const data = await res.json();
+                  if (data.url) window.location.href = data.url;
+                }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', color: '#f0b429', cursor: 'pointer', fontSize: 13, padding: '10px 12px', borderRadius: 8 }}>
+                  💎 Gérer abonnement
+                </button>
+              )}
+
+              <button onClick={() => { setMenuOuvert(false); onLogout(); }}
+                style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: 13, padding: '10px 12px', borderRadius: 8 }}>
+                Déconnexion
+              </button>
+
+              <button onClick={async () => {
+                setMenuOuvert(false);
+                const message = isPremium
+                  ? 'Vous avez un abonnement Premium actif. Veuillez d\'abord annuler votre abonnement via "Gérer abonnement". Voulez-vous quand même supprimer votre compte ?'
+                  : 'Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.';
+                if (window.confirm(message)) {
+                  const { data: { session } } = await supabase.auth.getSession();
+                  await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/delete-account', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ userId: session.user.id })
+                  });
+                  await supabase.auth.signOut();
+                }
+              }} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', color: 'rgba(255,80,80,0.8)', cursor: 'pointer', fontSize: 13, padding: '10px 12px', borderRadius: 8 }}>
+                🗑️ Supprimer mon compte
+              </button>
+            </div>
+          )}
         </div>
 
-        {isPremium && !isIOS && (
-  <button onClick={async () => {
-    const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail, returnUrl: window.location.origin })
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-  }} style={{ background: 'none', border: '1px solid rgba(240,180,41,0.5)', borderRadius: 8, color: '#f0b429', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8 }}>
-    💎 Gérer abonnement
-  </button>
-)}
+
+        
 
 {!isPremium && trialExpired && !isIOS && (
   <button onClick={onSubscribe} style={{ background: '#f0b429', border: 'none', borderRadius: 8, color: '#080b12', cursor: 'pointer', fontSize: 12, padding: '6px 12px', width: '100%', marginBottom: 8, fontWeight: 700 }}>
