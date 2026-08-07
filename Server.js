@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const SUPA_URL = process.env.SUPABASE_URL;
 const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
+console.log('SUPA_URL présent:', !!SUPA_URL, '| SUPA_KEY présent:', !!SUPA_KEY);
+
 
 async function logUsage(provider, model, inputTokens, outputTokens) {
   if (!SUPA_URL || !SUPA_KEY) return;
