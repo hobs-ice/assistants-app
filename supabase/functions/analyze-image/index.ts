@@ -54,6 +54,27 @@ Sois précis et concis.`
     });
 
     const data = await response.json();
+        // Log de consommation
+    try {
+      await fetch(`${Deno.env.get('SUPABASE_URL')}/rest/v1/ia_usage`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        },
+        body: JSON.stringify({
+          provider: 'anthropic',
+          model: 'claude-sonnet-4-6',
+          assistant: 'image',
+          input_tokens: data.usage?.input_tokens,
+          output_tokens: data.usage?.output_tokens,
+        }),
+      });
+    } catch (e) {
+      console.error('logUsage:', e.message);
+    }
+
     const text = data.content?.[0]?.text || "Impossible d'analyser l'image";
 
     return new Response(
