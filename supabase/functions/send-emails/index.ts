@@ -43,7 +43,7 @@ serve(async (req) => {
         <h1 style="color: #f0b429; font-size: 24px; margin: 16px 0;">Votre essai gratuit est terminé</h1>
       </div>
       <p>Bonjour 👋</p>
-      <p>Votre essai gratuit de 48h sur Macaifer est maintenant terminé.</p>
+      <p>Votre essai gratuit sur Macaifer est maintenant terminé.</p>
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
         <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">💎 Passez Premium à 4,99€/mois :</p>
         <ul style="color: #94a3b8; line-height: 2;">
@@ -62,7 +62,7 @@ serve(async (req) => {
 </a>
 
       </div>
-      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">Macaifer — Le couteau suisse numérique du quotidien 🇨🇭</p>
+      <p style="color: #64748b; font-size: 12px; margin-top: 32px; text-align: center;">Macaifer — Le couteau suisse numérique du quotidien </p>
     </div>
     `
   );
@@ -79,18 +79,28 @@ serve(async (req) => {
         <div style="font-size: 48px;">🤖</div>
         <h1 style="color: #f0b429; font-size: 28px; margin: 16px 0;">Bienvenue sur MacAlfer !</h1>
       </div>
-      <p>Bonjour 👋</p>
+            <p>Bonjour 👋</p>
       <p>Votre compte Macaifer a été créé avec succès !</p>
       <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
-        <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">✨ Votre essai gratuit 48h commence maintenant :</p>
+        <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">🔓 Deux assistants gratuits dès maintenant :</p>
         <ul style="color: #94a3b8; line-height: 2;">
-          <li>🤖 Accès à tous les assistants IA</li>
-          <li>💊 Reconnaissance médicament par photo</li>
-          <li>🚗 Reconnaissance pièce auto</li>
-          <li>💼 Offres d'emploi France Travail</li>
+          <li>🚨 Urgences · premiers secours, numéros utiles</li>
+          <li>💊 Médicaments · posologie, reconnaissance par photo</li>
         </ul>
       </div>
-      <p style="color: #94a3b8;">Après 48h, passez Premium à 4,99€/mois pour continuer à profiter de tous les assistants !</p>
+      <div style="background: #1a1a2e; border-radius: 12px; padding: 20px; margin: 24px 0;">
+        <p style="color: #f0b429; font-weight: bold; margin-bottom: 12px;">✨ Essayez les 11 autres gratuitement pendant 7 jours :</p>
+        <ul style="color: #94a3b8; line-height: 2;">
+          <li>🥗 Nutrition · scan produits + questions à l'IA</li>
+          <li>⚖️ Justice · avocat IA, courriers</li>
+          <li>💼 Emploi · offres France Travail, CV</li>
+          <li>🎓 Étudiant · cours et révisions</li>
+          <li>🚗 Véhicule · mécanicien IA, reconnaissance de pièces</li>
+          <li style="color: #64748b;">+ Business, Sport, Gaming, Audiovisuel, Voyage, Permis</li>
+        </ul>
+      </div>
+      <p style="color: #64748b; font-size: 13px;">7 jours gratuits, puis 4,99 €/mois. Renouvellement automatique, annulable à tout moment.</p>
+
       <div style="text-align: center; margin-top: 32px;">
         <a href="https://macaifer.com" style="background: #f0b429; color: #080b12; padding: 14px 32px; border-radius: 10px; text-decoration: none; font-weight: 700;">
           🚀 Découvrir Macaifer

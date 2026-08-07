@@ -1,5 +1,26 @@
 require('dotenv').config();
 
+const SUPA_URL = process.env.SUPABASE_URL;
+const SUPA_KEY = process.env.SUPABASE_SERVICE_KEY;
+
+async function logUsage(provider, model, inputTokens, outputTokens) {
+  if (!SUPA_URL || !SUPA_KEY) return;
+  try {
+    await fetch(`${SUPA_URL}/rest/v1/ia_usage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPA_KEY,
+        'Authorization': `Bearer ${SUPA_KEY}`,
+      },
+      body: JSON.stringify({ provider, model, input_tokens: inputTokens, output_tokens: outputTokens }),
+    });
+  } catch (e) {
+    console.error('logUsage:', e.message);
+  }
+}
+
+
 const express = require('express');
 const cors = require('cors');
 
@@ -48,8 +69,10 @@ const response = await fetch('https://api.anthropic.com/v1/messages', {
           messages: req.body.messages
         })
       });
-      const data = await response.json();
+            const data = await response.json();
+      logUsage('anthropic', 'claude-sonnet-4-6', data.usage?.input_tokens, data.usage?.output_tokens);
       res.json({ content: data.content });
+
     } else {
       // Utiliser Groq pour le texte
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
@@ -66,6 +89,7 @@ const response = await fetch('https://api.anthropic.com/v1/messages', {
         })
       });
       const data = await response.json();
+      logUsage('groq', 'llama-3.3-70b-versatile', data.usage?.prompt_tokens, data.usage?.completion_tokens);
       res.json({ content: [{ text: data.choices[0].message.content }] });
     }
   } catch (err) {
