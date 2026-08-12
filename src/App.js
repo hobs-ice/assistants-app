@@ -426,7 +426,13 @@ return (
       {current ? (
         <Assistant id={current} onBack={() => setCurrent(null)} hasAccess={hasAccess} isPremium={profile?.is_premium} trialExpired={trialExpired} iapProduct={iapProduct} />
       ) : (
-        <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => supabase.auth.signOut()} trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} />
+        <Home onSelect={setCurrent} onSubscribe={() => setCurrent('premium')} hasAccess={hasAccess} onLogout={() => {
+  setSession(null);
+  setProfile(null);
+  setCurrent(null);
+  supabase.auth.signOut();
+}}
+ trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} />
 
 
       )}
