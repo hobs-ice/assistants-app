@@ -46,7 +46,8 @@ const assistants = [
 
 
 
-function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail, iapProduct }) {
+function Home({ onSelect, onSubscribe, hasAccess, onLogout, trialExpired, isPremium, userEmail, iapProduct, appleTransactionId }) {
+
 
 
 const isIOS = Capacitor.getPlatform() === 'ios';
@@ -68,7 +69,7 @@ const [menuOuvert, setMenuOuvert] = useState(false);
           {menuOuvert && (
             <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, background: '#1a1a2e', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 12, padding: 8, minWidth: 200, zIndex: 100, boxShadow: '0 8px 24px rgba(0,0,0,0.4)' }}>
 
-              {isPremium && !isIOS && (
+              {isPremium && !isIOS && !appleTransactionId && (
                 <button onClick={async () => {
                   setMenuOuvert(false);
                   const res = await fetch('https://ywtngdmvlfgoptwdejje.supabase.co/functions/v1/customer-portal', {
@@ -82,6 +83,13 @@ const [menuOuvert, setMenuOuvert] = useState(false);
                   💎 Gérer abonnement
                 </button>
               )}
+
+              {isPremium && !isIOS && appleTransactionId && (
+                <div style={{ padding: '10px 12px', fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>
+                  Abonnement souscrit via l'App Store. Gérez-le dans Réglages &gt; Abonnements sur votre appareil Apple.
+                </div>
+              )}
+
 
               <button onClick={() => { setMenuOuvert(false); onLogout(); }}
                 style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', color: 'rgba(255,255,255,0.7)', cursor: 'pointer', fontSize: 13, padding: '10px 12px', borderRadius: 8 }}>
@@ -432,7 +440,10 @@ return (
   setCurrent(null);
   supabase.auth.signOut();
 }}
- trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} />
+
+
+ trialExpired={trialExpired} isPremium={profile?.is_premium} userEmail={profile?.email} iapProduct={iapProduct} appleTransactionId={profile?.apple_original_transaction_id} />
+
 
 
       )}
